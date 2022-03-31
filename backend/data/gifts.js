@@ -26,7 +26,7 @@ async function deleteGift(id) {
     const giftCollection = await gifts();
 
     try {
-        const deleteStatus = giftCollection.deleteOne({_id: giftId});
+        const deleteStatus = await giftCollection.deleteOne({_id: giftId});
         if (!deleteStatus.deletedCount) {
             throw `Delete operation did not succeed!`
         }
