@@ -12,6 +12,6 @@ const getCollectionFn = (collection) => {
 };
 
 module.exports = {
-    weddioDB: getCollectionFn("weddioDB"),
-    gifts: getCollectionFn("gifts"),
+  weddings: getCollectionFn('weddings'),
+  gifts: getCollectionFn('gifts')
 };

@@ -1,5 +1,7 @@
-const giftData = require("./gifts");
+const weddingData = require('./weddings');
+const giftData = require('./gifts');
 
 module.exports = {
-    gifts: giftData,
+    weddings: weddingData,
+    gifts: giftData
 };
