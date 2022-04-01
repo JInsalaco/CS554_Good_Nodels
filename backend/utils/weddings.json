@@ -1,78 +1,118 @@
 [
-    {
-        "venue": "Medieval Times",
-        "title": "Jake and Amy's Wedding",
-        "events": [{
-            "title": "Bachelor Party",
-            "date": "04/01/2022",
-            "description": "Bachelor Party before the wedding"
+  {
+    "venue": "Medieval Times",
+    "title": "Jake and Amy's Wedding",
+    "events": [
+      {
+        "title": "Bachelor Party",
+        "date": {
+          "day": 1,
+          "month": "May",
+          "year": 2023
         },
-        {
-            "title": "Bachellorette Party",
-            "date": "04/09/2022",
-            "description": "Last night was a movie!"
-        }],
-        "date": "04/30/2022",
-        "contactPerson": "jake.peralta@sample.com",
-        "rsvpDeadline": "04/01/2022",
-        "attendees": [{
-            "Name": "Joseph Insalaco",
-            "Email": "jinsalac@stevens.edu",
-            "Attending": true,
-            "extras": 2,
-            "foodChoice": ["chicken","steak","fish"]
+        "description": "Bachelor Party before the wedding"
+      },
+      {
+        "title": "Bachellorette Party",
+        "date": {
+          "day": 1,
+          "month": "May",
+          "year": 2023
         },
-        {
-            "Name": "Timothy Wang",
-            "Email": "twang77@stevens.edu",
-            "Attending": false,
-            "extras": 0,
-            "foodChoice": []
-        }],
-        "images": [],
-        "RegistryID": []
+        "description": "Last night was a movie!"
+      }
+    ],
+    "date": {
+      "day": 30,
+      "month": "June",
+      "year": 2023
     },
+    "contactPerson": "jake.peralta@sample.com",
+    "rsvpDeadline": {
+      "day": 1,
+      "month": "May",
+      "year": 2023,
+      "month": "July",
+      "year": 2022
+    },
+    "attendees": [
+      {
+        "Name": "Joseph Insalaco",
+        "Email": "jinsalac@stevens.edu",
+        "Attending": true,
+        "extras": 2,
+        "foodChoice": ["chicken", "steak", "fish"]
+      },
+      {
+        "Name": "Timothy Wang",
+        "Email": "twang77@stevens.edu",
+        "Attending": false,
+        "extras": 0,
+        "foodChoice": []
+      }
+    ],
+    "images": [],
+    "gifts": []
+  },
 
-
-
-    {
-        "venue": "Nanina's In the Park",
-        "title": "Elizabeth and Billy's Wedding",
-        "events": [{
-            "title": "Rehearsal Dinner",
-            "date": "09/01/2022",
-            "description": "Please be prompt"
+  {
+    "venue": "Nanina's In the Park",
+    "title": "Elizabeth and Billy's Wedding",
+    "events": [
+      {
+        "title": "Rehearsal Dinner",
+        "date": {
+          "day": 1,
+          "month": "August",
+          "year": 2023
         },
-        {
-            "title": "Post-Wedding Blood Test Brunch",
-            "date": "09/03/2022",
-            "description": "Theranos sponsored blood tests!"
-        }],
-        "date": "09/02/2022",
-        "contactPerson": "eholmes@thernos.org",
-        "rsvpDeadline": "06/30/2022",
-        "attendees": [{
-            "Name": "Christian Paz",
-            "Email": "cszablew@stevens.edu",
-            "Attending": true,
-            "extras": 1,
-            "foodChoice": ["steak","vegetarian"]
+        "description": "Please be prompt"
+      },
+      {
+        "title": "Post-Wedding Blood Test Brunch",
+        "date": {
+          "day": 20,
+          "month": "August",
+          "year": 2023
         },
-        {
-            "Name": "Anisha Shin",
-            "Email": "ashin1@stevens.edu",
-            "Attending": false,
-            "extras": 0,
-            "foodChoice": []
-        },
-        {
-            "Name": "Jacob Roessler",
-            "Email": "jroessl1@stevens.edu",
-            "Attending": true,
-            "extras": 0,
-            "foodChoice": ["steak"]
-        }],
-        "images": [],
-        "RegistryID": []
-    }
+        "description": "Theranos sponsored blood tests!"
+      }
+    ],
+    "date": {
+      "day": 10,
+      "month": "August",
+      "year": 2023
+    },
+    "contactPerson": "eholmes@thernos.org",
+    "rsvpDeadline": {
+      "day": 1,
+      "month": "July",
+      "year": 2022
+    },
+    "attendees": [
+      {
+        "Name": "Christian Paz",
+        "Email": "cszablew@stevens.edu",
+        "Attending": true,
+        "extras": 1,
+        "foodChoice": ["steak", "vegetarian"]
+      },
+      {
+        "Name": "Anisha Shin",
+        "Email": "ashin1@stevens.edu",
+        "Attending": false,
+        "extras": 0,
+        "foodChoice": []
+      },
+      {
+        "Name": "Jacob Roessler",
+        "Email": "jroessl1@stevens.edu",
+        "Attending": true,
+        "extras": 0,
+        "foodChoice": ["steak"]
+      }
+    ],
+    "images": [],
+    "gifts": []
+  }
 ]
