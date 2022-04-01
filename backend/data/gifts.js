@@ -5,7 +5,9 @@ const gifts = mongoCollections.gifts;
 
 let exportedMethods = {
     async getAll() {
-        // TO DO
+        const giftCollection = await gifts();
+        const giftList = await giftCollection.find({}).toArray();
+        return giftList;
     },
 
     async get(id) {
