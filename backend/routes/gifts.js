@@ -45,7 +45,6 @@ router.get("/:giftId", async (req, res) => {
 router.post("/", async (req, res) => {
     let giftInfo = req.body;
     giftInfo.title = xss(giftInfo.title);
-    giftInfo.price = xss(giftInfo.price);
     giftInfo.url = xss(giftInfo.url);
     giftInfo.picture = xss(giftInfo.picture);
     giftInfo.description = xss(giftInfo.description);
@@ -62,7 +61,7 @@ router.post("/", async (req, res) => {
         });
         return;
     }
-    if (!giftInfo.parsedPrice || typeof giftInfo.parsedPrice !== "number" || giftInfo.parsedPrice < 0) {
+    if (typeof giftInfo.parsedPrice !== "number" || isNaN(giftInfo.parsedPrice) || giftInfo.parsedPrice < 0) {
         res.status(400).json({
             message: "Price must be a number greater than or equal to 0."
         });
@@ -112,7 +111,6 @@ router.put("/:id", async (req, res) => {
     }
     let giftInfo = req.body;
     giftInfo.title = xss(giftInfo.title);
-    giftInfo.price = xss(giftInfo.price);
     giftInfo.url = xss(giftInfo.url);
     giftInfo.picture = xss(giftInfo.picture);
     giftInfo.description = xss(giftInfo.description);
@@ -130,7 +128,7 @@ router.put("/:id", async (req, res) => {
         });
         return;
     }
-    if (!giftInfo.parsedPrice || typeof giftInfo.parsedPrice !== "number" || giftInfo.parsedPrice < 0) {
+    if (typeof giftInfo.parsedPrice !== "number" || isNaN(giftInfo.parsedPrice) || giftInfo.parsedPrice < 0) {
         res.status(400).json({
             message: "Price must be a number greater than or equal to 0."
         });
@@ -217,9 +215,8 @@ router.patch("/:id", async (req, res) => {
         giftInfo.title = gift.title;
     }
     if (giftInfo.hasOwnProperty("price")) {
-        giftInfo.price = xss(giftInfo.price);
         giftInfo.parsedPrice = parseFloat(giftInfo.price);
-        if (!giftInfo.parsedPrice || typeof giftInfo.parsedPrice !== "number" || giftInfo.parsedPrice < 0) {
+        if (typeof giftInfo.parsedPrice !== "number" || isNaN(giftInfo.parsedPrice) || giftInfo.parsedPrice < 0) {
             res.status(400).json({
                 message: "Price must be a number greater than or equal to 0."
             });

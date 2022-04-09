@@ -9,7 +9,7 @@ async function create(title, price, url, picture, description) {
             "Parameter 1 [title] must be a non-empty string containing more than just spaces."
         );
     }
-    if (!price || typeof price !== "number" || price < 0) {
+    if (typeof price !== "number" || isNaN(price) || price < 0) {
         throw new Error(
             "Parameter 2 [price] must be a number greater than or equal to 0."
         );
@@ -59,7 +59,7 @@ async function update(id, title, price, url, picture, description) {
             "Parameter 2 [title] must be a non-empty string containing more than just spaces."
         );
     }
-    if (!price || typeof price !== "number" || price < 0) {
+    if (typeof price !== "number" || isNaN(price) || price < 0) {
         throw new Error(
             "Parameter 3 [price] must be a number greater than or equal to 0."
         );
