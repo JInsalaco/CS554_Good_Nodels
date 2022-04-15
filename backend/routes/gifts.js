@@ -45,44 +45,59 @@ router.get("/:giftId", async (req, res) => {
 router.post("/", async (req, res) => {
     let giftInfo = req.body;
     giftInfo.title = xss(giftInfo.title);
-    giftInfo.price = xss(giftInfo.price);
     giftInfo.url = xss(giftInfo.url);
     giftInfo.picture = xss(giftInfo.picture);
     giftInfo.description = xss(giftInfo.description);
     if (!giftInfo) {
         res.status(400).json({
-            message: "You must provide data to add a gift."
+            message: "You must provide data to add a gift.",
         });
         return;
     }
     giftInfo.parsedPrice = parseFloat(giftInfo.price);
-    if (!giftInfo.title || typeof giftInfo.title !== "string" || giftInfo.title.trim() === "") {
+    if (
+        !giftInfo.title ||
+        typeof giftInfo.title !== "string" ||
+        giftInfo.title.trim() === ""
+    ) {
         res.status(400).json({
-            message: "Invalid title."
+            message: "Invalid title.",
         });
         return;
     }
-    if (!giftInfo.parsedPrice || typeof giftInfo.parsedPrice !== "number" || giftInfo.parsedPrice < 0) {
+    if (typeof giftInfo.parsedPrice !== "number" || isNaN(giftInfo.parsedPrice) || giftInfo.parsedPrice < 0) {
         res.status(400).json({
-            message: "Price must be a number greater than or equal to 0."
+            message: "Price must be a number greater than or equal to 0.",
         });
         return;
     }
-    if (!giftInfo.url || typeof giftInfo.url !== "string" || giftInfo.url.trim() === "") {
+    if (
+        !giftInfo.url ||
+        typeof giftInfo.url !== "string" ||
+        giftInfo.url.trim() === ""
+    ) {
         res.status(400).json({
-            message: "Invalid url."
+            message: "Invalid url.",
         });
         return;
     }
-    if (!giftInfo.picture || typeof giftInfo.picture !== "string" || giftInfo.picture.trim() === "") {
+    if (
+        !giftInfo.picture ||
+        typeof giftInfo.picture !== "string" ||
+        giftInfo.picture.trim() === ""
+    ) {
         res.status(400).json({
-            message: "Invalid picture."
+            message: "Invalid picture.",
         });
         return;
     }
-    if (!giftInfo.description || typeof giftInfo.description !== "string" || giftInfo.description.trim() === "") {
+    if (
+        !giftInfo.description ||
+        typeof giftInfo.description !== "string" ||
+        giftInfo.description.trim() === ""
+    ) {
         res.status(400).json({
-            message: "Invalid description."
+            message: "Invalid description.",
         });
         return;
     }
@@ -97,60 +112,80 @@ router.post("/", async (req, res) => {
         res.status(200).json(newGift);
     } catch (e) {
         res.status(500).json({
-            message: e.message
+            message: e.message,
         });
     }
 });
 
 router.put("/:id", async (req, res) => {
     req.params.id = xss(req.params.id);
-    if (!req.params.id || typeof req.params.id !== "string" || req.params.id.trim() === "") {
+    if (
+        !req.params.id ||
+        typeof req.params.id !== "string" ||
+        req.params.id.trim() === ""
+    ) {
         res.status(400).json({
-            message: "Id must be a non-empty string containing more than just spaces."
+            message:
+                "Id must be a non-empty string containing more than just spaces.",
         });
         return;
     }
     let giftInfo = req.body;
     giftInfo.title = xss(giftInfo.title);
-    giftInfo.price = xss(giftInfo.price);
     giftInfo.url = xss(giftInfo.url);
     giftInfo.picture = xss(giftInfo.picture);
     giftInfo.description = xss(giftInfo.description);
     if (!giftInfo) {
         res.status(400).json({
-            message: "You must provide data to edit a gift."
+            message: "You must provide data to edit a gift.",
         });
         return;
     }
     giftInfo.id = req.params.id;
     giftInfo.parsedPrice = parseFloat(giftInfo.price);
-    if (!giftInfo.title || typeof giftInfo.title !== "string" || giftInfo.title.trim() === "") {
+    if (
+        !giftInfo.title ||
+        typeof giftInfo.title !== "string" ||
+        giftInfo.title.trim() === ""
+    ) {
         res.status(400).json({
-            message: "Invalid title."
+            message: "Invalid title.",
         });
         return;
     }
-    if (!giftInfo.parsedPrice || typeof giftInfo.parsedPrice !== "number" || giftInfo.parsedPrice < 0) {
+    if (typeof giftInfo.parsedPrice !== "number" || isNaN(giftInfo.parsedPrice) || giftInfo.parsedPrice < 0) {
         res.status(400).json({
-            message: "Price must be a number greater than or equal to 0."
+            message: "Price must be a number greater than or equal to 0.",
         });
         return;
     }
-    if (!giftInfo.url || typeof giftInfo.url !== "string" || giftInfo.url.trim() === "") {
+    if (
+        !giftInfo.url ||
+        typeof giftInfo.url !== "string" ||
+        giftInfo.url.trim() === ""
+    ) {
         res.status(400).json({
-            message: "Invalid url."
+            message: "Invalid url.",
         });
         return;
     }
-    if (!giftInfo.picture || typeof giftInfo.picture !== "string" || giftInfo.picture.trim() === "") {
+    if (
+        !giftInfo.picture ||
+        typeof giftInfo.picture !== "string" ||
+        giftInfo.picture.trim() === ""
+    ) {
         res.status(400).json({
-            message: "Invalid picture."
+            message: "Invalid picture.",
         });
         return;
     }
-    if (!giftInfo.description || typeof giftInfo.description !== "string" || giftInfo.description.trim() === "") {
+    if (
+        !giftInfo.description ||
+        typeof giftInfo.description !== "string" ||
+        giftInfo.description.trim() === ""
+    ) {
         res.status(400).json({
-            message: "Invalid description."
+            message: "Invalid description.",
         });
         return;
     }
@@ -158,7 +193,7 @@ router.put("/:id", async (req, res) => {
         const gift = await giftData.get(req.params.id);
     } catch (e) {
         res.status(404).json({
-            message: "Gift not found."
+            message: "Gift not found.",
         });
         return;
     }
@@ -174,16 +209,21 @@ router.put("/:id", async (req, res) => {
         res.status(200).json(updatedGift);
     } catch (e) {
         res.status(500).json({
-            message: e.message
+            message: e.message,
         });
     }
 });
 
 router.patch("/:id", async (req, res) => {
     req.params.id = xss(req.params.id);
-    if (!req.params.id || typeof req.params.id !== "string" || req.params.id.trim() === "") {
+    if (
+        !req.params.id ||
+        typeof req.params.id !== "string" ||
+        req.params.id.trim() === ""
+    ) {
         res.status(400).json({
-            message: "Id must be a non-empty string containing more than just spaces."
+            message:
+                "Id must be a non-empty string containing more than just spaces.",
         });
         return;
     }
@@ -192,77 +232,87 @@ router.patch("/:id", async (req, res) => {
         gift = await giftData.get(req.params.id);
     } catch (e) {
         res.status(404).json({
-            message: "Gift not found."
+            message: "Gift not found.",
         });
         return;
     }
     let giftInfo = req.body;
     if (!giftInfo) {
-         res.status(400).json({
-            message: "You must provide data to edit a gift."
+        res.status(400).json({
+            message: "You must provide data to edit a gift.",
         });
         return;
     }
     giftInfo.id = req.params.id;
     if (giftInfo.hasOwnProperty("title")) {
         giftInfo.title = xss(giftInfo.title);
-        if (!giftInfo.title || typeof giftInfo.title !== "string" || giftInfo.title.trim() === "") {
+        if (
+            !giftInfo.title ||
+            typeof giftInfo.title !== "string" ||
+            giftInfo.title.trim() === ""
+        ) {
             res.status(400).json({
-                message: "Invalid title."
+                message: "Invalid title.",
             });
             return;
         }
-    }
-    else {
+    } else {
         giftInfo.title = gift.title;
     }
     if (giftInfo.hasOwnProperty("price")) {
-        giftInfo.price = xss(giftInfo.price);
         giftInfo.parsedPrice = parseFloat(giftInfo.price);
-        if (!giftInfo.parsedPrice || typeof giftInfo.parsedPrice !== "number" || giftInfo.parsedPrice < 0) {
+        if (typeof giftInfo.parsedPrice !== "number" || isNaN(giftInfo.parsedPrice) || giftInfo.parsedPrice < 0) {
             res.status(400).json({
-                message: "Price must be a number greater than or equal to 0."
+                message: "Price must be a number greater than or equal to 0.",
             });
             return;
         }
-    }
-    else {
+    } else {
         giftInfo.parsedPrice = gift.price;
     }
     if (giftInfo.hasOwnProperty("url")) {
         giftInfo.url = xss(giftInfo.url);
-        if (!giftInfo.url || typeof giftInfo.url !== "string" || giftInfo.url.trim() === "") {
+        if (
+            !giftInfo.url ||
+            typeof giftInfo.url !== "string" ||
+            giftInfo.url.trim() === ""
+        ) {
             res.status(400).json({
-                message: "Invalid url."
+                message: "Invalid url.",
             });
             return;
         }
-    }
-    else {
+    } else {
         giftInfo.url = gift.url;
     }
     if (giftInfo.hasOwnProperty("picture")) {
         giftInfo.picture = xss(giftInfo.picture);
-        if (!giftInfo.picture || typeof giftInfo.picture !== "string" || giftInfo.picture.trim() === "") {
+        if (
+            !giftInfo.picture ||
+            typeof giftInfo.picture !== "string" ||
+            giftInfo.picture.trim() === ""
+        ) {
             res.status(400).json({
-                message: "Invalid picture."
+                message: "Invalid picture.",
             });
             return;
         }
-    }
-    else {
+    } else {
         giftInfo.picture = gift.picture;
     }
     if (giftInfo.hasOwnProperty("description")) {
         giftInfo.description = xss(giftInfo.description);
-        if (!giftInfo.description || typeof giftInfo.description !== "string" || giftInfo.description.trim() === "") {
+        if (
+            !giftInfo.description ||
+            typeof giftInfo.description !== "string" ||
+            giftInfo.description.trim() === ""
+        ) {
             res.status(400).json({
-                message: "Invalid description."
+                message: "Invalid description.",
             });
             return;
         }
-    }
-    else {
+    } else {
         giftInfo.description = gift.description;
     }
     try {
@@ -277,7 +327,7 @@ router.patch("/:id", async (req, res) => {
         res.status(200).json(updatedGift);
     } catch (e) {
         res.status(500).json({
-            message: e.message
+            message: e.message,
         });
     }
 });

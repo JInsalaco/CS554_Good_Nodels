@@ -1,12 +1,12 @@
-let { ObjectId } = require('mongodb');
+let { ObjectId } = require("mongodb");
 
-const mongoCollections = require('../config/mongoCollections');
+const mongoCollections = require("../config/mongoCollections");
 const weddings = mongoCollections.weddings;
 
 const stringValidation = (strList) => {
     strList.forEach((str) => {
-        if (typeof str !== 'string' || str.trim() === '') {
-            throw new Error('Parameter must be a non-empty string');
+        if (typeof str !== "string" || str.trim() === "") {
+            throw new Error("Parameter must be a non-empty string");
         }
     });
 };
@@ -14,18 +14,18 @@ const stringValidation = (strList) => {
 const nullValidation = (params) => {
     params.forEach((param) => {
         if (!param) {
-            throw new Error('Parameter cannot be null');
+            throw new Error("Parameter cannot be null");
         }
     });
 };
 
 const eventsValidation = (events) => {
     if (!Array.isArray(events)) {
-        throw new Error('Parameter must be an array.');
+        throw new Error("Parameter must be an array.");
     }
     events.forEach((event) => {
         if (!event.title || !event.date || !event.description) {
-            throw new Error('Each event must have a title, date, and description.');
+            throw new Error("Each event must have a title, date, and description.");
         }
     });
 };
@@ -49,16 +49,16 @@ const dateValidation = (date) => {
     const monthsAndDayStrings = Object.keys(monthsAndDays);
 
     if (date.day > monthsAndDays[date.month] || date.day < 1 || date.year < 2022) {
-        throw new Error('Invalid date.');
+        throw new Error("Invalid date.");
     }
 };
 
 const emailValidation = (email) => {
-    if (typeof email !== 'string' || email.trim() === '') {
-        throw new Error('Parameter must be a non-empty string');
+    if (typeof email !== "string" || email.trim() === "") {
+        throw new Error("Parameter must be a non-empty string");
     }
-    if (!email.includes('@')) {
-        throw new Error('Parameter must be a valid email.');
+    if (!email.includes("@")) {
+        throw new Error("Parameter must be a valid email.");
     }
 };
 
@@ -68,9 +68,21 @@ let exportedMethods = {
         return await weddingsCollection.find({}).toArray();
     },
 
+    async get(id) {
+        if (!id || typeof id !== "string" || id.trim() === "") {
+            throw new Error("Parameter must be a non-empty string");
+        }
+        let parsedId = ObjectId(id);
+        const weddingCollection = await weddings();
+        const wedding = await weddingCollection.findOne({ _id: parsedId });
+        if (wedding === null) throw new Error("No wedding with that id.");
+        wedding._id = wedding._id.toString();
+        return wedding;
+    },
+
     async getAllUser(userId) {
-        if (!userId || typeof userId !== 'string' || userId.trim() === '') {
-            throw new Error('Parameter must be a non-empty string');
+        if (!userId || typeof userId !== "string" || userId.trim() === "") {
+            throw new Error("Parameter must be a non-empty string");
         }
 
         let parsedId = ObjectId(userId);
@@ -81,18 +93,6 @@ let exportedMethods = {
             .toArray();
 
         return weddingsWithUser;
-    },
-
-    async get(id) {
-        if (!id || typeof id !== 'string' || id.trim() === '') {
-            throw new Error('Parameter must be a non-empty string');
-        }
-        let parsedId = ObjectId(id);
-        const weddingCollection = await weddings();
-        const wedding = await weddingCollection.findOne({ _id: parsedId });
-        if (wedding === null) throw new Error('No wedding with that id.');
-        wedding._id = wedding._id.toString();
-        return wedding;
     },
 
     async create(venue, title, events, date, contactPerson, rsvpDeadline) {
@@ -126,7 +126,7 @@ let exportedMethods = {
         const weddingCollection = await weddings();
         const insertInfo = await weddingCollection.insertOne(wedding);
         if (insertInfo.insertedCount === 0) {
-            throw new Error('Could not create wedding.');
+            throw new Error("Could not create wedding.");
         }
 
         return await exportedMethods.get(insertInfo.insertedId.toString());
@@ -136,11 +136,11 @@ let exportedMethods = {
         stringValidation([weddingId, name]);
         stringValidation(foodChoices);
         emailValidation(email);
-        if (typeof attending !== 'boolean') {
-            throw new Error('Attending must be a boolean.');
+        if (typeof attending !== "boolean") {
+            throw new Error("Attending must be a boolean.");
         }
-        if (typeof extras !== 'number' || extras < 0) {
-            throw new Error('Extras must be greater than or equal to 0.');
+        if (typeof extras !== "number" || extras < 0) {
+            throw new Error("Extras must be greater than or equal to 0.");
         }
         const attendee = {
             _id: ObjectId(),
@@ -155,7 +155,7 @@ let exportedMethods = {
         const wedding = await weddingCollection.findOne({
             _id: ObjectId(weddingId),
         });
-        if (wedding === null) throw new Error('No wedding with that id.');
+        if (wedding === null) throw new Error("No wedding with that id.");
 
         // Here is where the attendee is being added to the wedding
         const updatedWedding = {
@@ -168,22 +168,23 @@ let exportedMethods = {
             { $set: updatedWedding }
         );
         if (updateInfo.modifiedCount === 0) {
-            throw new Error('Could not add attendee.');
+            throw new Error("Could not add attendee.");
         }
 
         return await exportedMethods.get(weddingId);
     },
 
     async addEvent(weddingId, title, date, description) {
-        stringValidation([weddingId, title, description]);
+        stringValidation([weddingId, title]);
         dateValidation(date);
+        stringValidation(description);
 
         const weddingCollection = await weddings();
         const wedding = await weddingCollection.findOne({
             _id: ObjectId(weddingId),
         });
 
-        if (wedding === null) throw new Error('No wedding with that id.');
+        if (wedding === null) throw new Error("No wedding with that id.");
 
         const updatedWedding = {
             ...wedding,
@@ -195,7 +196,7 @@ let exportedMethods = {
             { $set: updatedWedding }
         );
         if (updateInfo.modifiedCount === 0) {
-            throw new Error('Could not add event.');
+            throw new Error("Could not add event.");
         }
 
         return await exportedMethods.get(weddingId);
@@ -209,7 +210,7 @@ let exportedMethods = {
             _id: ObjectId(weddingId),
         });
 
-        if (wedding === null) throw new Error('No wedding with that id.');
+        if (wedding === null) throw new Error("No wedding with that id.");
 
         const updatedWedding = {
             ...wedding,
@@ -222,7 +223,7 @@ let exportedMethods = {
         );
 
         if (updateInfo.modifiedCount === 0) {
-            throw new Error('Could not remove event.');
+            throw new Error("Could not remove event.");
         }
 
         return await exportedMethods.get(weddingId);
@@ -234,7 +235,7 @@ let exportedMethods = {
         const wedding = await weddingCollection.findOne({
             _id: ObjectId(weddingId),
         });
-        if (wedding === null) throw new Error('No wedding with that id.');
+        if (wedding === null) throw new Error("No wedding with that id.");
 
         // Here is where the attendee is being removed from the wedding
         const updatedWedding = {
@@ -249,7 +250,7 @@ let exportedMethods = {
             { $set: updatedWedding }
         );
         if (updateInfo.modifiedCount === 0) {
-            throw new Error('Could not remove attendee.');
+            throw new Error("Could not remove attendee.");
         }
 
         return await exportedMethods.get(weddingId);
@@ -261,7 +262,7 @@ let exportedMethods = {
         const wedding = await weddingCollection.findOne({
             _id: ObjectId(weddingId),
         });
-        if (wedding === null) throw new Error('No wedding with that id.');
+        if (wedding === null) throw new Error("No wedding with that id.");
 
         // Here is where the gift is being added to the wedding
         const updatedWedding = {
@@ -274,7 +275,7 @@ let exportedMethods = {
             { $set: updatedWedding }
         );
         if (updateInfo.modifiedCount === 0) {
-            throw new Error('Could not add gift.');
+            throw new Error("Could not add gift.");
         }
 
         return await exportedMethods.get(weddingId);
@@ -286,7 +287,7 @@ let exportedMethods = {
         const wedding = await weddingCollection.findOne({
             _id: ObjectId(weddingId),
         });
-        if (wedding === null) throw new Error('No wedding with that id.');
+        if (wedding === null) throw new Error("No wedding with that id.");
 
         // Here is where the gift is being removed from the wedding
         const updatedWedding = {
@@ -299,7 +300,7 @@ let exportedMethods = {
             { $set: updatedWedding }
         );
         if (updateInfo.modifiedCount === 0) {
-            throw new Error('Could not remove gift.');
+            throw new Error("Could not remove gift.");
         }
 
         return await exportedMethods.get(weddingId);
@@ -350,7 +351,7 @@ let exportedMethods = {
             updatedWedding.rsvpDeadline = rsvpDeadline;
         }
 
-        if (wedding === null) throw new Error('No wedding with that id.');
+        if (wedding === null) throw new Error("No wedding with that id.");
 
         // Here is where the attendee is being added to the wedding
 
@@ -359,7 +360,7 @@ let exportedMethods = {
             { $set: updatedWedding }
         );
         if (updateInfo.modifiedCount === 0) {
-            throw new Error('Could not add attendee.');
+            throw new Error("Could not add attendee.");
         }
 
         return await exportedMethods.get(weddingId);
@@ -371,17 +372,78 @@ let exportedMethods = {
         const wedding = await weddingCollection.findOne({
             _id: ObjectId(id),
         });
-        if (wedding === null) throw new Error('No wedding with that id.');
+        if (wedding === null) throw new Error("No wedding with that id.");
 
         const deleteInfo = await weddingCollection.deleteOne({
             _id: ObjectId(id),
         });
         if (deleteInfo.deletedCount === 0) {
-            throw new Error('Could not delete wedding.');
+            throw new Error("Could not delete wedding.");
         }
 
         return exportedMethods.getAll();
     },
+
+    async editEvent(weddingId, eventId, newEvent) {
+        stringValidation([weddingId, eventId]);
+        stringValidation[newEvent.title];
+        dateValidation(newEvent.date);
+        stringValidation[newEvent.description];
+
+        const weddingCollection = await weddings();
+        const updateInfo = await weddingCollection.updateOne(
+            { _id: ObjectId(weddingId), "events._id": ObjectId(eventId) },
+            { $set: { "events.$": newEvent } }
+        );
+
+        if (updateInfo.modifiedCount === 0) {
+            throw new Error("Could not edit Event.");
+        }
+
+        return exportedMethods.get(weddingId);
+    },
+
+    async editAttendee(weddingId, attendeeId, newAttendee) {
+        stringValidation([weddingId, attendeeId]);
+        stringValidation[newAttendee.Name];
+        emailValidation(newAttendee.Email);
+        if (newAttendee.Attending !== true && newAttendee.Attending !== false)
+            throw `Invalid attending field in editAttendee`;
+        if (isNaN(parseInt(newAttendee.extras) || newAttendee.extras % 1 !== 0))
+            throw `Invalid extras field in editAttendee`;
+        for (let food of newAttendee.foodChoice) stringValidation([food]);
+
+        const weddingCollection = await weddings();
+        const updateInfo = await weddingCollection.updateOne(
+            { _id: ObjectId(weddingId), "attendees._id": ObjectId(attendeeId) },
+            { $set: { "attendees.$": newAttendee } }
+        );
+
+        if (updateInfo.modifiedCount === 0) {
+            throw new Error("Could not edit attendee.");
+        }
+
+        return exportedMethods.get(weddingId);
+    },
+
+    async editImage(weddingId, imageId, newImage) {
+        stringValidation([weddingId, imageId, newImage.url]);
+
+        const weddingCollection = await weddings();
+        const updateInfo = await weddingCollection.updateOne(
+            { _id: ObjectId(weddingId), "images._id": ObjectId(imageId) },
+            { $set: { "images.$": newImage } }
+        );
+
+        if (updateInfo.modifiedCount === 0) {
+            throw new Error("Could not edit Image.");
+        }
+
+        return exportedMethods.get(weddingId);
+    },
+
+    dateValidation,
+    emailValidation,
 };
 
 const main = async () => {
