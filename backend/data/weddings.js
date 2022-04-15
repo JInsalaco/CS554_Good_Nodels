@@ -84,6 +84,22 @@ let exportedMethods = {
     return wedding;
   },
 
+
+  async getAllUser(userId) {
+    if (!userId || typeof userId !== "string" || userId.trim() === "") {
+        throw new Error("Parameter must be a non-empty string");
+    }
+
+    let parsedId = ObjectId(userId);
+    const weddingCollection = await weddings();
+
+    const weddingsWithUser = await weddingCollection
+        .find({ attendees: { $elemMatch: { _id: parsedId } } })
+        .toArray();
+
+    return weddingsWithUser;
+  },
+
   async create({ venue, title, events, date, contactPerson, rsvpDeadline }) {
     nullValidation([venue, title, events, date, contactPerson, rsvpDeadline]);
     stringValidation([venue, title, contactPerson]);
