@@ -4,12 +4,19 @@ const xss = require("xss");
 const data = require("../data");
 const giftData = data.gifts;
 
+const bluebird = require("bluebird");
+const redis = require("redis");
+const client = redis.createClient();
+
+bluebird.promisifyAll(redis.RedisClient.prototype);
+bluebird.promisifyAll(redis.Multi.prototype);
+
 // GET localhost:3001/gifts
 // Returns all gifts from the gift collection
 router.get("/", async (req, res) => {
     let allGifts;
     try {
-        allGifts = await giftData.getAllGifts();
+        allGifts = await giftData.getAll();
     } catch (e) {
         res.status(500).json({
             message: `Could not fetch all gifts! ${e}`,
@@ -22,13 +29,21 @@ router.get("/", async (req, res) => {
 // GET localhost:3001/gifts/:giftId
 // Returns the inputted gift ID from the gift collection
 router.get("/:giftId", async (req, res) => {
-    let reqGift;
+    let reqGift = {};
     if (!req.params.giftId) {
         res.status(400).json({ message: "You must pass in a giftId!" });
         return;
     }
     try {
-        reqGift = await giftData.getGift(req.params.giftId);
+        const exists = await client.hexistsAsync("gifts", req.params.giftId);
+        if(exists === 1) {
+            reqGift = await client.hgetAsync("gifts", req.params.giftId);
+            reqGift = JSON.parse(reqGift);
+        }
+        else {
+            reqGift = await giftData.get(req.params.giftId);
+            await client.hsetAsync("gifts", req.params.giftId, JSON.stringify(reqGift));
+        }
     } catch (e) {
         res.status(400).json({ message: e });
         return;
