@@ -23,12 +23,13 @@ router.get("/", async (req, res) => {
         });
         return;
     }
-    res.json(allGifts);
+    res.status(200).json(allGifts);
 });
 
 // GET localhost:3001/gifts/:giftId
 // Returns the inputted gift ID from the gift collection
 router.get("/:giftId", async (req, res) => {
+    req.params.giftId = xss(req.params.giftId);
     let reqGift = {};
     if (!req.params.giftId) {
         res.status(400).json({ message: "You must pass in a giftId!" });
@@ -54,7 +55,7 @@ router.get("/:giftId", async (req, res) => {
         });
         return;
     }
-    res.json(reqGift);
+    res.status(200).json(reqGift);
 });
 
 router.post("/", async (req, res) => {
@@ -350,9 +351,11 @@ router.patch("/:id", async (req, res) => {
 // DELETE localhost:3001/gifts/:giftId
 // Deletes the inputted gift ID from the gift collection
 router.delete("/:giftId", async (req, res) => {
+    req.params.giftId = xss(req.params.giftId);
     let reqGift;
     if (!req.params.giftId) {
         res.status(400).json({ message: "You must pass in a giftId!" });
+        return;
     }
     try {
         reqGift = await giftData.getGift(req.params.giftId);
