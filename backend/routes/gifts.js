@@ -136,6 +136,7 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
+    // TO DO: UPDATE REDIS CACHE
     req.params.id = xss(req.params.id);
     if (
         !req.params.id ||
@@ -233,6 +234,7 @@ router.put("/:id", async (req, res) => {
 });
 
 router.patch("/:id", async (req, res) => {
+    // TO DO: UPDATE REDIS CACHE
     req.params.id = xss(req.params.id);
     if (
         !req.params.id ||
@@ -353,6 +355,7 @@ router.patch("/:id", async (req, res) => {
 // DELETE localhost:3001/gifts/:giftId
 // Deletes the inputted gift ID from the gift collection
 router.delete("/:giftId", async (req, res) => {
+    // TO DO: UPDATE REDIS CACHE
     req.params.giftId = xss(req.params.giftId);
     let reqGift;
     if (!req.params.giftId) {
