@@ -116,11 +116,15 @@ async function getAll() {
 // Returns gift document based on the parameter that is passed in
 // id: Gift ObjectId value
 async function get(id) {
-    const giftId = checker.checkID(id);
+    if (!id || typeof id !== "string" || id.trim() === "") {
+        throw new Error(
+            "Parameter 1 [id] must be a non-empty string containing more than just spaces."
+        );
+    }
+    let parsedId = ObjectId(id);
     const giftCollection = await gifts();
-
-    const gift = await giftCollection.findOne({ _id: giftId });
-    if(gift === null) throw new Error('No gift with that id.');
+    const gift = await giftCollection.findOne({ _id: parsedId });
+    if(gift === null) throw new Error("No gift with that id.");
     gift._id = gift._id.toString();
     return gift;
 }

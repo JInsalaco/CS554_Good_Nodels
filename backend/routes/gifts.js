@@ -30,11 +30,18 @@ router.get("/", async (req, res) => {
 // Returns the inputted gift ID from the gift collection
 router.get("/:giftId", async (req, res) => {
     req.params.giftId = xss(req.params.giftId);
-    let reqGift = {};
-    if (!req.params.giftId) {
-        res.status(400).json({ message: "You must pass in a giftId!" });
+    if (
+        !req.params.giftId ||
+        typeof req.params.giftId !== "string" ||
+        req.params.giftId.trim() === ""
+    ) {
+        res.status(400).json({
+            message:
+                "Id must be a non-empty string containing more than just spaces.",
+        });
         return;
     }
+    let reqGift = {};
     try {
         const exists = await client.hexistsAsync("gifts", req.params.giftId);
         if(exists === 1) {
@@ -45,17 +52,12 @@ router.get("/:giftId", async (req, res) => {
             reqGift = await giftData.get(req.params.giftId);
             await client.hsetAsync("gifts", req.params.giftId, JSON.stringify(reqGift));
         }
+        res.status(200).json(reqGift);
     } catch (e) {
-        res.status(400).json({ message: e });
-        return;
-    }
-    if (!reqGift) {
         res.status(404).json({
-            message: `Could not find gift Id: ${req.params.giftId}`,
+            message: e.message
         });
-        return;
     }
-    res.status(200).json(reqGift);
 });
 
 router.post("/", async (req, res) => {
@@ -128,7 +130,7 @@ router.post("/", async (req, res) => {
         res.status(200).json(newGift);
     } catch (e) {
         res.status(500).json({
-            message: e.message,
+            message: e.message
         });
     }
 });
@@ -225,7 +227,7 @@ router.put("/:id", async (req, res) => {
         res.status(200).json(updatedGift);
     } catch (e) {
         res.status(500).json({
-            message: e.message,
+            message: e.message
         });
     }
 });
@@ -343,7 +345,7 @@ router.patch("/:id", async (req, res) => {
         res.status(200).json(updatedGift);
     } catch (e) {
         res.status(500).json({
-            message: e.message,
+            message: e.message
         });
     }
 });
