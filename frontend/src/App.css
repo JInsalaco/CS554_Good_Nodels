@@ -36,3 +36,19 @@
     transform: rotate(360deg);
   }
 }
+
+.event-div {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  text-align: center;
+  align-items: center;
+}
+
+.event-card {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.event-image {
+  font-size: xxx-large;
+}

@@ -33,7 +33,7 @@ const eventsValidation = (events) => {
 const dateValidation = (date) => {
   const monthsAndDays = {
     January: 31,
-    February: 28,
+    February: 29,
     March: 31,
     April: 30,
     May: 31,
@@ -84,18 +84,17 @@ let exportedMethods = {
     return wedding;
   },
 
-
   async getAllUser(userId) {
     if (!userId || typeof userId !== "string" || userId.trim() === "") {
-        throw new Error("Parameter must be a non-empty string");
+      throw new Error("Parameter must be a non-empty string");
     }
 
     let parsedId = ObjectId(userId);
     const weddingCollection = await weddings();
 
     const weddingsWithUser = await weddingCollection
-        .find({ attendees: { $elemMatch: { _id: parsedId } } })
-        .toArray();
+      .find({ attendees: { $elemMatch: { _id: parsedId } } })
+      .toArray();
 
     return weddingsWithUser;
   },
@@ -182,7 +181,7 @@ let exportedMethods = {
   async addEvent(weddingId, title, date, description) {
     stringValidation([weddingId, title]);
     dateValidation(date);
-    stringValidation(description);
+    stringValidation([description]);
 
     const weddingCollection = await weddings();
     const wedding = await weddingCollection.findOne({
@@ -416,6 +415,22 @@ let exportedMethods = {
 
     if (updateInfo.modifiedCount === 0) {
       throw new Error("Could not edit Event.");
+    }
+
+    return exportedMethods.get(weddingId);
+  },
+
+  async deleteEvent(weddingId, eventId) {
+    stringValidation([weddingId, eventId]);
+
+    const weddingCollection = await weddings();
+    const deleteInfo = await weddingCollection.updateOne(
+      { _id: ObjectId(weddingId) },
+      { $pull: { events: { _id: ObjectId(eventId) } } }
+    );
+
+    if (deleteInfo.deletedCount === 0) {
+      throw new Error("Could not delete event.");
     }
 
     return exportedMethods.get(weddingId);
