@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import '../App.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
+import GiftCard from './GiftCard';
+import { Col, Container, ListGroup, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Wedding() {
@@ -15,6 +16,12 @@ function Wedding() {
         async function fetchData() {
             try {
                 const { data } = await axios.get(`http://localhost:3001/weddings/${id}`);
+                const giftList = [];
+                for (let giftId of data.gifts) {
+                    const { data } = await axios.get(`http://localhost:3001/gifts/${giftId}`);
+                    giftList.push(data);
+                }
+                data.gifts = giftList;
                 setWeddingData(data);
                 setLoading(false);
                 setError(false);
@@ -54,21 +61,34 @@ function Wedding() {
                     <h7>Events:</h7>
                     <ul>
                         {weddingData.events.map((event) => {
+                            return (
                             <li key={event._id}>{event.title}</li>
+                            );
                         })}
                     </ul>
                     <h7>Attendees:</h7>
                     <ul>
                         {weddingData.attendees.map((attendee) => {
+                            return (
                             <li key={attendee._id}>{attendee.name}</li>
+                            );
                         })}
                     </ul>
                     <h7>Gifts:</h7>
-                    <ul>
-                        {weddingData.gifts.map((gift) => {
-                            <li key={gift}>{gift}</li>
-                        })}
-                    </ul>
+                    <ListGroup>
+                        <Row xs={2} md={4} lg={5} className='g-4'>
+                            {weddingData.gifts.map((gift) => {
+                                return ( 
+                                    <ListGroup.Item key={gift.id}>
+                                        <Col>
+                                            <GiftCard gift={gift} />
+                                            <br />
+                                        </Col>
+                                    </ListGroup.Item>
+                                );
+                            })}
+                        </Row>
+                    </ListGroup>
                 </Container>
             </div>
         );
