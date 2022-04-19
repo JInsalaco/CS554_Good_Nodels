@@ -544,4 +544,40 @@ router.patch("/:id/image/:imageId", async (req, res) => {
   }
 });
 
+// DELETE localhost:30001/weddings/:id/image/:imageId
+// Route to delete an image for a wedding
+router.delete("/:id/image/:imageId", async (req, res) => {
+  let existingImage;
+  // Error check
+  try {
+    checker.checkID(req.params.id);
+    checker.checkID(req.params.imageId);
+    // Check that the image actually exists
+    let reqWedding = await weddingData.get(req.params.id);
+    for (let image of reqWedding.images) {
+      if (String(image._id) === req.params.imageId) {
+        existingImage = image;
+        break;
+      }
+    }
+    if (!existingImage) throw `Image not found!`;
+  } catch (e) {
+    res.status(400).json({
+      message: `Error in deleting image, ${e}`,
+    });
+    return;
+  }
+  // Perform the delete
+  try {
+    const deleteImage = await weddingData.deleteImage(
+      req.params.id,
+      req.params.imageId
+    );
+    res.json(deleteImage);
+  } catch (e) {
+    res.status(500).json({ message: e });
+    return;
+  }
+});
+
 module.exports = router;

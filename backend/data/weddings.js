@@ -429,7 +429,7 @@ let exportedMethods = {
       { $pull: { events: { _id: ObjectId(eventId) } } }
     );
 
-    if (deleteInfo.deletedCount === 0) {
+    if (deleteInfo.modifiedCount === 0) {
       throw new Error("Could not delete event.");
     }
 
@@ -470,6 +470,22 @@ let exportedMethods = {
 
     if (updateInfo.modifiedCount === 0) {
       throw new Error("Could not edit Image.");
+    }
+
+    return exportedMethods.get(weddingId);
+  },
+
+  async deleteImage(weddingId, imageId) {
+    stringValidation([weddingId, imageId]);
+
+    const weddingCollection = await weddings();
+    const deleteInfo = await weddingCollection.updateOne(
+      { _id: ObjectId(weddingId) },
+      { $pull: { images: { _id: ObjectId(imageId) } } }
+    );
+
+    if (deleteInfo.modifiedCount === 0) {
+      throw new Error("Could not delete Image");
     }
 
     return exportedMethods.get(weddingId);
