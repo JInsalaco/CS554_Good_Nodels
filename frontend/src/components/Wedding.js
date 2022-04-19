@@ -3,7 +3,7 @@ import '../App.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import GiftCard from './GiftCard';
-import { Col, Container, ListGroup, Row } from 'react-bootstrap';
+import { Button, Col, Container, ListGroup, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Wedding() {
@@ -32,6 +32,10 @@ function Wedding() {
         }
         fetchData();
     }, [id]);
+
+    const addGift = () => {
+        return;
+    };
 
     if (loading) {
         return (
@@ -75,6 +79,11 @@ function Wedding() {
                         })}
                     </ul>
                     <h7>Gifts:</h7>
+                    <br />
+                    <br />
+                    <Button variant='primary' onClick={addGift}>Add Gift</Button>
+                    <br />
+                    <br />
                     <ListGroup>
                         <Row xs={2} md={4} lg={5} className='g-4'>
                             {weddingData.gifts.map((gift) => {

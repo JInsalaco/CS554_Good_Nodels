@@ -5,7 +5,6 @@ import { Button, Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function GiftCard({gift}) {
-    console.log(gift);
     const editGift = () => {
         return;
     };
