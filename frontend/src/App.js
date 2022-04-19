@@ -12,6 +12,7 @@ import SignUp from "./components/SignUp";
 import Wedding from "./components/Wedding";
 import { AuthProvider } from "./firebase/Auth";
 import Events from "./components/Events";
+import Photos from "./components/Photos";
 
 function App() {
   return (
@@ -37,7 +38,11 @@ function App() {
           {/* This is just for Tim's testing right now */}
           <Route
             path="/events"
-            element={<Events weddingID={"624de252bbd546e7d2fedebe"} />}
+            element={<Events weddingID={"625f219d7b7531954b932973"} />}
+          />
+          <Route
+            path="/photos"
+            element={<Photos weddingID={"625f219d7b7531954b932973"} />}
           />
         </Routes>
       </Router>

@@ -65,9 +65,11 @@ function Events(props) {
     // Error checks
     if (eventName.length === 0 || eventDesc.length === 0 || !eventDate) {
       alert("You must fill out all details!");
+      return;
     }
     if (new Date(eventDate).getTime() < new Date().getTime()) {
       alert("Event cannot be in the past!");
+      return;
     }
     let date = new Date(eventDate);
     date.setHours(date.getHours() + 5);
@@ -114,9 +116,11 @@ function Events(props) {
     // Error checks
     if (eventName.length === 0 || eventDesc.length === 0 || !eventDate) {
       alert("You must fill out all details!");
+      return;
     }
     if (new Date(eventDate).getTime() < new Date().getTime()) {
       alert("Event cannot be in the past!");
+      return;
     }
     let date = new Date(eventDate);
     date.setHours(date.getHours() + 5);
@@ -251,15 +255,25 @@ function Events(props) {
     eventCards = eventData.map((event) => {
       if (event.title.toLowerCase().includes("party")) {
         eventImage = (
-          <i className="fa-solid fa-champagne-glasses event-image"></i>
+          <i
+            className="fa-solid fa-champagne-glasses event-image"
+            alt="event icon"
+          ></i>
         );
       } else if (
         event.title.toLowerCase().includes("dinner") ||
         event.title.toLowerCase().includes("food")
       ) {
-        eventImage = <i className="fa-solid fa-utensils event-image"></i>;
+        eventImage = (
+          <i className="fa-solid fa-utensils event-image" alt="event icon"></i>
+        );
       } else {
-        eventImage = <i className="fa-solid fa-cake-candles event-image"></i>;
+        eventImage = (
+          <i
+            className="fa-solid fa-cake-candles event-image"
+            alt="event icon"
+          ></i>
+        );
       }
       return (
         <Card
