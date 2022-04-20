@@ -84,7 +84,23 @@ let exportedMethods = {
     return wedding;
   },
 
-  async create(venue, title, events, date, contactPerson, rsvpDeadline) {
+
+  async getAllUser(userId) {
+    if (!userId || typeof userId !== "string" || userId.trim() === "") {
+        throw new Error("Parameter must be a non-empty string");
+    }
+
+    let parsedId = ObjectId(userId);
+    const weddingCollection = await weddings();
+
+    const weddingsWithUser = await weddingCollection
+        .find({ attendees: { $elemMatch: { _id: parsedId } } })
+        .toArray();
+
+    return weddingsWithUser;
+  },
+
+  async create({ venue, title, events, date, contactPerson, rsvpDeadline }) {
     nullValidation([venue, title, events, date, contactPerson, rsvpDeadline]);
     stringValidation([venue, title, contactPerson]);
     eventsValidation(events);
@@ -385,6 +401,67 @@ let exportedMethods = {
 
     return exportedMethods.getAll();
   },
+
+  async editEvent(weddingId, eventId, newEvent) {
+    stringValidation([weddingId, eventId]);
+    stringValidation[newEvent.title];
+    dateValidation(newEvent.date);
+    stringValidation[newEvent.description];
+
+    const weddingCollection = await weddings();
+    const updateInfo = await weddingCollection.updateOne(
+      { _id: ObjectId(weddingId), "events._id": ObjectId(eventId) },
+      { $set: { "events.$": newEvent } }
+    );
+
+    if (updateInfo.modifiedCount === 0) {
+      throw new Error("Could not edit Event.");
+    }
+
+    return exportedMethods.get(weddingId);
+  },
+
+  async editAttendee(weddingId, attendeeId, newAttendee) {
+    stringValidation([weddingId, attendeeId]);
+    stringValidation[newAttendee.Name];
+    emailValidation(newAttendee.Email);
+    if (newAttendee.Attending !== true && newAttendee.Attending !== false)
+      throw `Invalid attending field in editAttendee`;
+    if (isNaN(parseInt(newAttendee.extras) || newAttendee.extras % 1 !== 0))
+      throw `Invalid extras field in editAttendee`;
+    for (let food of newAttendee.foodChoice) stringValidation([food]);
+
+    const weddingCollection = await weddings();
+    const updateInfo = await weddingCollection.updateOne(
+      { _id: ObjectId(weddingId), "attendees._id": ObjectId(attendeeId) },
+      { $set: { "attendees.$": newAttendee } }
+    );
+
+    if (updateInfo.modifiedCount === 0) {
+      throw new Error("Could not edit attendee.");
+    }
+
+    return exportedMethods.get(weddingId);
+  },
+
+  async editImage(weddingId, imageId, newImage) {
+    stringValidation([weddingId, imageId, newImage.url]);
+
+    const weddingCollection = await weddings();
+    const updateInfo = await weddingCollection.updateOne(
+      { _id: ObjectId(weddingId), "images._id": ObjectId(imageId) },
+      { $set: { "images.$": newImage } }
+    );
+
+    if (updateInfo.modifiedCount === 0) {
+      throw new Error("Could not edit Image.");
+    }
+
+    return exportedMethods.get(weddingId);
+  },
+
+  dateValidation,
+  emailValidation,
 };
 
 const main = async () => {
