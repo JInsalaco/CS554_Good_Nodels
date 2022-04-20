@@ -1,5 +1,4 @@
 require("dotenv").config();
-const {path} = require("path")
 const fs = require('fs');
 const {s3Client} = require('../config/s3Client')
 // Enter the name of the bucket we are using for weddio
@@ -66,5 +65,4 @@ const deleteFile = (fileKey) => {
   }
 };
 
-deleteFile('test.jpg')
-//module.exports = { uploadFile, getFileStream };
+module.exports = { uploadFile, getFile, deleteFile };
