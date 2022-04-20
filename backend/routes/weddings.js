@@ -12,242 +12,271 @@ const { exist } = require("mongodb/lib/gridfs/grid_store");
 // GET localhost:3001/weddings
 // Returns all weddings from the weddings collection
 // May or may not be used
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   let allWeddings;
   try {
-      allWeddings = await weddingData.getAll();
+    allWeddings = await weddingData.getAll();
   } catch (e) {
-      res.status(500).json({
-          message: `Could not fetch all weddings! ${e}`,
-      });
-      return;
+    res.status(500).json({
+      message: `Could not fetch all weddings! ${e}`,
+    });
+    return;
   }
   res.json(allWeddings);
 });
 
 // GET localhost:3001/weddings/:weddingId
 // Returns the inputted wedding ID from the weddings collection
-router.get('/:weddingId', async (req, res) => {
+router.get("/:weddingId", async (req, res) => {
   let reqWedding;
   if (!req.params.weddingId) {
-      res.status(400).json({ message: 'You must pass in a weddingId!' });
-      return;
+    res.status(400).json({ message: "You must pass in a weddingId!" });
+    return;
   }
   try {
-      reqWedding = await weddingData.get(req.params.weddingId);
+    reqWedding = await weddingData.get(req.params.weddingId);
   } catch (e) {
-      res.status(400).json({ message: e });
-      return;
+    res.status(400).json({ message: e });
+    return;
   }
   if (!reqWedding) {
-      res.status(404).json({
-          message: `Could not find wedding Id: ${req.params.weddingId}`,
-      });
-      return;
+    res.status(404).json({
+      message: `Could not find wedding Id: ${req.params.weddingId}`,
+    });
+    return;
   }
   res.json(reqWedding);
 });
 
 // GET localhost:3001/user/:userId
 // Gets all weddings associated with userId
-router.get('/user/:userId', async (req, res) => {
+router.get("/user/:userId", async (req, res) => {
   let userWeddings;
   if (!req.params.userId) {
-      res.status(400).json({ message: 'You must pass in a userId!' });
-      return;
+    res.status(400).json({ message: "You must pass in a userId!" });
+    return;
   }
   try {
-      userWeddings = await weddingData.getAllUser(req.params.userId);
+    userWeddings = await weddingData.getAllUser(req.params.userId);
   } catch (e) {
-      res.status(400).json({ message: e });
-      return;
+    res.status(400).json({ message: e });
+    return;
   }
   if (!userWeddings) {
-      res.status(404).json({
-          message: `Could not find weddings for userId: ${req.params.userId}`,
-      });
-      return;
+    res.status(404).json({
+      message: `Could not find weddings for userId: ${req.params.userId}`,
+    });
+    return;
   }
   res.json(userWeddings);
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   let wedding;
   if (!req.params.id) {
-      res.status(400).json({ message: 'You must pass in a wedding id!' });
+    res.status(400).json({ message: "You must pass in a wedding id!" });
   }
   try {
-      wedding = await weddingData.get(req.params.id);
+    wedding = await weddingData.get(req.params.id);
   } catch (e) {
-      res.status(400).json({ message: e });
-      return;
+    res.status(400).json({ message: e });
+    return;
   }
   if (!wedding) {
-      res.status(404).json({
-          message: `Could not find wedding Id: ${req.params.id}`,
-      });
-      return;
+    res.status(404).json({
+      message: `Could not find wedding Id: ${req.params.id}`,
+    });
+    return;
   }
   try {
-      await weddingData.remove(req.params.id);
+    await weddingData.remove(req.params.id);
   } catch (e) {
-      res.status(500).json({ message: `Error deleting wedding: ${e}` });
-      return;
+    res.status(500).json({ message: `Error deleting wedding: ${e}` });
+    return;
   }
   res.sendStatus(200);
 });
 
-router.patch('/:id/attendee', async (req, res) => {
+router.patch("/:id/attendee", async (req, res) => {
   req.params.id = xss(req.params.id);
-  if (!req.params.id || typeof req.params.id !== 'string' || req.params.id.trim() === '') {
-      res.status(400).json({
-          message: 'Id must be a non-empty string containing more than just spaces.',
-      });
-      return;
+  if (
+    !req.params.id ||
+    typeof req.params.id !== "string" ||
+    req.params.id.trim() === ""
+  ) {
+    res.status(400).json({
+      message:
+        "Id must be a non-empty string containing more than just spaces.",
+    });
+    return;
   }
 
   if (!req.body) {
-      res.status(400).json({
-          message: 'You must provide data to edit an attendee.',
-      });
-      return;
+    res.status(400).json({
+      message: "You must provide data to edit an attendee.",
+    });
+    return;
   }
   let { name, email, attending, extras, foodChoice } = req.body;
 
-  if (!name || typeof name !== 'string' || name.trim() === '') {
-      res.status(400).json({
-          message: 'Id must be a non-empty string containing more than just spaces.',
-      });
-      return;
+  if (!name || typeof name !== "string" || name.trim() === "") {
+    res.status(400).json({
+      message:
+        "Id must be a non-empty string containing more than just spaces.",
+    });
+    return;
   }
 
-  if (!email || typeof email !== 'string' || email.trim() === '') {
-      res.status(400).json({
-          message: 'email must be a non-empty string containing more than just spaces.',
-      });
-      return;
+  if (!email || typeof email !== "string" || email.trim() === "") {
+    res.status(400).json({
+      message:
+        "email must be a non-empty string containing more than just spaces.",
+    });
+    return;
   }
 
-  if (!attending || typeof attending !== 'boolean') {
-      res.status(400).json({
-          message: 'attending must be a boolean.',
-      });
-      return;
+  if (!attending || typeof attending !== "boolean") {
+    res.status(400).json({
+      message: "attending must be a boolean.",
+    });
+    return;
   }
 
   if (!Number.isInteger(extras)) {
-      res.status(400).json({
-          message: 'extras must be a number',
-      });
-      return;
+    res.status(400).json({
+      message: "extras must be a number",
+    });
+    return;
   }
 
   if (!foodChoice || !Array.isArray(foodChoice)) {
-      res.status(400).json({
-          message: 'food choice must be an array',
-      });
-      return;
+    res.status(400).json({
+      message: "food choice must be an array",
+    });
+    return;
   }
 
   try {
-      const newWedding = await weddingData.addAttendee(
-          req.params.id,
-          name,
-          email,
-          attending,
-          extras,
-          foodChoice
-      );
-      res.status(200).json(newWedding);
+    const newWedding = await weddingData.addAttendee(
+      req.params.id,
+      name,
+      email,
+      attending,
+      extras,
+      foodChoice
+    );
+    res.status(200).json(newWedding);
   } catch (e) {
-      res.status(500).json({
-          message: `Could not add attendee! ${e}`,
-      });
-      return;
+    res.status(500).json({
+      message: `Could not add attendee! ${e}`,
+    });
+    return;
   }
 });
 
-router.patch('/:id/event', async (req, res) => {
+router.patch("/:id/event", async (req, res) => {
   req.params.id = xss(req.params.id);
-  if (!req.params.id || typeof req.params.id !== 'string' || req.params.id.trim() === '') {
-      res.status(400).json({
-          message: 'Id must be a non-empty string containing more than just spaces.',
-      });
-      return;
+  if (
+    !req.params.id ||
+    typeof req.params.id !== "string" ||
+    req.params.id.trim() === ""
+  ) {
+    res.status(400).json({
+      message:
+        "Id must be a non-empty string containing more than just spaces.",
+    });
+    return;
   }
 
   if (!req.body) {
-      res.status(400).json({
-          message: 'You must provide data to edit an attendee.',
-      });
-      return;
+    res.status(400).json({
+      message: "You must provide data to edit an attendee.",
+    });
+    return;
   }
   let { title, date, description } = req.body;
 
-  if (!title || typeof title !== 'string' || title.trim() === '') {
-      res.status(400).json({
-          message: 'title must be a non-empty string containing more than just spaces.',
-      });
-      return;
+  if (!title || typeof title !== "string" || title.trim() === "") {
+    res.status(400).json({
+      message:
+        "title must be a non-empty string containing more than just spaces.",
+    });
+    return;
   }
 
-  if (!date || typeof date !== 'object') {
-      res.status(400).json({
-          message: 'date must be an object.',
-      });
-      return;
+  if (!date || typeof date !== "object") {
+    res.status(400).json({
+      message: "date must be an object.",
+    });
+    return;
   }
 
-  if (!description || typeof description !== 'string' || description.trim() === '') {
-      res.status(400).json({
-          message: 'decription must be a non-empty string containing more than just spaces.',
-      });
-      return;
+  if (
+    !description ||
+    typeof description !== "string" ||
+    description.trim() === ""
+  ) {
+    res.status(400).json({
+      message:
+        "decription must be a non-empty string containing more than just spaces.",
+    });
+    return;
   }
 
   try {
-      const newWedding = await weddingData.addEvent(req.params.id, title, date, description);
-      res.status(200).json(newWedding);
+    const newWedding = await weddingData.addEvent(
+      req.params.id,
+      title,
+      date,
+      description
+    );
+    res.status(200).json(newWedding);
   } catch (e) {
-      res.status(500).json({
-          message: `Could not add event! ${e}`,
-      });
-      return;
+    res.status(500).json({
+      message: `Could not add event! ${e}`,
+    });
+    return;
   }
 });
 
-router.patch('/:id/gift', async (req, res) => {
+router.patch("/:id/gift", async (req, res) => {
   req.params.id = xss(req.params.id);
-  if (!req.params.id || typeof req.params.id !== 'string' || req.params.id.trim() === '') {
-      res.status(400).json({
-          message: 'Id must be a non-empty string containing more than just spaces.',
-      });
-      return;
+  if (
+    !req.params.id ||
+    typeof req.params.id !== "string" ||
+    req.params.id.trim() === ""
+  ) {
+    res.status(400).json({
+      message:
+        "Id must be a non-empty string containing more than just spaces.",
+    });
+    return;
   }
 
   if (!req.body) {
-      res.status(400).json({
-          message: 'You must provide data to edit an attendee.',
-      });
-      return;
+    res.status(400).json({
+      message: "You must provide data to edit an attendee.",
+    });
+    return;
   }
   let { giftId } = req.body;
 
-  if (!giftId || typeof giftId !== 'string' || giftId.trim() === '') {
-      res.status(400).json({
-          message: 'giftId must be a non-empty string containing more than just spaces.',
-      });
-      return;
+  if (!giftId || typeof giftId !== "string" || giftId.trim() === "") {
+    res.status(400).json({
+      message:
+        "giftId must be a non-empty string containing more than just spaces.",
+    });
+    return;
   }
 
   try {
-      newWedding = await weddingData.addGift(req.params.id, giftId);
-      res.status(200).json(newWedding);
+    newWedding = await weddingData.addGift(req.params.id, giftId);
+    res.status(200).json(newWedding);
   } catch (e) {
-      res.status(500).json({
-          message: `Could not add gift! ${e}`,
-      });
-      return;
+    res.status(500).json({
+      message: `Could not add gift! ${e}`,
+    });
+    return;
   }
 });
 // POST localhost:3001/weddings/
@@ -369,6 +398,42 @@ router.patch("/:id/event/:eventId", async (req, res) => {
   }
 });
 
+// DELETE localhost:30001/weddings/:id/event/:eventId
+// Route to delete an associated event for a wedding
+router.delete("/:id/event/:eventId", async (req, res) => {
+  let existingEvent;
+  // Error check
+  try {
+    checker.checkID(req.params.id);
+    checker.checkID(req.params.eventId);
+    // Check that the event actually exists
+    let reqWedding = await weddingData.get(req.params.id);
+    for (let event of reqWedding.events) {
+      if (String(event._id) === req.params.eventId) {
+        existingEvent = event;
+        break;
+      }
+    }
+    if (!existingEvent) throw `Event not found!`;
+  } catch (e) {
+    res.status(400).json({
+      message: `Error in deleting event, ${e}`,
+    });
+    return;
+  }
+  // Perform the delete
+  try {
+    const deleteEvent = await weddingData.deleteEvent(
+      req.params.id,
+      req.params.eventId
+    );
+    res.json(deleteEvent);
+  } catch (e) {
+    res.status(500).json({ message: e });
+    return;
+  }
+});
+
 // PATCH localhost:3001/weddings/:id/attendee/:attendeeId
 // Route to edit an attendee within the inputted wedding
 router.patch("/:id/attendee/:attendeeId", async (req, res) => {
@@ -473,6 +538,68 @@ router.patch("/:id/image/:imageId", async (req, res) => {
       imageInfo
     );
     res.json(editImage);
+  } catch (e) {
+    res.status(500).json({ message: e });
+    return;
+  }
+});
+
+// PUT localhost:3001/weddings/:id/image
+// Route to add an image to a wedding
+router.put("/:id/image", async (req, res) => {
+  let imageInfo = req.body;
+  // Error check
+  let reqWedding;
+  try {
+    reqWedding = await weddingData.get(req.params.id);
+    if (!reqWedding) throw `Wedding not found!`;
+    checker.checkStr(imageInfo.url);
+  } catch (e) {
+    res.status(400).json({
+      message: `Error in adding image, ${e}`,
+    });
+    return;
+  }
+  // Perform the add
+  try {
+    const addImage = await weddingData.addImage(req.params.id, imageInfo.url);
+    res.json(addImage);
+  } catch (e) {
+    res.status(500).json({ message: e });
+    return;
+  }
+});
+
+// DELETE localhost:30001/weddings/:id/image/:imageId
+// Route to delete an image for a wedding
+router.delete("/:id/image/:imageId", async (req, res) => {
+  let existingImage;
+  // Error check
+  try {
+    checker.checkID(req.params.id);
+    checker.checkID(req.params.imageId);
+    // Check that the image actually exists
+    let reqWedding = await weddingData.get(req.params.id);
+    for (let image of reqWedding.images) {
+      if (String(image._id) === req.params.imageId) {
+        existingImage = image;
+        break;
+      }
+    }
+    if (!existingImage) throw `Image not found!`;
+  } catch (e) {
+    res.status(400).json({
+      message: `Error in deleting image, ${e}`,
+    });
+    return;
+  }
+  // Perform the delete
+  try {
+    const deleteImage = await weddingData.deleteImage(
+      req.params.id,
+      req.params.imageId
+    );
+    res.json(deleteImage);
   } catch (e) {
     res.status(500).json({ message: e });
     return;
