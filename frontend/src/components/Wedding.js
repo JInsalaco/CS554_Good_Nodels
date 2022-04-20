@@ -13,7 +13,17 @@ function Wedding() {
     const [error, setError] = useState(true);
     const [addGiftButtonToggle, setAddGiftButtonToggle] = useState(false);
     let { id } = useParams();
-    
+
+    async function liftState(wedding) {
+        const giftList = [];
+        for (let giftId of wedding.gifts) {
+            const { data } = await axios.get(`http://localhost:3001/gifts/${giftId}`);
+            giftList.push(data);
+        }
+        wedding.gifts = giftList;
+        setWeddingData(wedding);
+    }
+
     useEffect(() => {
         async function fetchData() {
             try {
@@ -82,7 +92,7 @@ function Wedding() {
                     <Button variant='primary' onClick={() => setAddGiftButtonToggle(!addGiftButtonToggle)}>Add Gift</Button>
                     <br />
                     <br />
-                    {addGiftButtonToggle && <AddGift wedding={weddingData}/>}
+                    {addGiftButtonToggle && <AddGift wedding={weddingData} liftState={liftState}/>}
                     <br />
                     <ListGroup>
                         <Row xs={2} md={4} lg={5} className='g-4'>

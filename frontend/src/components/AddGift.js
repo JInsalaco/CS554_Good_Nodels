@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function AddGift({wedding}) {
+function AddGift(props) {
   const [formData, setFormData] = useState({ title: '', price: 0, url: '', picture: '', description: '' });
 
   const handleChange = (e) => {
@@ -13,12 +13,13 @@ function AddGift({wedding}) {
 
   const addGift = async () => {
     const { data } = await axios.post('http://localhost:3001/gifts', formData);
-    await axios.patch(`http://localhost:3001/weddings/${wedding._id}/gift`, { giftId: data._id });
+    const response = await axios.patch(`http://localhost:3001/weddings/${props.wedding._id}/gift`, { giftId: data._id });
     document.getElementById('title').value = '';
     document.getElementById('price').value = '';
     document.getElementById('url').value = '';
     document.getElementById('picture').value = '';
     document.getElementById('description').value = '';
+    props.liftState(response.data);
   };
 
   return (
