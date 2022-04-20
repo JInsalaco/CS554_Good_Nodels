@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../App.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import AddGift from './AddGift';
 import GiftCard from './GiftCard';
 import { Button, Col, Container, ListGroup, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,6 +11,7 @@ function Wedding() {
     const [weddingData, setWeddingData] = useState(undefined);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(true);
+    const [addGiftButtonToggle, setAddGiftButtonToggle] = useState(false);
     let { id } = useParams();
     
     useEffect(() => {
@@ -32,10 +34,6 @@ function Wedding() {
         }
         fetchData();
     }, [id]);
-
-    const addGift = () => {
-        return;
-    };
 
     if (loading) {
         return (
@@ -81,8 +79,10 @@ function Wedding() {
                     <h7>Gifts:</h7>
                     <br />
                     <br />
-                    <Button variant='primary' onClick={addGift}>Add Gift</Button>
+                    <Button variant='primary' onClick={() => setAddGiftButtonToggle(!addGiftButtonToggle)}>Add Gift</Button>
                     <br />
+                    <br />
+                    {addGiftButtonToggle && <AddGift wedding={weddingData}/>}
                     <br />
                     <ListGroup>
                         <Row xs={2} md={4} lg={5} className='g-4'>
