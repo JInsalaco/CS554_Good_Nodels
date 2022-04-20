@@ -106,6 +106,9 @@ function Events(props) {
       );
       setEventData(newData.data.events);
       setShowAdd(false);
+      setEventName("");
+      setEventDesc("");
+      setEventDate("");
     } catch (e) {
       alert("Could not add new event!");
       console.log(e);

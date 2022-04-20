@@ -491,6 +491,24 @@ let exportedMethods = {
     return exportedMethods.get(weddingId);
   },
 
+  async addImage(weddingId, url) {
+    stringValidation([weddingId, url]);
+
+    const weddingCollection = await weddings();
+    const insertInfo = await weddingCollection.updateOne(
+      {
+        _id: ObjectId(weddingId),
+      },
+      { $push: { images: { _id: ObjectId(), url: url } } }
+    );
+
+    if (insertInfo.modifiedCount === 0) {
+      throw new Error("Could not add Image");
+    }
+
+    return exportedMethods.get(weddingId);
+  },
+
   dateValidation,
   emailValidation,
 };

@@ -544,6 +544,32 @@ router.patch("/:id/image/:imageId", async (req, res) => {
   }
 });
 
+// PUT localhost:3001/weddings/:id/image
+// Route to add an image to a wedding
+router.put("/:id/image", async (req, res) => {
+  let imageInfo = req.body;
+  // Error check
+  let reqWedding;
+  try {
+    reqWedding = await weddingData.get(req.params.id);
+    if (!reqWedding) throw `Wedding not found!`;
+    checker.checkStr(imageInfo.url);
+  } catch (e) {
+    res.status(400).json({
+      message: `Error in adding image, ${e}`,
+    });
+    return;
+  }
+  // Perform the add
+  try {
+    const addImage = await weddingData.addImage(req.params.id, imageInfo.url);
+    res.json(addImage);
+  } catch (e) {
+    res.status(500).json({ message: e });
+    return;
+  }
+});
+
 // DELETE localhost:30001/weddings/:id/image/:imageId
 // Route to delete an image for a wedding
 router.delete("/:id/image/:imageId", async (req, res) => {

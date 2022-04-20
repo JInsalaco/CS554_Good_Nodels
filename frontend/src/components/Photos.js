@@ -21,6 +21,7 @@ function Photos(props) {
   const [showDelete, setShowDelete] = useState(false);
   const [photoID, setPhotoID] = useState(undefined);
   const [photoURL, setPhotoURL] = useState("");
+  const [photoFile, setPhotoFile] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
 
@@ -83,15 +84,43 @@ function Photos(props) {
   const handleInput = (state, e) => {
     if (state === "photoURL") {
       setPhotoURL(e.target.value);
+    } else if (state === "photoFile") {
+      setPhotoFile(e.target.files[0]);
+    }
+  };
+
+  const addPhoto = async () => {
+    // Error check
+    if (photoURL.length === 0 && photoFile === undefined) {
+      alert("You must fill out all details!");
+      return;
+    }
+    // TODO: something with the file upload depending on how S3 is handled
+    // Add the image
+    let newData;
+    try {
+      newData = await axios.put(
+        `http://localhost:3001/weddings/${props.weddingID}/image`,
+        { url: photoURL }
+      );
+
+      setPhotoData(newData.data.images);
+      setShowAdd(false);
+      setPhotoURL("");
+      setPhotoFile(undefined);
+    } catch (e) {
+      alert("Could not add image, please try again!");
+      console.log(e);
     }
   };
 
   const editPhoto = async () => {
     // Error check
-    if (photoURL.length === 0) {
+    if (photoURL.length === 0 && photoFile === undefined) {
       alert("You must fill out all details!");
       return;
     }
+    // TODO: something with the file upload depending on how S3 is handled
     // Make the edit
     let newData;
     try {
@@ -135,7 +164,14 @@ function Photos(props) {
             <Form.Label>Image URL</Form.Label>
             <Form.Control
               type="text"
-              onChange={(e) => handleInput("imageURL", e)}
+              onChange={(e) => handleInput("photoURL", e)}
+            />
+          </Form.Group>
+          <Form.Group controlId="formFile" className="mb-3">
+            <Form.Label>Upload your Image</Form.Label>
+            <Form.Control
+              type="file"
+              onChange={(e) => handleInput("photoFile", e)}
             />
           </Form.Group>
         </Form>
@@ -144,7 +180,9 @@ function Photos(props) {
         <Button variant="secondary" onClick={() => setShowAdd(false)}>
           Close
         </Button>
-        <Button variant="primary">Add!</Button>
+        <Button variant="primary" onClick={() => addPhoto()}>
+          Add!
+        </Button>
       </Modal.Footer>
     </Modal>
   );
@@ -161,6 +199,13 @@ function Photos(props) {
             <Form.Control
               type="text"
               onChange={(e) => handleInput("photoURL", e)}
+            />
+          </Form.Group>
+          <Form.Group controlId="formFile" className="mb-3">
+            <Form.Label>Upload your Image</Form.Label>
+            <Form.Control
+              type="file"
+              onChange={(e) => handleInput("photoFile", e)}
             />
           </Form.Group>
         </Form>
