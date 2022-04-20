@@ -4,42 +4,60 @@ const xss = require("xss");
 const data = require("../data");
 const giftData = data.gifts;
 
+const bluebird = require("bluebird");
+const redis = require("redis");
+const client = redis.createClient();
+
+bluebird.promisifyAll(redis.RedisClient.prototype);
+bluebird.promisifyAll(redis.Multi.prototype);
+
 // GET localhost:3001/gifts
 // Returns all gifts from the gift collection
 router.get("/", async (req, res) => {
     let allGifts;
     try {
-        allGifts = await giftData.getAllGifts();
+        allGifts = await giftData.getAll();
     } catch (e) {
         res.status(500).json({
             message: `Could not fetch all gifts! ${e}`,
         });
         return;
     }
-    res.json(allGifts);
+    res.status(200).json(allGifts);
 });
 
 // GET localhost:3001/gifts/:giftId
 // Returns the inputted gift ID from the gift collection
 router.get("/:giftId", async (req, res) => {
-    let reqGift;
-    if (!req.params.giftId) {
-        res.status(400).json({ message: "You must pass in a giftId!" });
-        return;
-    }
-    try {
-        reqGift = await giftData.getGift(req.params.giftId);
-    } catch (e) {
-        res.status(400).json({ message: e });
-        return;
-    }
-    if (!reqGift) {
-        res.status(404).json({
-            message: `Could not find gift Id: ${req.params.giftId}`,
+    req.params.giftId = xss(req.params.giftId);
+    if (
+        !req.params.giftId ||
+        typeof req.params.giftId !== "string" ||
+        req.params.giftId.trim() === ""
+    ) {
+        res.status(400).json({
+            message:
+                "Id must be a non-empty string containing more than just spaces.",
         });
         return;
     }
-    res.json(reqGift);
+    let reqGift = {};
+    try {
+        const exists = await client.hexistsAsync("gifts", req.params.giftId);
+        if(exists === 1) {
+            reqGift = await client.hgetAsync("gifts", req.params.giftId);
+            reqGift = JSON.parse(reqGift);
+        }
+        else {
+            reqGift = await giftData.get(req.params.giftId);
+            await client.hsetAsync("gifts", req.params.giftId, JSON.stringify(reqGift));
+        }
+        res.status(200).json(reqGift);
+    } catch (e) {
+        res.status(404).json({
+            message: e.message
+        });
+    }
 });
 
 router.post("/", async (req, res) => {
@@ -112,12 +130,13 @@ router.post("/", async (req, res) => {
         res.status(200).json(newGift);
     } catch (e) {
         res.status(500).json({
-            message: e.message,
+            message: e.message
         });
     }
 });
 
 router.put("/:id", async (req, res) => {
+    // TO DO: UPDATE REDIS CACHE
     req.params.id = xss(req.params.id);
     if (
         !req.params.id ||
@@ -209,12 +228,13 @@ router.put("/:id", async (req, res) => {
         res.status(200).json(updatedGift);
     } catch (e) {
         res.status(500).json({
-            message: e.message,
+            message: e.message
         });
     }
 });
 
 router.patch("/:id", async (req, res) => {
+    // TO DO: UPDATE REDIS CACHE
     req.params.id = xss(req.params.id);
     if (
         !req.params.id ||
@@ -327,7 +347,7 @@ router.patch("/:id", async (req, res) => {
         res.status(200).json(updatedGift);
     } catch (e) {
         res.status(500).json({
-            message: e.message,
+            message: e.message
         });
     }
 });
@@ -335,9 +355,12 @@ router.patch("/:id", async (req, res) => {
 // DELETE localhost:3001/gifts/:giftId
 // Deletes the inputted gift ID from the gift collection
 router.delete("/:giftId", async (req, res) => {
+    // TO DO: UPDATE REDIS CACHE
+    req.params.giftId = xss(req.params.giftId);
     let reqGift;
     if (!req.params.giftId) {
         res.status(400).json({ message: "You must pass in a giftId!" });
+        return;
     }
     try {
         reqGift = await giftData.getGift(req.params.giftId);
