@@ -14,6 +14,7 @@ import { AuthProvider } from "./firebase/Auth";
 import Events from "./components/Events";
 import Photos from "./components/Photos";
 
+
 function App() {
   return (
     <AuthProvider>
@@ -24,6 +25,7 @@ function App() {
           </header>
         </div>
         <Routes>
+
           <Route exact path="/" element={<Landing />} />
           <Route path="/home" element={<PrivateRoute />}>
             <Route path="/home" element={<Home />} />
@@ -31,6 +33,7 @@ function App() {
           <Route path="/account" element={<PrivateRoute />}>
             <Route path="/account" element={<Account />} />
           </Route>
+
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/weddings/:id" element={<Wedding />} />
@@ -44,6 +47,7 @@ function App() {
             path="/photos"
             element={<Photos weddingID={"625f219d7b7531954b932973"} />}
           />
+
         </Routes>
       </Router>
     </AuthProvider>

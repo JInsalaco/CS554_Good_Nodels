@@ -1,7 +1,16 @@
-// Create service client module using ES6 syntax.
-import { S3Client } from "@aws-sdk/client-s3";
-// Set the AWS Region.
-const REGION = "us-east-2"; //e.g. "us-east-1"
-// Create an Amazon S3 service client object.
-const s3Client = new S3Client({ region: REGION });
-export { s3Client };
+const AWS = require('aws-sdk');
+
+const AWS_ACCESS_KEY = "AKIA6DVS6SCHPHOQ44GV"
+const AWS_SECRET_KEY = "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"
+
+
+// Enter the name of the bucket that you have created here
+const BUCKET_NAME = 'weddio';
+
+const s3Client = new AWS.S3({
+    accessKeyId: AWS_ACCESS_KEY,
+    secretAccessKey: AWS_SECRET_KEY
+});
+
+module.exports = { s3Client }
+
