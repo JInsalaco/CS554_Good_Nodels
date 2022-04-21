@@ -11,8 +11,9 @@ function GiftCard(props) {
     };
 
     const removeGift = async () => {
-        const { data } = await axios.delete('http://localhost:3001/gifts', props.gift._id);
-        // props.liftState(data);
+        const { data } = await axios.delete(`http://localhost:3001/gifts/${props.gift._id}`);
+        const response = await axios.get(`http://localhost:3001/weddings/${data.weddingId}`);
+        props.liftState(response.data);
     };
 
     return (

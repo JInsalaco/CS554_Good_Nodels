@@ -143,24 +143,22 @@ async function deleteGift(id) {
     const gift = await this.get(id);
 
     const weddingCollection = await weddings();
-    const weddingList = await weddingCollection.find({gifts: id}).toArray();
-    for(let wedding of weddingList) {
-        let giftList = wedding.gifts;
-        let updatedWedding = {
-            gifts: []
-        };
-        for(let i = 0; i < giftList.length; i++) {
-            if(giftList[i] !== id) {
-                updatedWedding.gifts.push(giftList[i]);
-            }
+    const wedding = await weddingCollection.findOne({gifts: id});
+    let giftList = wedding.gifts;
+    let updatedWedding = {
+        gifts: []
+    };
+    for(let i = 0; i < giftList.length; i++) {
+        if(giftList[i] !== id) {
+            updatedWedding.gifts.push(giftList[i]);
         }
-        let updateInfo = await weddingCollection.updateOne({_id: wedding._id}, {$set: updatedWedding});
-        if(!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error('Could not remove gift.');
     }
+    let updateInfo = await weddingCollection.updateOne({ _id: wedding._id }, { $set: updatedWedding });
+    if(!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error('Could not remove gift.');
 
     const deleteInfo = await giftCollection.deleteOne({_id: parsedGiftId});
     if(deleteInfo.deletedCount === 0) throw new Error('Could not remove gift.');
-    return {'giftId': id, 'deleted': true};
+    return { 'giftId': id, 'deleted': true, 'weddingId': wedding._id };
 }
 
 module.exports = {
