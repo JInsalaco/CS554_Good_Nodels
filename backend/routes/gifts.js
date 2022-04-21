@@ -357,30 +357,33 @@ router.patch("/:id", async (req, res) => {
 router.delete("/:giftId", async (req, res) => {
     // TO DO: UPDATE REDIS CACHE
     req.params.giftId = xss(req.params.giftId);
-    let reqGift;
-    if (!req.params.giftId) {
-        res.status(400).json({ message: "You must pass in a giftId!" });
-        return;
-    }
-    try {
-        reqGift = await giftData.getGift(req.params.giftId);
-    } catch (e) {
-        res.status(400).json({ message: e });
-        return;
-    }
-    if (!reqGift) {
-        res.status(404).json({
-            message: `Could not find gift Id: ${req.params.giftId}`,
+    if (
+        !req.params.giftId ||
+        typeof req.params.giftId !== "string" ||
+        req.params.giftId.trim() === ""
+    ) {
+        res.status(400).json({
+            message:
+                "Id must be a non-empty string containing more than just spaces.",
         });
         return;
     }
     try {
-        await giftData.deleteGift(req.params.giftId);
+        const gift = await giftData.get(req.params.giftId);
     } catch (e) {
-        res.status(500).json({ message: `Error deleting gift: ${e}` });
+        res.status(404).json({
+            message: "Gift not found.",
+        });
         return;
     }
-    res.sendStatus(200);
+    try {
+        const result = await giftData.deleteGift(req.params.giftId);
+        res.status(200).json(result);
+    } catch (e) {
+        res.status(500).json({
+            message: e.message
+        });
+    }
 });
 
 module.exports = router;

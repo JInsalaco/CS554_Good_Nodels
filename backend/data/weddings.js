@@ -276,7 +276,7 @@ let exportedMethods = {
     // Here is where the gift is being added to the wedding
     const updatedWedding = {
       ...wedding,
-      gifts: [...wedding.gifts, ObjectId(giftId)],
+      gifts: [...wedding.gifts, giftId],
     };
 
     const updateInfo = await weddingCollection.updateOne(

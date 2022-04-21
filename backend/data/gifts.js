@@ -1,5 +1,6 @@
 const mongoCollections = require("../config/mongoCollections");
 const gifts = mongoCollections.gifts;
+const weddings = mongoCollections.weddings;
 const checker = require("./checker");
 const { ObjectId } = require("mongodb");
 
@@ -132,18 +133,34 @@ async function get(id) {
 // Deletes gift document based on the parameter that is passed in
 // id: Gift ObjectId value
 async function deleteGift(id) {
-    const giftId = checker.checkID(id);
+    if (!id || typeof id !== "string" || id.trim() === "") {
+        throw new Error(
+            "Parameter 1 [id] must be a non-empty string containing more than just spaces."
+        );
+    }
+    let parsedGiftId = ObjectId(id);
     const giftCollection = await gifts();
     const gift = await this.get(id);
 
-    try {
-        const deleteStatus = await giftCollection.deleteOne({ _id: giftId });
-        if (!deleteStatus.deletedCount) {
-            throw `Delete operation did not succeed!`;
+    const weddingCollection = await weddings();
+    const weddingList = await weddingCollection.find({gifts: id}).toArray();
+    for(let wedding of weddingList) {
+        let giftList = wedding.gifts;
+        let updatedWedding = {
+            gifts: []
+        };
+        for(let i = 0; i < giftList.length; i++) {
+            if(giftList[i] !== id) {
+                updatedWedding.gifts.push(giftList[i]);
+            }
         }
-    } catch (e) {
-        throw e;
+        let updateInfo = await weddingCollection.updateOne({_id: wedding._id}, {$set: updatedWedding});
+        if(!updateInfo.matchedCount && !updateInfo.modifiedCount) throw new Error('Could not remove gift.');
     }
+
+    const deleteInfo = await giftCollection.deleteOne({_id: parsedGiftId});
+    if(deleteInfo.deletedCount === 0) throw new Error('Could not remove gift.');
+    return {'giftId': id, 'deleted': true};
 }
 
 module.exports = {
