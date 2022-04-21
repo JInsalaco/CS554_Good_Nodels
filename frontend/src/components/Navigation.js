@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import {NavLink} from 'react-router-dom';
 import {AuthContext} from '../firebase/Auth';
 import SignOutButton from './SignOut';
+
 import '../App.css';
 
 const Navigation = () => {
@@ -25,6 +26,9 @@ const NavigationAuth = () => {
         </li>
         <li>
           <SignOutButton />
+        </li>
+        <li>
+          <NavLink to ='/weddings/wedding/:email'>Wedding</NavLink>
         </li>
       </ul>
     </nav>

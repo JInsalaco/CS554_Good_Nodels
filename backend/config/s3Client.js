@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 
-const AWS_ACCESS_KEY = "AKIA6DVS6SCHPHOQ44GV"
-const AWS_SECRET_KEY = "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"
+const AWS_ACCESS_KEY = "AKIA6DVS6SCHHWSPUERM"
+const AWS_SECRET_KEY = "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"
 
 
 // Enter the name of the bucket that you have created here
@@ -13,4 +13,3 @@ const s3Client = new AWS.S3({
 });
 
 module.exports = { s3Client }
-
