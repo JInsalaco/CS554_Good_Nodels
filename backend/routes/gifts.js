@@ -136,7 +136,6 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
-    // TO DO: UPDATE REDIS CACHE
     req.params.id = xss(req.params.id);
     if (
         !req.params.id ||
@@ -225,6 +224,7 @@ router.put("/:id", async (req, res) => {
             giftInfo.picture,
             giftInfo.description
         );
+        await client.hsetAsync("gifts", result.gift._id, JSON.stringify(result.gift));
         res.status(200).json(result);
     } catch (e) {
         res.status(500).json({
@@ -234,7 +234,6 @@ router.put("/:id", async (req, res) => {
 });
 
 router.patch("/:id", async (req, res) => {
-    // TO DO: UPDATE REDIS CACHE
     req.params.id = xss(req.params.id);
     if (
         !req.params.id ||
@@ -344,6 +343,7 @@ router.patch("/:id", async (req, res) => {
             giftInfo.picture,
             giftInfo.description
         );
+        await client.hsetAsync("gifts", updatedGift._id, JSON.stringify(updatedGift));
         res.status(200).json(updatedGift);
     } catch (e) {
         res.status(500).json({
@@ -355,7 +355,6 @@ router.patch("/:id", async (req, res) => {
 // DELETE localhost:3001/gifts/:giftId
 // Deletes the inputted gift ID from the gift collection
 router.delete("/:giftId", async (req, res) => {
-    // TO DO: UPDATE REDIS CACHE
     req.params.giftId = xss(req.params.giftId);
     if (
         !req.params.giftId ||
@@ -378,6 +377,7 @@ router.delete("/:giftId", async (req, res) => {
     }
     try {
         const result = await giftData.deleteGift(req.params.giftId);
+        await client.hdelAsync("gifts", result.giftId);
         res.status(200).json(result);
     } catch (e) {
         res.status(500).json({
