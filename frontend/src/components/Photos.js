@@ -81,6 +81,19 @@ function Photos(props) {
     });
   }
 
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
   const handleInput = (state, e) => {
     if (state === "photoURL") {
       setPhotoURL(e.target.value);
@@ -95,19 +108,30 @@ function Photos(props) {
       alert("You must fill out all details!");
       return;
     }
-    // TODO: something with the file upload depending on how S3 is handled
+    if (photoFile && photoFile.type !== "image/jpeg") {
+      alert("Invalid photo type!");
+      return;
+    }
     // Add the image
     let newData;
+    let photoBase64 = undefined;
+    // Convert photoFile to base64 to store in S3
+    if (photoFile) {
+      photoBase64 = await convertBase64(photoFile);
+    }
     try {
       newData = await axios.put(
         `http://localhost:3001/weddings/${props.weddingID}/image`,
-        { url: photoURL }
+        { url: photoURL, imageBinary: photoBase64 }
       );
 
-      setPhotoData(newData.data.images);
-      setShowAdd(false);
-      setPhotoURL("");
-      setPhotoFile(undefined);
+      // Wait a bit of time so the link becomes accessible
+      setTimeout(() => {
+        setPhotoData(newData.data.images);
+        setShowAdd(false);
+        setPhotoURL("");
+        setPhotoFile(undefined);
+      }, 1000);
     } catch (e) {
       alert("Could not add image, please try again!");
       console.log(e);
@@ -120,18 +144,32 @@ function Photos(props) {
       alert("You must fill out all details!");
       return;
     }
-    // TODO: something with the file upload depending on how S3 is handled
+    if (photoFile && photoFile.type !== "image/jpeg") {
+      alert("Invalid photo type!");
+      return;
+    }
     // Make the edit
     let newData;
+    let photoBase64 = undefined;
+    // Convert photoFile to base64 to store in S3
+    if (photoFile) {
+      photoBase64 = await convertBase64(photoFile);
+    }
     try {
       newData = await axios.patch(
         `http://localhost:3001/weddings/${props.weddingID}/image/${photoID}`,
         {
           url: photoURL,
+          imageBinary: photoBase64,
         }
       );
-      setPhotoData(newData.data.images);
-      setShowEdit(false);
+      // Wait until the link is accessible
+      setTimeout(() => {
+        setPhotoData(newData.data.images);
+        setShowEdit(false);
+        setPhotoURL("");
+        setPhotoFile(undefined);
+      }, 1000);
     } catch (e) {
       alert("Could not edit image, please try again!");
       console.log(e);

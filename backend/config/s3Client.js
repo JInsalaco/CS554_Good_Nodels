@@ -1,16 +1,21 @@
-const AWS = require('aws-sdk');
+const dotenv = require("dotenv");
+dotenv.config({
+  path: "C:/Users/Joseph/Documents/CS554_Good_Nodels/backend/.env",
+});
+const AWS = require("aws-sdk");
+const ACCESS_KEY = process.env.AWS_ACCESS_KEY;
+const SECRET_KEY = process.env.AWS_SECRET_KEY;
+const REGION = process.env.REGION;
 
-const AWS_ACCESS_KEY = "AKIA6DVS6SCHPHOQ44GV"
-const AWS_SECRET_KEY = "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"
-
-
-// Enter the name of the bucket that you have created here
-const BUCKET_NAME = 'weddio';
-
-const s3Client = new AWS.S3({
-    accessKeyId: AWS_ACCESS_KEY,
-    secretAccessKey: AWS_SECRET_KEY
+AWS.config.update({
+  region: REGION,
+  accessKeyId: ACCESS_KEY,
+  secretAccessKey: SECRET_KEY,
 });
 
-module.exports = { s3Client }
+const s3Client = new AWS.S3({
+  apiVersion: "2006-03-01",
+  signatureVersion: "v4",
+});
 
+module.exports = { s3Client };
