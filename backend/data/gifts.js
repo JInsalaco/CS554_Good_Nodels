@@ -86,7 +86,7 @@ async function update(id, title, price, url, picture, description) {
     }
     let parsedId = ObjectId(id);
     const giftCollection = await gifts();
-    const gift = await this.get(id);
+    let gift = await this.get(id);
     const updatedGift = {
         title: title,
         price: price,
@@ -100,7 +100,11 @@ async function update(id, title, price, url, picture, description) {
     );
     if (!updateInfo.matchedCount && !updateInfo.modifiedCount)
         throw new Error("Could not update gift.");
-    return await this.get(id);
+    gift = await this.get(id);
+
+    const weddingCollection = await weddings();
+    const wedding = await weddingCollection.findOne({gifts: id});
+    return { 'gift': gift, 'weddingId': wedding._id };
 }
 
 // Returns all gift documents

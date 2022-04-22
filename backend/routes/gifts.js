@@ -217,7 +217,7 @@ router.put("/:id", async (req, res) => {
         return;
     }
     try {
-        const updatedGift = await giftData.update(
+        const result = await giftData.update(
             req.params.id,
             giftInfo.title,
             giftInfo.parsedPrice,
@@ -225,7 +225,7 @@ router.put("/:id", async (req, res) => {
             giftInfo.picture,
             giftInfo.description
         );
-        res.status(200).json(updatedGift);
+        res.status(200).json(result);
     } catch (e) {
         res.status(500).json({
             message: e.message
