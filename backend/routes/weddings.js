@@ -55,7 +55,7 @@ router.get("/wedding/:email", async (req, res) => {
     return;
   }
   try {
-    reqWedding = await weddingData.getByEmail(req.params.email);
+    reqWedding = await weddingData.getByContactPerson(req.params.email);
   } catch (e) {
     res.status(400).json({ message: e });
     return;
