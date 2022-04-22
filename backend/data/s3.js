@@ -1,18 +1,19 @@
-require("dotenv").config();
 const fs = require('fs');
 const {s3Client} = require('../config/s3Client')
+const { v4: uuidv4 } = require('uuid');
 // Enter the name of the bucket we are using for weddio
 const BUCKET_NAME = 'weddio';
+
 
 // UPLOAD FILE TO S3
 const uploadFile = (fileName) => {
   // read content from the file
   const fileContent = fs.readFileSync(fileName);
-
+  let extension = fileName.split(".").pop();
   // setting up s3 upload parameters
   const params = {
       Bucket: BUCKET_NAME,
-      Key: 'test.jpg', //name of the file in s3
+      Key: uuidv4()+'.'+extension, //name of the file in s3
       Body: fileContent //the actual contents of the file
   };
 
@@ -22,6 +23,7 @@ const uploadFile = (fileName) => {
           throw err
       }
       console.log(`File uploaded successfully. ${data.Location}`)
+      return data.Location;
   });
 };
 
@@ -64,5 +66,4 @@ const deleteFile = (fileKey) => {
     console.log("Error: ", err);
   }
 };
-
 module.exports = { uploadFile, getFile, deleteFile };
