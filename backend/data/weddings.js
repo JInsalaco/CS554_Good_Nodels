@@ -276,7 +276,7 @@ let exportedMethods = {
     // Here is where the gift is being added to the wedding
     const updatedWedding = {
       ...wedding,
-      gifts: [...wedding.gifts, ObjectId(giftId)],
+      gifts: [...wedding.gifts, giftId],
     };
 
     const updateInfo = await weddingCollection.updateOne(
@@ -491,7 +491,7 @@ let exportedMethods = {
     return exportedMethods.get(weddingId);
   },
 
-  async addImage(weddingId, url) {
+  async addImage(weddingId, url, imageID) {
     stringValidation([weddingId, url]);
 
     const weddingCollection = await weddings();
@@ -499,7 +499,7 @@ let exportedMethods = {
       {
         _id: ObjectId(weddingId),
       },
-      { $push: { images: { _id: ObjectId(), url: url } } }
+      { $push: { images: { _id: imageID, url: url } } }
     );
 
     if (insertInfo.modifiedCount === 0) {

@@ -136,7 +136,6 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
-    // TO DO: UPDATE REDIS CACHE
     req.params.id = xss(req.params.id);
     if (
         !req.params.id ||
@@ -217,7 +216,7 @@ router.put("/:id", async (req, res) => {
         return;
     }
     try {
-        const updatedGift = await giftData.update(
+        const result = await giftData.update(
             req.params.id,
             giftInfo.title,
             giftInfo.parsedPrice,
@@ -225,7 +224,8 @@ router.put("/:id", async (req, res) => {
             giftInfo.picture,
             giftInfo.description
         );
-        res.status(200).json(updatedGift);
+        await client.hsetAsync("gifts", result.gift._id, JSON.stringify(result.gift));
+        res.status(200).json(result);
     } catch (e) {
         res.status(500).json({
             message: e.message
@@ -234,7 +234,6 @@ router.put("/:id", async (req, res) => {
 });
 
 router.patch("/:id", async (req, res) => {
-    // TO DO: UPDATE REDIS CACHE
     req.params.id = xss(req.params.id);
     if (
         !req.params.id ||
@@ -344,6 +343,7 @@ router.patch("/:id", async (req, res) => {
             giftInfo.picture,
             giftInfo.description
         );
+        await client.hsetAsync("gifts", updatedGift._id, JSON.stringify(updatedGift));
         res.status(200).json(updatedGift);
     } catch (e) {
         res.status(500).json({
@@ -355,32 +355,35 @@ router.patch("/:id", async (req, res) => {
 // DELETE localhost:3001/gifts/:giftId
 // Deletes the inputted gift ID from the gift collection
 router.delete("/:giftId", async (req, res) => {
-    // TO DO: UPDATE REDIS CACHE
     req.params.giftId = xss(req.params.giftId);
-    let reqGift;
-    if (!req.params.giftId) {
-        res.status(400).json({ message: "You must pass in a giftId!" });
-        return;
-    }
-    try {
-        reqGift = await giftData.getGift(req.params.giftId);
-    } catch (e) {
-        res.status(400).json({ message: e });
-        return;
-    }
-    if (!reqGift) {
-        res.status(404).json({
-            message: `Could not find gift Id: ${req.params.giftId}`,
+    if (
+        !req.params.giftId ||
+        typeof req.params.giftId !== "string" ||
+        req.params.giftId.trim() === ""
+    ) {
+        res.status(400).json({
+            message:
+                "Id must be a non-empty string containing more than just spaces.",
         });
         return;
     }
     try {
-        await giftData.deleteGift(req.params.giftId);
+        const gift = await giftData.get(req.params.giftId);
     } catch (e) {
-        res.status(500).json({ message: `Error deleting gift: ${e}` });
+        res.status(404).json({
+            message: "Gift not found.",
+        });
         return;
     }
-    res.sendStatus(200);
+    try {
+        const result = await giftData.deleteGift(req.params.giftId);
+        await client.hdelAsync("gifts", result.giftId);
+        res.status(200).json(result);
+    } catch (e) {
+        res.status(500).json({
+            message: e.message
+        });
+    }
 });
 
 module.exports = router;

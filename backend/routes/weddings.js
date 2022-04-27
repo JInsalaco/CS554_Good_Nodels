@@ -5,6 +5,7 @@ const xss = require("xss");
 const data = require("../data");
 const giftData = data.gifts;
 const weddingData = data.weddings;
+const s3 = require("../data/s3");
 const checker = require("../data/checker");
 const { ObjectId } = require("mongodb");
 const { exist } = require("mongodb/lib/gridfs/grid_store");
@@ -525,6 +526,7 @@ router.patch("/:id/attendee/:attendeeId", async (req, res) => {
 router.patch("/:id/image/:imageId", async (req, res) => {
   let imageInfo = req.body;
   let existingImage;
+  let isAWS = false;
   // Error check
   try {
     checker.checkID(req.params.id);
@@ -532,13 +534,16 @@ router.patch("/:id/image/:imageId", async (req, res) => {
     if (imageInfo.url) {
       checker.checkStr(imageInfo.url);
     }
-    if (!imageInfo.url) {
+    if (!imageInfo.url && !imageInfo.imageBinary) {
       throw "Nothing to edit in edit image route!";
     }
     // Check that the image actually exists
     let reqWedding = await weddingData.get(req.params.id);
     for (let image of reqWedding.images) {
       if (String(image._id) === req.params.imageId) {
+        if (image.url.includes("weddio.s3")) {
+          isAWS = true;
+        }
         existingImage = image;
         break;
       }
@@ -553,12 +558,43 @@ router.patch("/:id/image/:imageId", async (req, res) => {
   // Fill in everything that wasn't passed in
   imageInfo._id = ObjectId(req.params.imageId);
   try {
-    const editImage = await weddingData.editImage(
-      req.params.id,
-      req.params.imageId,
-      imageInfo
-    );
-    res.json(editImage);
+    // If the image is in S3, we need to delete the S3 object and recreate it
+    if (isAWS) {
+      s3.deleteFile(req.params.imageId);
+    }
+    if (imageInfo.imageBinary) {
+      var buf = Buffer.from(
+        req.body.imageBinary.replace(/^data:image\/\w+;base64,/, ""),
+        "base64"
+      );
+      let s3Data = {
+        Bucket: "weddio",
+        Key: req.params.imageId,
+        Body: buf,
+        ContentEncoding: "base64",
+        ContentType: "image/jpeg",
+        ACL: "public-read",
+      };
+      s3.uploadImageBinary(s3Data);
+      // Then we need to add it into the MongoDB with the link
+      const baseURL = "https://weddio.s3.amazonaws.com";
+      const editImage = await weddingData.editImage(
+        req.params.id,
+        req.params.imageId,
+        {
+          _id: ObjectId(req.params.imageId),
+          url: `${baseURL}/${req.params.imageId}`,
+        }
+      );
+      res.json(editImage);
+    } else {
+      const editImage = await weddingData.editImage(
+        req.params.id,
+        req.params.imageId,
+        imageInfo
+      );
+      res.json(editImage);
+    }
   } catch (e) {
     res.status(500).json({ message: e });
     return;
@@ -574,7 +610,9 @@ router.put("/:id/image", async (req, res) => {
   try {
     reqWedding = await weddingData.get(req.params.id);
     if (!reqWedding) throw `Wedding not found!`;
-    checker.checkStr(imageInfo.url);
+    if (imageInfo.url) {
+      checker.checkStr(imageInfo.url);
+    }
   } catch (e) {
     res.status(400).json({
       message: `Error in adding image, ${e}`,
@@ -583,8 +621,39 @@ router.put("/:id/image", async (req, res) => {
   }
   // Perform the add
   try {
-    const addImage = await weddingData.addImage(req.params.id, imageInfo.url);
-    res.json(addImage);
+    // Create new ObjectId for the image
+    let newID = ObjectId();
+    // Add image into AWS first
+    if (req.body.imageBinary) {
+      var buf = Buffer.from(
+        req.body.imageBinary.replace(/^data:image\/\w+;base64,/, ""),
+        "base64"
+      );
+      let s3Data = {
+        Bucket: "weddio",
+        Key: String(newID),
+        Body: buf,
+        ContentEncoding: "base64",
+        ContentType: "image/jpeg",
+        ACL: "public-read",
+      };
+      s3.uploadImageBinary(s3Data);
+      // Then we need to add it into the MongoDB with the link
+      const baseURL = "https://weddio.s3.amazonaws.com";
+      const addImage = await weddingData.addImage(
+        req.params.id,
+        `${baseURL}/${String(newID)}`,
+        newID
+      );
+      res.json(addImage);
+    } else {
+      const addImage = await weddingData.addImage(
+        req.params.id,
+        imageInfo.url,
+        newID
+      );
+      res.json(addImage);
+    }
   } catch (e) {
     res.status(500).json({ message: e });
     return;
@@ -595,6 +664,7 @@ router.put("/:id/image", async (req, res) => {
 // Route to delete an image for a wedding
 router.delete("/:id/image/:imageId", async (req, res) => {
   let existingImage;
+  let isAWS = false;
   // Error check
   try {
     checker.checkID(req.params.id);
@@ -603,6 +673,9 @@ router.delete("/:id/image/:imageId", async (req, res) => {
     let reqWedding = await weddingData.get(req.params.id);
     for (let image of reqWedding.images) {
       if (String(image._id) === req.params.imageId) {
+        if (image.url.includes("weddio.s3")) {
+          isAWS = true;
+        }
         existingImage = image;
         break;
       }
@@ -616,6 +689,10 @@ router.delete("/:id/image/:imageId", async (req, res) => {
   }
   // Perform the delete
   try {
+    // If it's an AWS image, we have to remove it in AWS
+    if (isAWS) {
+      s3.deleteFile(req.params.imageId);
+    }
     const deleteImage = await weddingData.deleteImage(
       req.params.id,
       req.params.imageId
