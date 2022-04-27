@@ -1,0 +1,23 @@
+[
+    {
+        "title": "Kitchen-Aid Stand Mixer",
+        "price": "$429",
+        "url": "https://www.amazon.com/KitchenAid-KSM150PSAQ-Artisan-Pouring-Shield/dp/B005PMEHBG/ref=sr_1_3?keywords=kitchenaid+stand+mixer+5+quart&qid=1648777476&sprefix=kitchen+aid+s%2Caps%2C106&sr=8-3",
+        "picture": "/public/img/noimg.jpg",
+        "description": "Beautiful stand mixer for the bride and groom"
+    },
+    {
+        "title": "Toaster Oven",
+        "price": "$47",
+        "url": "https://www.amazon.com/BLACK-DECKER-Convection-Stainless-TO1760SS/dp/B0721CGB5F/ref=sr_1_3?crid=11AGQP2DTZ6YA&keywords=toaster+oven&qid=1648777611&sprefix=toaster+oven%2Caps%2C74&sr=8-3",
+        "picture":"/public/img/noimg.jpg",
+        "description": "Wonderful toaster oven for carb eating"
+    },
+    {
+        "title": "Champagne Flutes",
+        "price": "$22.95",
+        "url": "https://www.amazon.com/JoyJolt-Stemless-Champagne-Glasses-Glassware/dp/B08BBHLW3Q/ref=sr_1_4?crid=331R3NNWMZ8JT&keywords=champagne+glasses&nav_sdd=aps&qid=1648777655&refinements=p_n_feature_eight_browse-bin%3A17941671011&rnid=17941669011&s=kitchen&sprefix=champagne+glass&sr=1-4",
+        "picture":"/public/img/noimg.jpg",
+        "description": "Crystal stemless champagne flutes for our honeymoon"
+    }
+]

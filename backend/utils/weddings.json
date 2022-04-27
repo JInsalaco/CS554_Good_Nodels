@@ -1,0 +1,146 @@
+[
+  {
+    "venue": "Medieval Times",
+    "title": "Jake and Amy's Wedding",
+    "events": [
+      {
+        "_id": "624db6b5df19773c9181c54f",
+        "title": "Bachelor Party",
+        "date": {
+          "day": 1,
+          "month": "May",
+          "year": 2023
+        },
+        "description": "Bachelor Party before the wedding"
+      },
+      {
+        "_id": "624db6bc593400e129148156",
+        "title": "Bachellorette Party",
+        "date": {
+          "day": 1,
+          "month": "May",
+          "year": 2023
+        },
+        "description": "Last night was a movie!"
+      }
+    ],
+    "date": {
+      "day": 30,
+      "month": "June",
+      "year": 2023
+    },
+    "contactPerson": "cszablewskipaz@gmail.com",
+    "rsvpDeadline": {
+      "day": 1,
+      "month": "May",
+      "year": 2023
+    },
+    "attendees": [
+      {
+        "_id": "624db6c9e114d4dc711339bc",
+        "Name": "Joseph Insalaco",
+        "Email": "jinsalac@stevens.edu",
+        "Attending": true,
+        "extras": 2,
+        "foodChoice": ["chicken", "steak", "fish"]
+      },
+      {
+        "_id": "624db6d1cd345859d39a2720",
+        "Name": "Timothy Wang",
+        "Email": "twang77@stevens.edu",
+        "Attending": false,
+        "extras": 0,
+        "foodChoice": []
+      }
+    ],
+    "images": [
+      {
+        "_id": "624de0b394c05dfb5186aee9",
+        "url": "https://images.unsplash.com/photo-1622977266039-dbb162254c12?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=800&ixid=MnwxfDB8MXxyYW5kb218MHx8aW1nfHx8fHx8MTY0OTI3MDk5OQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=800"
+      },
+      {
+        "_id": "624de0b394c05dfb5186aee2",
+        "url": "https://images.unsplash.com/photo-1622977266039-dbb162254c12?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=800&ixid=MnwxfDB8MXxyYW5kb218MHx8aW1nfHx8fHx8MTY0OTI3MDk5OQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=800"
+      },
+      {
+        "_id": "624de0b394c05dfb5186aee3",
+        "url": "https://images.unsplash.com/photo-1622977266039-dbb162254c12?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=800&ixid=MnwxfDB8MXxyYW5kb218MHx8aW1nfHx8fHx8MTY0OTI3MDk5OQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=800"
+      },
+      {
+        "_id": "624de0b394c05dfb5186aee4",
+        "url": "https://images.unsplash.com/photo-1622977266039-dbb162254c12?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=800&ixid=MnwxfDB8MXxyYW5kb218MHx8aW1nfHx8fHx8MTY0OTI3MDk5OQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=800"
+      },
+      {
+        "_id": "624de0b394c05dfb5186aee5",
+        "url": "https://images.unsplash.com/photo-1622977266039-dbb162254c12?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=800&ixid=MnwxfDB8MXxyYW5kb218MHx8aW1nfHx8fHx8MTY0OTI3MDk5OQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=800"
+      }
+    ],
+    "gifts": []
+  },
+
+  {
+    "venue": "Nanina's In the Park",
+    "title": "Elizabeth and Billy's Wedding",
+    "events": [
+      {
+        "_id": "624db6d7dc81ea00b5b8c671",
+        "title": "Rehearsal Dinner",
+        "date": {
+          "day": 1,
+          "month": "August",
+          "year": 2023
+        },
+        "description": "Please be prompt"
+      },
+      {
+        "_id": "624db6db3ee49a27f78c0032",
+        "title": "Post-Wedding Blood Test Brunch",
+        "date": {
+          "day": 20,
+          "month": "August",
+          "year": 2023
+        },
+        "description": "Theranos sponsored blood tests!"
+      }
+    ],
+    "date": {
+      "day": 10,
+      "month": "August",
+      "year": 2023
+    },
+    "contactPerson": "eholmes@thernos.org",
+    "rsvpDeadline": {
+      "day": 1,
+      "month": "July",
+      "year": 2022
+    },
+    "attendees": [
+      {
+        "_id": "624db6e009b35bbd2cbdbd95",
+        "Name": "Christian Paz",
+        "Email": "cszablew@stevens.edu",
+        "Attending": true,
+        "extras": 1,
+        "foodChoice": ["steak", "vegetarian"]
+      },
+      {
+        "_id": "624db6e7262d97119da8eff5",
+        "Name": "Anisha Shin",
+        "Email": "ashin1@stevens.edu",
+        "Attending": false,
+        "extras": 0,
+        "foodChoice": []
+      },
+      {
+        "_id": "624db6e7262d97119da8eff5",
+        "Name": "Jacob Roessler",
+        "Email": "jroessl1@stevens.edu",
+        "Attending": true,
+        "extras": 0,
+        "foodChoice": ["steak"]
+      }
+    ],
+    "images": [],
+    "gifts": []
+  }
+]
