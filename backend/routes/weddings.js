@@ -49,6 +49,27 @@ router.get("/:weddingId", async (req, res) => {
   res.json(reqWedding);
 });
 
+router.get("/wedding/:email", async (req, res) => {
+  let reqWedding;
+  if (!req.params.email) {
+    res.status(400).json({ message: "You must pass in an email!" });
+    return;
+  }
+  try {
+    reqWedding = await weddingData.getByContactPerson(req.params.email);
+  } catch (e) {
+    res.status(400).json({ message: e });
+    return;
+  }
+  if (!reqWedding) {
+    res.status(404).json({
+      message: `Could not find wedding Id: ${req.params.email}`,
+    });
+    return;
+  }
+  res.json(reqWedding);
+});
+
 // GET localhost:3001/user/:userId
 // Gets all weddings associated with userId
 router.get("/user/:userId", async (req, res) => {

@@ -20,6 +20,7 @@
     "mockjs": "^1.1.0",
     "mongodb": "^3.6.2",
     "redis": "^3.0.2",
+    "uuid": "^8.3.2",
     "xss": "^1.0.11"
   },
   "devDependencies": {

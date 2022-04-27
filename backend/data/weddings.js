@@ -509,6 +509,19 @@ let exportedMethods = {
     return exportedMethods.get(weddingId);
   },
 
+  //get wedding by email provided by firebase
+  async getByContactPerson(email){
+    stringValidation([email]);
+    const weddingCollection = await weddings();
+    const data = await weddingCollection.findOne({contactPerson: email});
+
+    if(!data){
+      throw new Error(`Could not find wedding for user ${email}`)
+    }
+
+    return data;
+  },
+
   dateValidation,
   emailValidation,
 };
