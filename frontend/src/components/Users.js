@@ -103,10 +103,19 @@ function Users() {
               </h5>
               <h6>{weddingData.contactPerson}</h6>
 
-              <h6>Events:</h6>
+              <h6>Events: {weddingData.events < 1 && "None"}</h6>
               <ul>
                 {weddingData.events.map((event) => {
-                  return <li key={event._id}>{event.title}</li>;
+                  return (
+                    <li key={event._id}>
+                      <div>
+                        <p>{event.title}</p>
+                        <p>
+                          {event.date.day} {event.date.month} {event.date.year}
+                        </p>
+                      </div>
+                    </li>
+                  );
                 })}
               </ul>
               <h6>Attendees: {weddingData.attendees.length < 1 && "None"}</h6>
