@@ -38,6 +38,9 @@ const NavigationAuth = ({ currentUser }) => {
         <li>
           <NavLink to={`/weddings/wedding/`}>Wedding</NavLink>
         </li>
+        <li>
+          <NavLink to={`/events/`}>Events</NavLink>
+        </li>
       </ul>
     </nav>
   );

@@ -31,6 +31,9 @@ const eventsValidation = (events) => {
 };
 
 const dateValidation = (date) => {
+  if (typeof date !== "object") {
+    throw new Error("Parameter must be an object.");
+  }
   const monthsAndDays = {
     January: 31,
     February: 29,
@@ -125,6 +128,7 @@ let exportedMethods = {
       rsvpDeadline,
       attendees: [],
       gifts: [],
+      images: [],
     };
 
     const weddingCollection = await weddings();
@@ -510,13 +514,13 @@ let exportedMethods = {
   },
 
   //get wedding by email provided by firebase
-  async getByContactPerson(email){
+  async getByContactPerson(email) {
     stringValidation([email]);
     const weddingCollection = await weddings();
-    const data = await weddingCollection.findOne({contactPerson: email});
+    const data = await weddingCollection.findOne({ contactPerson: email });
 
-    if(!data){
-      throw new Error(`Could not find wedding for user ${email}`)
+    if (!data) {
+      throw new Error(`Could not find wedding for user ${email}`);
     }
 
     return data;
