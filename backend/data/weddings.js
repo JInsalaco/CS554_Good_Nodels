@@ -522,6 +522,22 @@ let exportedMethods = {
     return data;
   },
 
+  async getByAttendee(email){
+    stringValidation(email);
+    emailValidation(email);
+    let attendingWeddings = []
+    const weddingCollection = await weddings();
+    const data = weddingCollection.find({}).toArray();
+    for(let i = 0; i<data.length; i++){
+      for(let j = 0; j<data[i].attendees.length; i++){
+        if(email === data[i].attendees[j].email){
+          attendingWeddings.push(data[i]);
+        }
+      }
+    }
+    return attendingWeddings;
+  },
+  
   dateValidation,
   emailValidation,
 };
