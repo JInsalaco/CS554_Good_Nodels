@@ -16,7 +16,6 @@ import Photos from "./components/Photos";
 import Users from "./components/Users";
 import AttendingWeddings from './components/AttendingWeddings'
 
-
 function App() {
   return (
     <AuthProvider>
@@ -27,7 +26,6 @@ function App() {
           </header>
         </div>
         <Routes>
-
           <Route exact path="/" element={<Landing />} />
           <Route path="/home" element={<PrivateRoute />}>
             <Route path="/home" element={<Home />} />
@@ -42,16 +40,11 @@ function App() {
           <Route path='/weddings/wedding/' element={<Users />} />
           <Route path='/weddings/attending/' element={<AttendingWeddings />} />
           <Route path="/gifts/:id" element={<GiftPage />}></Route>
-          {/* This is just for Tim's testing right now */}
-          <Route
-            path="/events"
-            element={<Events weddingID={"625f219d7b7531954b932973"} />}
-          />
+          <Route path="/events" element={<Events />} />
           <Route
             path="/photos"
             element={<Photos weddingID={"625f219d7b7531954b932973"} />}
           />
-
         </Routes>
       </Router>
     </AuthProvider>

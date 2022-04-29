@@ -336,7 +336,6 @@ router.post("/", async (req, res) => {
     const returnedWedding = await weddingData.create(newWedding);
     res.status(200).send(returnedWedding);
   } catch (e) {
-    console.log(500);
     res.status(500).send({ error: e });
   }
 });

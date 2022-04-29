@@ -43,6 +43,9 @@ const NavigationAuth = ({ currentUser }) => {
         <li class='nav-item active'>
           <a class='navbar-link' href="/weddings/attending/">Your Events</a>
         </li>
+        <li>
+          <NavLink to={`/events/`}>Events</NavLink>
+        </li>
       </ul>
       </div>
     </nav>
