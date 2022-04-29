@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
 import { AuthContext } from "../firebase/Auth";
 import SignOutButton from "./SignOut";
 
@@ -21,55 +22,60 @@ const Navigation = () => {
 
 const NavigationAuth = ({ currentUser }) => {
   return (
-    <nav  class="navbar navbar-expand-lg">
-    <a class='navbar-brand' href="#">Wedd.io</a>
-      <div id="navbarSupportedContent">
-      <ul id="menu-main-nav" className="navbar-nav nav-fill w-100">
-        <li class='nav-item active'>
-          <a class='navbar-link' href="/">Landing</a>
-        </li>
-        <li class='nav-item active'>
-          <a class='navbar-link' href="/home">Home</a>
-        </li>
-        <li class='nav-item active'>
-          <a class='navbar-link' href="/account">Account</a>
-        </li>
-        <li class='nav-item active'>
-          <SignOutButton />
-        </li>
-        <li class='nav-item active'>
-          <a class='navbar-link' href="/weddings/wedding/">Wedding</a>
-        </li>
-        <li class='nav-item active'>
-          <a class='navbar-link' href="/weddings/attending/">Your Events</a>
-        </li>
-        <li>
-          <NavLink to={`/events/`}>Events</NavLink>
-        </li>
-      </ul>
-      </div>
-    </nav>
+    <Navbar bg="light" expand="lg" class="header">
+      <Container>
+        <Navbar.Brand href="/" style={{ fontSize: "xx-large" }}>
+          Wedd.io
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link href="/" className="active">
+              Landing
+            </Nav.Link>
+            <Nav.Link href="/home" className="active">
+              Home
+            </Nav.Link>
+            <Nav.Link href="/account" className="active">
+              Account
+            </Nav.Link>
+            <Nav.Link href="/weddings/wedding" className="active">
+              Wedding
+            </Nav.Link>
+            <Nav.Link href="/weddings/attending" className="active">
+              Your Events
+            </Nav.Link>
+            <Nav.Link href="/events" className="active">
+              Events
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+        <SignOutButton />
+      </Container>
+    </Navbar>
   );
 };
 
 const NavigationNonAuth = () => {
   return (
-    <nav class="navbar navbar-expand-lg">
-      <a class='navbar-brand' href="#">Wedd.io</a>
-      <div id="navbarSupportedContent">
-      <ul id="menu-main-nav" className="navbar-nav nav-fill w-100">
-        <li class='nav-item active'>
-          <a class='navbar-link' href="/">Landing</a>
-        </li>
-        <li class='nav-item active'>
-          <a class='navbar-link' href="/signup">Sign-up</a>
-        </li>
-        <li class='nav-item active'>
-          <a class='navbar-link' href="/signin">Sign In</a>
-        </li>
-      </ul>
-      </div>
-    </nav>
+    <Navbar bg="light" expand="lg" class="header">
+      <Container>
+        <Navbar.Brand href="/" style={{ fontSize: "xx-large" }}>
+          Wedd.io
+        </Navbar.Brand>
+        <Nav className="me-auto">
+          <Nav.Link href="/" className="active">
+            Landing
+          </Nav.Link>
+          <Nav.Link href="/signup" className="active">
+            Sign-Up
+          </Nav.Link>
+          <Nav.Link href="/signin" className="active">
+            Sign-In
+          </Nav.Link>
+        </Nav>
+      </Container>
+    </Navbar>
   );
 };
 
