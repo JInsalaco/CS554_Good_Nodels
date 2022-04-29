@@ -36,8 +36,9 @@ function SignIn() {
     return <Navigate to='/home' />;
   }
   return (
-    <div>
-      <h1>Log in</h1>
+    <div class="row justify-content-center">
+      <div class="col-2">
+      <h1>Sign In</h1>
       <form onSubmit={handleLogin}>
         <div className='form-group'>
           <label>
@@ -74,6 +75,7 @@ function SignIn() {
 
       <br />
       <SocialSignIn />
+      </div>
     </div>
   );
 }

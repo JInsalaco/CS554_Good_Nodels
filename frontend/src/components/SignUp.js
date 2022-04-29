@@ -30,10 +30,11 @@ function SignUp() {
   }
 
   return (
-    <div>
-      <h1>Sign up</h1>
+    <div class="row justify-content-center">
+    <div class="col-2">
       {pwMatch && <h4 className='error'>{pwMatch}</h4>}
-      <form onSubmit={handleSignUp}>
+      <form onSubmit={handleSignUp} class = 'card'>
+      <h1>Sign up</h1>
         <div className='form-group'>
           <label>
             Name:
@@ -91,6 +92,7 @@ function SignUp() {
       </form>
       <br />
       <SocialSignIn />
+    </div>
     </div>
   );
 }
