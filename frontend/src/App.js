@@ -14,6 +14,7 @@ import { AuthProvider } from "./firebase/Auth";
 import Events from "./components/Events";
 import Photos from "./components/Photos";
 import Users from "./components/Users";
+import AttendingWeddings from './components/AttendingWeddings'
 
 function App() {
   return (
@@ -36,7 +37,8 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/weddings/:id" element={<Wedding />} />
-          <Route path="/weddings/wedding/" element={<Users />} />
+          <Route path='/weddings/wedding/' element={<Users />} />
+          <Route path='/weddings/attending/' element={<AttendingWeddings />} />
           <Route path="/gifts/:id" element={<GiftPage />}></Route>
           <Route path="/events" element={<Events />} />
           <Route

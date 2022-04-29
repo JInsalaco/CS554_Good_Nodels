@@ -9,6 +9,7 @@ const s3 = require("../data/s3");
 const checker = require("../data/checker");
 const { ObjectId } = require("mongodb");
 const { exist } = require("mongodb/lib/gridfs/grid_store");
+const { getByAttendee } = require("../data/weddings");
 
 // GET localhost:3001/weddings
 // Returns all weddings from the weddings collection
@@ -70,6 +71,20 @@ router.get("/wedding/:email", async (req, res) => {
   res.json(reqWedding);
 });
 
+router.get("/attending/:email", async (req, res) => {
+  let attendingWeddings;
+  console.log(req.params.email);
+  try {
+    attendingWeddings = await getByAttendee(req.params.email);
+    console.log(await getByAttendee(req.params.email));
+  } catch (e) {
+    res.status(500).json({
+      message: `Could not fetch your weddings! ${e}`,
+    });
+    return;
+  }
+  res.json(attendingWeddings);
+});
 // GET localhost:3001/user/:userId
 // Gets all weddings associated with userId
 router.get("/user/:userId", async (req, res) => {

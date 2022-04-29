@@ -21,46 +21,54 @@ const Navigation = () => {
 
 const NavigationAuth = ({ currentUser }) => {
   return (
-    <nav className="navigation">
-      <ul>
-        <li>
-          <NavLink to="/">Landing</NavLink>
+    <nav  class="navbar navbar-expand-lg">
+    <a class='navbar-brand' href="#">Wedd.io</a>
+      <div id="navbarSupportedContent">
+      <ul id="menu-main-nav" className="navbar-nav nav-fill w-100">
+        <li class='nav-item active'>
+          <a class='navbar-link' href="/">Landing</a>
         </li>
-        <li>
-          <NavLink to="/home">Home</NavLink>
+        <li class='nav-item active'>
+          <a class='navbar-link' href="/home">Home</a>
         </li>
-        <li>
-          <NavLink to="/account">Account</NavLink>
+        <li class='nav-item active'>
+          <a class='navbar-link' href="/account">Account</a>
         </li>
-        <li>
+        <li class='nav-item active'>
           <SignOutButton />
         </li>
-        <li>
-          <NavLink to={`/weddings/wedding/`}>Wedding</NavLink>
+        <li class='nav-item active'>
+          <a class='navbar-link' href="/weddings/wedding/">Wedding</a>
+        </li>
+        <li class='nav-item active'>
+          <a class='navbar-link' href="/weddings/attending/">Your Events</a>
         </li>
         <li>
           <NavLink to={`/events/`}>Events</NavLink>
         </li>
       </ul>
+      </div>
     </nav>
   );
 };
 
 const NavigationNonAuth = () => {
   return (
-    <nav className="navigation">
-      <ul>
-        <li>
-          <NavLink to="/">Landing</NavLink>
+    <nav class="navbar navbar-expand-lg">
+      <a class='navbar-brand' href="#">Wedd.io</a>
+      <div id="navbarSupportedContent">
+      <ul id="menu-main-nav" className="navbar-nav nav-fill w-100">
+        <li class='nav-item active'>
+          <a class='navbar-link' href="/">Landing</a>
         </li>
-        <li>
-          <NavLink to="/signup">Sign-up</NavLink>
+        <li class='nav-item active'>
+          <a class='navbar-link' href="/signup">Sign-up</a>
         </li>
-
-        <li>
-          <NavLink to="/signin">Sign-In</NavLink>
+        <li class='nav-item active'>
+          <a class='navbar-link' href="/signin">Sign In</a>
         </li>
       </ul>
+      </div>
     </nav>
   );
 };
