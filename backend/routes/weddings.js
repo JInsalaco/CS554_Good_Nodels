@@ -125,6 +125,14 @@ router.delete("/:id", async (req, res) => {
     });
     return;
   }
+
+  //If the wedding has images from s3 make sure to delete them
+  for (let image of wedding.images) {
+    if (image.url.includes("weddio.s3")) {
+      s3.deleteFile(image._id);
+    }
+  }
+
   try {
     await weddingData.remove(req.params.id);
   } catch (e) {
@@ -207,6 +215,38 @@ router.patch("/:id/attendee", async (req, res) => {
     res.status(500).json({
       message: `Could not add attendee! ${e}`,
     });
+    return;
+  }
+});
+
+//Remove an attendee from a wedding
+router.delete("/:id/attendee/:attendeeId", async (req, res) => {
+  let existingAttendee;
+  // Error check
+  try {
+    checker.checkID(req.params.id);
+    checker.checkID(req.params.attendeeId);
+    // Check that the event actually exists
+    let reqWedding = await weddingData.get(req.params.id);
+    for (let attendee of reqWedding.attendees) {
+      if (String(attendee._id) === req.params.attendeeId) {
+        existingAttendee = attendee;
+        break;
+      }
+    }
+    if (!existingAttendee) throw `Attendee not found!`;
+  } catch (e) {
+    res.status(400).json({
+      message: `Error in deleting attendee, ${e}`,
+    });
+    return;
+  }
+  // Perform the delete
+  try {
+    const updatedWedding = await weddingData.removeAttendee(req.params.id, req.params.attendeeId);
+    res.json(updatedWedding);
+  } catch (e) {
+    res.status(500).json({ message: e });
     return;
   }
 });

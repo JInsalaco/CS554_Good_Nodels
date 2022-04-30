@@ -157,6 +157,7 @@ let exportedMethods = {
       attending,
       extras,
       foodChoices,
+      responded: false
     };
 
     const weddingCollection = await weddings();
