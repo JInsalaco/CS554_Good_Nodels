@@ -131,14 +131,15 @@ async function main() {
         "Theranos sponsored blood tests!"
     );
 
-    await weddingData.addAttendee(wedding2._id, "Christian Paz", "cszablew@stevens.edu", true, 1, [
+    const christian = await weddingData.addAttendee(wedding2._id, "Christian Paz", "cszablew@stevens.edu", true, 1, [
         "steak",
         "vegetarian",
     ]);
-    await weddingData.addAttendee(wedding2._id, "Anisha Shin", "ashin1@stevens.edu", false, 0, []);
-    await weddingData.addAttendee(wedding2._id, "Jacob Roessler", "jroessl1@stevens.edu", true, 0, [
+    const anisha = await weddingData.addAttendee(wedding2._id, "Anisha Shin", "ashin1@stevens.edu", false, 0, []);
+    const jacob = await weddingData.addAttendee(wedding2._id, "Jacob Roessler", "jroessl1@stevens.edu", true, 0, [
         "steak",
     ]);
+
 
     await weddingData.addImage(
         wedding2._id,

@@ -162,7 +162,7 @@ router.patch("/:id/attendee", async (req, res) => {
     });
     return;
   }
-  let { name, email, attending, extras, foodChoice } = req.body;
+  let { name, email, attending, extras, foodChoices } = req.body;
 
   if (!name || typeof name !== "string" || name.trim() === "") {
     res.status(400).json({
@@ -180,7 +180,7 @@ router.patch("/:id/attendee", async (req, res) => {
     return;
   }
 
-  if (!attending || typeof attending !== "boolean") {
+  if (typeof attending !== "boolean") {
     res.status(400).json({
       message: "attending must be a boolean.",
     });
@@ -194,7 +194,7 @@ router.patch("/:id/attendee", async (req, res) => {
     return;
   }
 
-  if (!foodChoice || !Array.isArray(foodChoice)) {
+  if (!foodChoices || !Array.isArray(foodChoices)) {
     res.status(400).json({
       message: "food choice must be an array",
     });
@@ -208,7 +208,7 @@ router.patch("/:id/attendee", async (req, res) => {
       email,
       attending,
       extras,
-      foodChoice
+      foodChoices
     );
     res.status(200).json(newWedding);
   } catch (e) {
@@ -528,15 +528,15 @@ router.patch("/:id/attendee/:attendeeId", async (req, res) => {
     if (attendInfo.extras) {
       checker.checkID(attendInfo.extras);
     }
-    if (attendInfo.foodChoice) {
-      for (let food of attendInfo.foodChoice) checker.checkStr(food);
+    if (attendInfo.foodChoices) {
+      for (let food of attendInfo.foodChoices) checker.checkStr(food);
     }
     if (
       !attendInfo.Name &&
       !attendInfo.Email &&
       !attendInfo.Attending &&
       !attendInfo.extras &&
-      !attendInfo.foodChoice
+      !attendInfo.foodChoices
     ) {
       throw "Nothing to edit in edit attendee route!";
     }
@@ -560,7 +560,7 @@ router.patch("/:id/attendee/:attendeeId", async (req, res) => {
   if (!attendInfo.Email) attendInfo.Email = existingAttend.Email;
   if (!attendInfo.Attending) attendInfo.Attending = existingAttend.Attending;
   if (!attendInfo.extras) attendInfo.extras = existingAttend.extras;
-  if (!attendInfo.foodChoice) attendInfo.foodChoice = existingAttend.foodChoice;
+  if (!attendInfo.foodChoices) attendInfo.foodChoices = existingAttend.foodChoices;
   attendInfo._id = ObjectId(req.params.attendeeId);
   try {
     const editAttendee = await weddingData.editAttendee(

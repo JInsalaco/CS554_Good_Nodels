@@ -29,9 +29,6 @@ function Wedding() {
         setWeddingData(wedding);
     }
 
-    async function liftStateAttendee(wedding) {
-        setWeddingData(wedding);
-    }
 
     async function deleteWedding() {
         const { data } = await axios.delete(`http://localhost:3001/weddings/${weddingData._id}`);
@@ -99,14 +96,14 @@ function Wedding() {
                         variant="primary"
                         onClick={() => setAddAttendeeButtonToggle(!addAttendeeButtonToggle)}
                     >
-                        Add Attendee
+                        Send Invitation
                     </Button>
                     <br />
                     <br />
                     {addAttendeeButtonToggle && (
-                        <AddAttendee weddingData={weddingData} liftState={liftStateAttendee} />
+                        <AddAttendee weddingData={weddingData} liftState={liftState} />
                     )}
-                    <Attendees weddingData={weddingData} liftState={liftStateAttendee} />
+                    <Attendees weddingData={weddingData} liftState={liftState} />
                     <h7>Gifts:</h7>
                     <br />
                     <br />

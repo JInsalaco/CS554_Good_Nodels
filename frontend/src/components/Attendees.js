@@ -18,9 +18,9 @@ function Attendees(props) {
         <Container>
             <ListGroup>
                 <Row xs={2} md={4} lg={5} className="g-4">
-                    {weddingData.attendees.map((attendee) => {
+                    {weddingData.attendees.map((attendee,index) => {
                         return (
-                            <ListGroup.Item key={attendee.id}>
+                            <ListGroup.Item key={attendee._id + index}>
                                 <Col>
                                     <Card>
                                         <Card.Body>
