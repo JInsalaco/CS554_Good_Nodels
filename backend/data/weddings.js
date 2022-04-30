@@ -145,7 +145,7 @@ let exportedMethods = {
     stringValidation(foodChoices);
     emailValidation(email);
     if (typeof attending !== "boolean") {
-      throw new Error("Attending must be a boolean.");
+      throw new Error("attending must be a boolean.");
     }
     if (typeof extras !== "number" || extras < 0) {
       throw new Error("Extras must be greater than or equal to 0.");
@@ -443,13 +443,13 @@ let exportedMethods = {
 
   async editAttendee(weddingId, attendeeId, newAttendee) {
     stringValidation([weddingId, attendeeId]);
-    stringValidation[newAttendee.Name];
-    emailValidation(newAttendee.Email);
-    if (newAttendee.Attending !== true && newAttendee.Attending !== false)
+    stringValidation[newAttendee.name];
+    emailValidation(newAttendee.email);
+    if (newAttendee.attending !== true && newAttendee.attending !== false)
       throw `Invalid attending field in editAttendee`;
     if (isNaN(parseInt(newAttendee.extras) || newAttendee.extras % 1 !== 0))
       throw `Invalid extras field in editAttendee`;
-    for (let food of newAttendee.foodChoice) stringValidation([food]);
+    for (let food of newAttendee.foodChoices) stringValidation([food]);
 
     const weddingCollection = await weddings();
     const updateInfo = await weddingCollection.updateOne(

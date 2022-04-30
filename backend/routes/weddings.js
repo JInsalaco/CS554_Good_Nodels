@@ -519,11 +519,11 @@ router.patch("/:id/attendee/:attendeeId", async (req, res) => {
   try {
     checker.checkID(req.params.id);
     checker.checkID(req.params.attendeeId);
-    if (attendInfo.Name) {
-      checker.checkStr(attendInfo.Name);
+    if (attendInfo.name) {
+      checker.checkStr(attendInfo.name);
     }
-    if (attendInfo.Email) {
-      weddingData.emailValidation(attendInfo.Email);
+    if (attendInfo.email) {
+      weddingData.emailValidation(attendInfo.email);
     }
     if (attendInfo.extras) {
       checker.checkID(attendInfo.extras);
@@ -532,9 +532,9 @@ router.patch("/:id/attendee/:attendeeId", async (req, res) => {
       for (let food of attendInfo.foodChoices) checker.checkStr(food);
     }
     if (
-      !attendInfo.Name &&
-      !attendInfo.Email &&
-      !attendInfo.Attending &&
+      !attendInfo.name &&
+      !attendInfo.email &&
+      !attendInfo.attending &&
       !attendInfo.extras &&
       !attendInfo.foodChoices
     ) {
@@ -556,9 +556,9 @@ router.patch("/:id/attendee/:attendeeId", async (req, res) => {
     return;
   }
   // Fill in everything that wasn't passed in
-  if (!attendInfo.Name) attendInfo.Name = existingAttend.Name;
-  if (!attendInfo.Email) attendInfo.Email = existingAttend.Email;
-  if (!attendInfo.Attending) attendInfo.Attending = existingAttend.Attending;
+  if (!attendInfo.name) attendInfo.name = existingAttend.name;
+  if (!attendInfo.email) attendInfo.email = existingAttend.email;
+  if (!attendInfo.attending) attendInfo.attending = existingAttend.attending;
   if (!attendInfo.extras) attendInfo.extras = existingAttend.extras;
   if (!attendInfo.foodChoices) attendInfo.foodChoices = existingAttend.foodChoices;
   attendInfo._id = ObjectId(req.params.attendeeId);

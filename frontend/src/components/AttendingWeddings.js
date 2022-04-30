@@ -12,6 +12,7 @@ import {
     makeStyles,
     Button
   } from "@material-ui/core";
+import AttendeeModal from "./AttendeeModal";
 
   const useStyles = makeStyles({
     card: {
@@ -50,6 +51,9 @@ function AttendingWeddings() {
   const [weddingData, setWeddingData] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const [attendeeModalToggle, setAttendeeModalToggle] = useState(false);
+
   const user = firebase.auth().currentUser;
   const email = user.email;
   let list = null;
@@ -81,6 +85,21 @@ function AttendingWeddings() {
                     <CardHeader className={classes.titleHead} title={wedding.title} />
                   <br/>
                   <br/>
+                  {!wedding.attendees.find((att) => att.email === email).responded && 
+                    <Button 
+                      variant="primary"
+                      onClick={() => setAttendeeModalToggle(!attendeeModalToggle)}>Respond to Invitation
+                    </Button>
+                  }
+                  {attendeeModalToggle && (
+                    <AttendeeModal
+                      setAttendeeModalToggle={setAttendeeModalToggle}
+                      setWeddingData={setWeddingData}
+                      weddingData={wedding}
+                      weddings = {weddingData}
+                      attendeeId={wedding.attendees.find((att) => att.email === email)._id}
+                    />
+                  )}
                 </Card>
                 <br/> 
         </Grid>
