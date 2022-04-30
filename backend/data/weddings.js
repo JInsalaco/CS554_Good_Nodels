@@ -534,7 +534,7 @@ let exportedMethods = {
     for(let i = 0; i<data.length; i++){
       let attendance = data[i].attendees
       for(let j = 0; j<attendance.length; j++){
-        if(attendance[j].Email == email){
+        if(attendance[j].email == email){
           attendingWeddings.push(data[i])
         }
       }
