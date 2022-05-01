@@ -13,12 +13,11 @@ function SignUp() {
       setPwMatch('Passwords do not match');
       return false;
     }
-
     try {
       await doCreateUserWithEmailAndPassword(
         email.value,
         passwordOne.value,
-        displayName
+        displayName.value
       );
     } catch (error) {
       alert(error);
@@ -36,7 +35,7 @@ function SignUp() {
       <div class="container h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
           <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-            <div class="card" style={{borderRadius: '15px;'}}>
+            <div class="card" style={{borderRadius: '15px'}}>
               <div class='card-body p-5'>
               <form onSubmit={handleSignUp}>
                 <h2 class="text-center mb-5">Sign Up</h2>
