@@ -44,7 +44,7 @@ function SignIn() {
         <div class="container h-100">
           <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-              <div class="card" style={{borderRadius: '15px;'}}>
+              <div class="card" style={{borderRadius: '15px'}}>
                 <div class='card-body p-5'>
                   <form onSubmit={handleLogin}>
                     <h2 class="text-center mb-5">Sign in using your email</h2>
@@ -58,7 +58,7 @@ function SignIn() {
                         required
                       />
                     </div>
-                    <div className='form-outline mb-4'>
+                    <div className='form-outline mb-2'>
                         <input
                           className='form-control form-control-lg'
                           name='password'
@@ -68,9 +68,9 @@ function SignIn() {
                           required
                         />
                     </div>
-                    <div class="d-flex justify-content-end">
-                      <button className='forgotPassword' onClick={passwordReset}>
-                      Forgot Password?
+                    <div class="d-flex mb-4 justify-content-end">
+                      <button className='forgotPassword' type='button' onClick={passwordReset}>
+                      Reset Password
                       </button>
                     </div> 
                     <div class="d-flex justify-content-center">
@@ -82,7 +82,7 @@ function SignIn() {
                       <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
                     </div>
                     <SocialSignIn/>
-                    <div class="d-flex justify-content-end">
+                    <div class="d-flex justify-content-end mt-2">
                       <a href='/signup' class='signUpLink'>Create an account</a>
                     </div>  
                   </form>
