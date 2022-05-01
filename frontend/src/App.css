@@ -67,3 +67,69 @@
   position: fixed !important;
   width: 100%;
 }
+
+.divider:after,
+.divider:before {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+
+.social-container {
+  position: relative;
+  border-radius: 5px;
+  padding: 20px 0 30px 0;
+}
+.google-btn:focus,
+.google-btn:hover {
+  background-color: #4285f4;
+  color: white;
+  opacity: 1;
+}
+.fb-btn:focus,
+.fb-btn:hover {
+  background-color: #3b5998;
+  color: white;
+  opacity: 1;
+}
+
+.signup-btn:focus,
+.signup-btn:hover {
+  opacity: 1;
+}
+
+.social-btn {
+  width: 100%;
+  justify-content: center;
+  padding: 0px;
+  border: none;
+  border-radius: 4px;
+  margin: 5px 0;
+  opacity: 0.85;
+  display: inline-block;
+  font-size: 17px;
+  line-height: 20px;
+  text-decoration: none;
+}
+.fb-btn {
+  background-color: #3b5998;
+  color: white;
+}
+
+.google-btn {
+  background-color: #4285f4;
+  color: white;
+}
+
+.signup-btn {
+  background-color: #572afb;
+  border-color: #572afb;
+  color: white;
+}
+
+.forgotPassword {
+  background-color: transparent;
+  color: black;
+  border-color: transparent;
+}
