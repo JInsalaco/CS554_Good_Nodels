@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
 import { AuthContext } from "../firebase/Auth";
 import SignOutButton from "./SignOut";
+import Profile from './Profile';
 
 import "../App.css";
 
@@ -50,7 +51,13 @@ const NavigationAuth = ({ currentUser }) => {
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
-        <SignOutButton />
+        <Navbar.Collapse className="justify-content-end">
+          <Nav.Link href="/profile" className="active">
+              Profile
+          </Nav.Link>
+          <SignOutButton />
+        </Navbar.Collapse>  
+
       </Container>
     </Navbar>
   );
@@ -67,13 +74,15 @@ const NavigationNonAuth = () => {
           <Nav.Link href="/" className="active">
             Landing
           </Nav.Link>
+        </Nav>
+        <Navbar.Collapse className="justify-content-end">
           <Nav.Link href="/signup" className="active">
-            Sign up
+            Sign Up
           </Nav.Link>
           <Nav.Link href="/signin" className="active">
-            Sign in
+            Sign In
           </Nav.Link>
-        </Nav>
+        </Navbar.Collapse>  
       </Container>
     </Navbar>
   );

@@ -26,6 +26,7 @@ async function doSocialSignIn(provider) {
   } else if (provider === 'facebook') {
     socialProvider = new firebase.auth.FacebookAuthProvider();
   }
+  console.log(socialProvider);
   await firebase.auth().signInWithPopup(socialProvider);
 }
 
@@ -34,7 +35,7 @@ async function doPasswordReset(email) {
 }
 
 async function doPasswordUpdate(password) {
-  await firebase.auth().updatePassword(password);
+  await firebase.auth().currentUser.updatePassword(password);
 }
 
 async function doSignOut() {

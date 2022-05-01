@@ -14,6 +14,7 @@ import { AuthProvider } from "./firebase/Auth";
 import Events from "./components/Events";
 import Photos from "./components/Photos";
 import Users from "./components/Users";
+import Profile from "./components/Profile";
 import AttendingWeddings from './components/AttendingWeddings'
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
           <Route path='/weddings/attending/' element={<AttendingWeddings />} />
           <Route path="/gifts/:id" element={<GiftPage />}></Route>
           <Route path="/events" element={<Events />} />
+          <Route path="/profile" element={<Profile />} />
           <Route
             path="/photos"
             element={<Photos weddingID={"625f219d7b7531954b932973"} />}

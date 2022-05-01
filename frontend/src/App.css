@@ -76,11 +76,6 @@
   background: #eee;
 }
 
-.social-container {
-  position: relative;
-  border-radius: 5px;
-  padding: 20px 0 30px 0;
-}
 .google-btn:focus,
 .google-btn:hover {
   background-color: #4285f4;
@@ -99,6 +94,18 @@
   opacity: 1;
 }
 
+.fb-btn {
+  background-color: #3b5998;
+  color: white;
+  margin-bottom: 13px;
+}
+
+.google-btn {
+  background-color: #4285f4;
+  color: white;
+  margin-bottom: 13px;
+}
+
 .social-btn {
   width: 100%;
   justify-content: center;
@@ -111,15 +118,13 @@
   font-size: 17px;
   line-height: 20px;
   text-decoration: none;
-}
-.fb-btn {
-  background-color: #3b5998;
-  color: white;
+  position: relative;
 }
 
-.google-btn {
-  background-color: #4285f4;
-  color: white;
+.social-btn img {
+  left: 8px;
+  position: absolute;
+  background-color: white;
 }
 
 .signup-btn {
@@ -130,6 +135,7 @@
 
 .forgotPassword {
   background-color: transparent;
-  color: black;
+  color: #0d6efd;
+  text-decoration: underline;
   border-color: transparent;
 }

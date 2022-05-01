@@ -39,7 +39,7 @@ function SignUp() {
             <div class="card" style={{borderRadius: '15px;'}}>
               <div class='card-body p-5'>
               <form onSubmit={handleSignUp}>
-                <h2 class="text-center mb-5">Sign up using your email</h2>
+                <h2 class="text-center mb-5">Sign Up</h2>
                 {pwMatch && <h4 className='error'>{pwMatch}</h4>}
                 
                 <div className='form-outline mb-4'>
@@ -96,6 +96,7 @@ function SignUp() {
                 </div>
               </form>
               <SocialSignIn />
+              <span class='d-flex justify-content-center mt-2'>Have an account? &nbsp;<a href='/signin'> Sign in</a></span>
             </div>
             </div>
           </div>
