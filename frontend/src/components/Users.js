@@ -125,35 +125,37 @@ function Users() {
                   return <li key={attendee._id}>{attendee.name}</li>;
                 })}
               </ul>
-              <h6>Gifts: {weddingData.gifts.length < 1 && "None"}</h6>
-              {addGiftButtonToggle && (
-                <AddGift wedding={weddingData} liftState={updateGifts} />
-              )}
-              <br />
-              <ListGroup>
-                <Row xs={2} md={4} lg={5} className="g-4">
-                  {weddingData.gifts.map((gift) => {
-                    return (
-                      <ListGroup.Item key={gift.id}>
-                        <Col>
-                          <GiftCard gift={gift} liftState={updateGifts} />
-                          <br />
-                        </Col>
-                      </ListGroup.Item>
-                    );
-                  })}
-                </Row>
-              </ListGroup>
-              <br />
-              <br />
-              <Button
-                variant="primary"
-                onClick={() => setAddGiftButtonToggle(!addGiftButtonToggle)}
-              >
-                Add Gift
-              </Button>
-              <br />
-              <br />
+              <div className="gift-div">
+                <h6 style={{ float: "left" }}>Gift Registry for {weddingData.title}:</h6>
+                <br />
+                <br />
+                <Container>
+                  <ListGroup>
+                    <Row xs={1} md={2} lg={3} className="g-4">
+                      {weddingData.gifts.map((gift) => {
+                        return (
+                          <ListGroup.Item key={gift.id}>
+                            <Col>
+                              <GiftCard gift={gift} liftState={updateGifts} />
+                              <br />
+                            </Col>
+                          </ListGroup.Item>
+                        );
+                      })}
+                    </Row>
+                  </ListGroup>
+                </Container>
+                <br />
+                <br />
+                <Button variant="primary" onClick={() => setAddGiftButtonToggle(!addGiftButtonToggle)}>
+                  Add Gift
+                </Button>
+                <br />
+                <br />
+                {addGiftButtonToggle && (
+                  <AddGift wedding={weddingData} liftState={updateGifts} />
+                )}
+              </div>
               <Photos weddingID={weddingData._id} />
             </>
           )}

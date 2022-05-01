@@ -159,3 +159,10 @@
   font-size: 16px;
   color: #6b6b83;
 }
+
+.gift-div {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  text-align: center;
+  align-items: center;
+}

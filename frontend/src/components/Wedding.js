@@ -110,35 +110,39 @@ function Wedding() {
             <AddAttendee weddingData={weddingData} liftState={liftState} />
           )}
           <Attendees weddingData={weddingData} liftState={liftState} />
-          <h7>Gifts:</h7>
+          <div className="gift-div">
+              <h7 style={{ float: "left" }}>Gift Registry for {weddingData.title}:</h7>
+              <br />
+              <br />
+              <Container>
+                  <ListGroup>
+                      <Row xs={1} md={2} lg={3} className="g-4">
+                          {weddingData.gifts.map((gift) => {
+                              return (
+                                <ListGroup.Item key={gift.id}>
+                                    <Col>
+                                        <GiftCard gift={gift} liftState={liftState} />
+                                        <br />
+                                    </Col>
+                                </ListGroup.Item>
+                                );
+                            })}
+                        </Row>
+                    </ListGroup>
+              </Container>
+              <br />
+              <br />
+              <Button variant="primary" onClick={() => setAddGiftButtonToggle(!addGiftButtonToggle)}>
+                  Add Gift
+                </Button>
+                <br />
+                <br />
+                {addGiftButtonToggle && (
+                    <AddGift wedding={weddingData} liftState={liftState} />
+                )}
+          </div>
           <br />
           <br />
-          <Button
-            variant="primary"
-            onClick={() => setAddGiftButtonToggle(!addGiftButtonToggle)}
-          >
-            Add Gift
-          </Button>
-          <br />
-          <br />
-          {addGiftButtonToggle && (
-            <AddGift wedding={weddingData} liftState={liftState} />
-          )}
-          <br />
-          <ListGroup>
-            <Row xs={2} md={4} lg={5} className="g-4">
-              {weddingData.gifts.map((gift) => {
-                return (
-                  <ListGroup.Item key={gift.id}>
-                    <Col>
-                      <GiftCard gift={gift} liftState={liftState} />
-                      <br />
-                    </Col>
-                  </ListGroup.Item>
-                );
-              })}
-            </Row>
-          </ListGroup>
           <Button variant="danger" onClick={deleteWedding}>
             Delete Wedding
           </Button>
