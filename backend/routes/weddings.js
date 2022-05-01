@@ -10,6 +10,7 @@ const checker = require("../data/checker");
 const { ObjectId } = require("mongodb");
 const { exist } = require("mongodb/lib/gridfs/grid_store");
 const { getByAttendee } = require("../data/weddings");
+const gm = require("gm").subClass({ imageMagick: true });
 
 // GET localhost:3001/weddings
 // Returns all weddings from the weddings collection
@@ -243,7 +244,10 @@ router.delete("/:id/attendee/:attendeeId", async (req, res) => {
   }
   // Perform the delete
   try {
-    const updatedWedding = await weddingData.removeAttendee(req.params.id, req.params.attendeeId);
+    const updatedWedding = await weddingData.removeAttendee(
+      req.params.id,
+      req.params.attendeeId
+    );
     res.json(updatedWedding);
   } catch (e) {
     res.status(500).json({ message: e });
@@ -560,7 +564,8 @@ router.patch("/:id/attendee/:attendeeId", async (req, res) => {
   if (!attendInfo.Email) attendInfo.Email = existingAttend.Email;
   if (!attendInfo.Attending) attendInfo.Attending = existingAttend.Attending;
   if (!attendInfo.extras) attendInfo.extras = existingAttend.extras;
-  if (!attendInfo.foodChoices) attendInfo.foodChoices = existingAttend.foodChoices;
+  if (!attendInfo.foodChoices)
+    attendInfo.foodChoices = existingAttend.foodChoices;
   attendInfo._id = ObjectId(req.params.attendeeId);
   try {
     const editAttendee = await weddingData.editAttendee(
@@ -621,6 +626,15 @@ router.patch("/:id/image/:imageId", async (req, res) => {
         req.body.imageBinary.replace(/^data:image\/\w+;base64,/, ""),
         "base64"
       );
+      // IMAGEMAGICK CODE to resize
+      gm(buf).identify(function (err, _) {
+        if (err) {
+          console.log(err);
+          res.sendStatus(500);
+          return;
+        }
+      });
+      gm(buf).resize(960, 960);
       let s3Data = {
         Bucket: "weddio",
         Key: req.params.imageId,
@@ -683,6 +697,15 @@ router.put("/:id/image", async (req, res) => {
         req.body.imageBinary.replace(/^data:image\/\w+;base64,/, ""),
         "base64"
       );
+      // IMAGEMAGICK CODE to resize
+      gm(buf).identify(function (err, value) {
+        if (err) {
+          console.log(err);
+          res.sendStatus(500);
+          return;
+        }
+      });
+      gm(buf).resize(960, 960);
       let s3Data = {
         Bucket: "weddio",
         Key: String(newID),
