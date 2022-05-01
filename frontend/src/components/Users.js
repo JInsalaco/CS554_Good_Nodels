@@ -8,6 +8,7 @@ import WeddingModal from "./WeddingModal";
 import GiftCard from "./GiftCard";
 import { Button, Col, Container, ListGroup, Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Photos from "./Photos";
 
 function Users() {
   const [weddingData, setWeddingData] = useState(null);
@@ -151,6 +152,9 @@ function Users() {
               >
                 Add Gift
               </Button>
+              <br />
+              <br />
+              <Photos weddingID={weddingData._id} />
             </>
           )}
         </Container>
