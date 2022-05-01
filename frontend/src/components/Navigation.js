@@ -68,10 +68,10 @@ const NavigationNonAuth = () => {
             Landing
           </Nav.Link>
           <Nav.Link href="/signup" className="active">
-            Sign-Up
+            Sign up
           </Nav.Link>
           <Nav.Link href="/signin" className="active">
-            Sign-In
+            Sign in
           </Nav.Link>
         </Nav>
       </Container>

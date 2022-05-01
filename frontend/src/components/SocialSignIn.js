@@ -9,18 +9,21 @@ const SocialSignIn = () => {
       alert(error);
     }
   };
+
   return (
     <div>
-      <img
-        onClick={() => socialSignOn('google')}
-        alt='google signin'
-        src='/imgs/btn_google_signin.png'
-      />
-      <img
-        onClick={() => socialSignOn('facebook')}
-        alt='google signin'
-        src='/imgs/facebook_signin.png'
-      />
+    <div class = 'd-flex justify-content-center'>
+        <a class="fb-btn btn-lg social-btn" onClick={() => socialSignOn('facebook')}
+          role='button'>
+          <i class="fa fa-facebook fa-fw"></i> Continue with Facebook
+        </a>
+    </div>
+    <div class = 'd-flex justify-content-center'>
+        <a class="google-btn btn-lg social-btn" onClick={() => socialSignOn('google')}
+            role="button">
+            <i class="fab fa-google me-2"></i>Continue with Google
+        </a>
+    </div>
     </div>
   );
 };
