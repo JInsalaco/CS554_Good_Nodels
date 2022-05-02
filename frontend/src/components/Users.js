@@ -2,11 +2,10 @@ import firebase from "firebase/app";
 import React, { useState, useEffect } from "react";
 import "../App.css";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 import AddGift from "./AddGift";
 import WeddingModal from "./WeddingModal";
 import GiftCard from "./GiftCard";
-import { Button, Col, Container, ListGroup, Row } from "react-bootstrap";
+import { Button, Col, ListGroup, Row, Card } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Photos from "./Photos";
 
@@ -20,7 +19,7 @@ function Users() {
   const user = firebase.auth().currentUser;
   const email = user.email;
 
-  useEffect(async () => {
+  useEffect(() => {
     async function fetchData() {
       try {
         const { data } = await axios.get(
@@ -43,7 +42,7 @@ function Users() {
       }
     }
     console.log(1);
-    await fetchData();
+    fetchData();
   }, [email, updateWeddingData]);
 
   async function updateGifts(wedding) {
@@ -71,13 +70,15 @@ function Users() {
     );
   } else {
     return (
-      <div>
-        <br />
-        <br />
-        <Container className="container">
+      <Card>
+      <Card.Body>
+        <Card.Title className='mb-4'>
+          <h1>Your Wedding</h1>
+        </Card.Title>
           <Button
             variant="primary"
             onClick={() => setWeddingModalToggle(!weddingModalToggle)}
+            className='mb-4'
           >
             {weddingData ? "Edit" : "Create"} Wedding
           </Button>
@@ -91,9 +92,8 @@ function Users() {
           )}
           {weddingData && (
             <>
-              <br />
               <h2>{weddingData.title}</h2>
-              <h3>
+              <h3 className='wedding-label'>
                 {weddingData.date.day} {weddingData.date.month}{" "}
                 {weddingData.date.year}
               </h3>
@@ -157,8 +157,8 @@ function Users() {
               <Photos weddingID={weddingData._id} />
             </>
           )}
-        </Container>
-      </div>
+      </Card.Body>
+      </Card>
     );
   }
 }

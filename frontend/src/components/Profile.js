@@ -3,22 +3,31 @@ import {AuthContext} from '../firebase/Auth';
 import {Container, Row, Card, Col, ListGroup, ListGroupItem} from 'react-bootstrap'
 import Users from "./Users";
 import AttendingWeddings from "./AttendingWeddings";
-import { List } from "@material-ui/core";
+import ChangePassword from "./ChangePassword";
 
 
 const Profile = () => {
     const { currentUser } = useContext(AuthContext);
     console.log(currentUser);
     return (
+        <div className='profile-page'>
         <Container>
             <Row>
-                <Col sm={7}>
-                    <h1>Your Weddings</h1>
-                    <Fragment>
-                        <Users/>
-                    </Fragment>
+                <Col sm={7} className='d-inline-block vertical-spacing'>
+                    <Row className='mb-4 justify-content-center'>
+                        <Fragment>
+                            <Users/>
+                        </Fragment>
+                    </Row>
+                    <Row className='mb-4'>
+                        <h1>Your Invites</h1>
+                        <Fragment>
+                            <AttendingWeddings/>
+                        </Fragment>
+                    </Row>
                 </Col>
-                <Col sm={5}>
+                <Col sm={4}>
+                    <Row className='mb-4'>
                     <Card>
                         <Card.Body>
                             <Card.Title>
@@ -36,11 +45,16 @@ const Profile = () => {
                             </ListGroup>
                         </Card.Body>
                     </Card>
+                    </Row>
+                    <Row className='mb-4'>
+                        <Fragment>
+                            <ChangePassword/>
+                        </Fragment>
+                    </Row>
                 </Col>
             </Row>
-            <Row>
-            </Row>
         </Container>
+        </div>
     );
 }
 

@@ -49,6 +49,9 @@ function App() {
           />
         </Routes>
       </Router>
+      <footer>
+        <p>&copy;Weddio 2022 All rights reserved</p>
+      </footer>
     </AuthProvider>
   );
 }

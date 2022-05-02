@@ -1,9 +1,7 @@
 import React, { useContext } from "react";
-import { NavLink } from "react-router-dom";
-import { Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
+import { Container, Nav,Navbar } from "react-bootstrap";
 import { AuthContext } from "../firebase/Auth";
 import SignOutButton from "./SignOut";
-import Profile from './Profile';
 
 import "../App.css";
 
@@ -31,14 +29,8 @@ const NavigationAuth = ({ currentUser }) => {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/" className="active">
-              Landing
-            </Nav.Link>
             <Nav.Link href="/home" className="active">
               Home
-            </Nav.Link>
-            <Nav.Link href="/account" className="active">
-              Account
             </Nav.Link>
             <Nav.Link href="/weddings/wedding" className="active">
               Wedding

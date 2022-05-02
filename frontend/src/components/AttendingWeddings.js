@@ -2,12 +2,10 @@ import firebase from "firebase/app";
 import React, { useState, useEffect } from "react";
 import "../App.css";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
     Card,
     CardHeader,
-    CardMedia,
     Grid,
     makeStyles,
     Button
@@ -59,7 +57,7 @@ function AttendingWeddings() {
   let list = null;
   const classes = useStyles();
 
-  useEffect(async () => {
+  useEffect(() => {
     async function fetchData() {
       try {
         const data = await axios.get(
@@ -74,13 +72,12 @@ function AttendingWeddings() {
         setError(e);
       }
     }
-    await fetchData();
+    fetchData();
   }, [email]);
 
   const buildList= (wedding) => {
     return (
         <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={wedding.id}>
-            
                 <Card className={classes.card} variant="outlined">
                     <CardHeader className={classes.titleHead} title={wedding.title} />
                   <br/>

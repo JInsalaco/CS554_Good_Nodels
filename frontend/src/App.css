@@ -159,3 +159,23 @@
   font-size: 16px;
   color: #6b6b83;
 }
+
+.wedding-label {
+  font-size: 24px;
+  margin-bottom: 0rem;
+  color: black;
+}
+.wedding-display {
+  font-size: 22px;
+  color: #6b6b83;
+}
+
+.vertical-spacing {
+  margin-right: 40px;
+}
+
+.profile-page {
+  background-color: lightgray;
+  padding-top: 20px;
+  padding-bottom: 40px;
+}
