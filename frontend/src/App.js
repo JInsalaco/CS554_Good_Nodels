@@ -27,14 +27,10 @@ function App() {
           </header>
         </div>
         <Routes>
-          <Route exact path="/" element={<Landing />} />
+          <Route exact path="/" element={<Home />} />
           <Route path="/home" element={<PrivateRoute />}>
             <Route path="/home" element={<Home />} />
           </Route>
-          <Route path="/account" element={<PrivateRoute />}>
-            <Route path="/account" element={<Account />} />
-          </Route>
-
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/weddings/:id" element={<Wedding />} />
@@ -42,16 +38,15 @@ function App() {
           <Route path='/weddings/attending/' element={<AttendingWeddings />} />
           <Route path="/gifts/:id" element={<GiftPage />}></Route>
           <Route path="/events" element={<Events />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<PrivateRoute />}>
+            <Route path="/profile" element={<Profile />} />
+          </Route>
           <Route
             path="/photos"
             element={<Photos weddingID={"625f219d7b7531954b932973"} />}
           />
         </Routes>
       </Router>
-      <footer>
-        <p>&copy;Weddio 2022 All rights reserved</p>
-      </footer>
     </AuthProvider>
   );
 }
