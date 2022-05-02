@@ -12,10 +12,10 @@ import SignUp from "./components/SignUp";
 import Wedding from "./components/Wedding";
 import { AuthProvider } from "./firebase/Auth";
 import Events from "./components/Events";
-import Photos from "./components/Photos";
 import Users from "./components/Users";
 import Profile from "./components/Profile";
-import AttendingWeddings from './components/AttendingWeddings'
+import AttendingWeddings from "./components/AttendingWeddings";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
@@ -33,18 +33,25 @@ function App() {
           </Route>
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/weddings/:id" element={<Wedding />} />
-          <Route path='/weddings/wedding/' element={<Users />} />
-          <Route path='/weddings/attending/' element={<AttendingWeddings />} />
-          <Route path="/gifts/:id" element={<GiftPage />}></Route>
-          <Route path="/events" element={<Events />} />
+          <Route path="/weddings/:id" element={<PrivateRoute />}>
+            <Route path="/weddings/:id" element={<Wedding />} />
+          </Route>
+          <Route path="/weddings/wedding" element={<PrivateRoute />}>
+            <Route path="/weddings/wedding" element={<Users />} />
+          </Route>
+          <Route path="/weddings/attending" element={<PrivateRoute />}>
+            <Route path="/weddings/attending" element={<AttendingWeddings />} />
+          </Route>
+          <Route path="/gifts/:id" element={<PrivateRoute />}>
+            <Route path="/gifts/:id" element={<GiftPage />} />
+          </Route>
+          <Route path="/events" element={<PrivateRoute />}>
+            <Route path="/events" element={<Events />} />
+          </Route>
           <Route path="/profile" element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
           </Route>
-          <Route
-            path="/photos"
-            element={<Photos weddingID={"625f219d7b7531954b932973"} />}
-          />
+          <Route path="*" element={<NotFound />} status={404} />
         </Routes>
       </Router>
     </AuthProvider>

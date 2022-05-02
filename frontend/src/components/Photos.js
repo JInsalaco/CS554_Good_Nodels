@@ -107,7 +107,11 @@ function Photos(props) {
       alert("You must fill out all details!");
       return;
     }
-    if (photoFile && photoFile.type !== "image/jpeg") {
+    if (
+      photoFile &&
+      photoFile.type !== "image/jpeg" &&
+      photoFile.type !== "image/png"
+    ) {
       alert("Invalid photo type!");
       return;
     }
@@ -143,7 +147,11 @@ function Photos(props) {
       alert("You must fill out all details!");
       return;
     }
-    if (photoFile && photoFile.type !== "image/jpeg") {
+    if (
+      photoFile &&
+      photoFile.type !== "image/jpeg" &&
+      photoFile.type !== "image/png"
+    ) {
       alert("Invalid photo type!");
       return;
     }
