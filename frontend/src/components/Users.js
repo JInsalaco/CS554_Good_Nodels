@@ -5,7 +5,7 @@ import axios from "axios";
 import AddGift from "./AddGift";
 import WeddingModal from "./WeddingModal";
 import GiftCard from "./GiftCard";
-import { Button, Col, ListGroup, Row, Card } from "react-bootstrap";
+import { Button, Col, ListGroup, Row, Card, Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Photos from "./Photos";
 
