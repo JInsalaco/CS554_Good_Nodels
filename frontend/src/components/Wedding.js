@@ -30,7 +30,7 @@ function Wedding() {
   }
 
   async function deleteWedding() {
-    const { data } = await axios.delete(
+    await axios.delete(
       `http://localhost:3001/weddings/${weddingData._id}`
     );
     navigate("/");
