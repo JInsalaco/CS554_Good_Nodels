@@ -25,30 +25,34 @@ function AddGift(props) {
 
   return (
     <div>
-      <div>
-        <label>
+      <div className='form-outline mb-4'>
+        <label style={{ textAlign: 'left' }}>
           Title:
-          <input type='text' onChange={(e) => handleChange(e)} id='title' name='title' placeholder='Gift Title' />
+          <input className='form-control' type='text' onChange={(e) => handleChange(e)} id='title' name='title' placeholder='Gift Title' />
         </label>
         <br />
-        <label>
+        <br />
+        <label style={{ textAlign: 'left' }}>
           Price:
-          <input type='number' min='0' onChange={(e) => handleChange(e)} id='price' name='price' placeholder='Gift Price' />
+          <input className='form-control' type='number' min='0' onChange={(e) => handleChange(e)} id='price' name='price' placeholder='Gift Price' />
         </label>
         <br />
-        <label>
+        <br />
+        <label style={{ textAlign: 'left' }}>
           URL:
-          <input type='text' onChange={(e) => handleChange(e)} id='url' name='url' placeholder='Gift URL' />
+          <input className='form-control' type='text' onChange={(e) => handleChange(e)} id='url' name='url' placeholder='Gift URL' />
         </label>
         <br />
-        <label>
+        <br />
+        <label style={{ textAlign: 'left' }}>
           Picture:
-          <input type='text' onChange={(e) => handleChange(e)} id='picture' name='picture' placeholder='Gift Picture' />
+          <input className='form-control' type='text' onChange={(e) => handleChange(e)} id='picture' name='picture' placeholder='Gift Picture' />
         </label>
         <br />
-        <label>
+        <br />
+        <label style={{ textAlign: 'left' }}>
           Description:
-          <input type='text' onChange={(e) => handleChange(e)} id='description' name='description' placeholder='Gift Description' />
+          <input className='form-control' type='text' onChange={(e) => handleChange(e)} id='description' name='description' placeholder='Gift Description' />
         </label>
       </div>
       <br />
