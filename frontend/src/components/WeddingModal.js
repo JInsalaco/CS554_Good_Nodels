@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import firebase from "firebase/app";
 import "../App.css";
 import axios from "axios";
-import { Button, Card, Form, Modal } from "react-bootstrap";
+import { Button,Form, Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const longMonths = {
-  0: "January",
-  1: "February",
-  2: "March",
-  3: "April",
-  4: "May",
-  5: "June",
-  6: "July",
-  7: "August",
-  8: "September",
-  9: "October",
-  10: "November",
-  11: "December",
+  1: "January",
+  2: "February",
+  3: "March",
+  4: "April",
+  5: "May",
+  6: "June",
+  7: "July",
+  8: "August",
+  9: "September",
+  10: "October",
+  11: "November",
+  12: "December",
 };
 
 function WeddingModal(props) {
@@ -27,13 +27,28 @@ function WeddingModal(props) {
   const [venue, setVenue] = useState("");
   const [date, setDate] = useState("");
   const [rsvpDeadline, setRsvpDeadline] = useState("");
-  const [loading, setLoading] = useState(false);
   const [invalid, setInvalid] = useState(false);
 
 
   const { setUpdateWeddingData, setWeddingModalToggle, weddingData, type } =
     props;
   
+  let rsvpDate; 
+  let weddingDate;
+  let formWeddingDate;
+  let formRsvp;
+  
+  if(weddingData){
+      rsvpDate = new Date(`${weddingData.rsvpDeadline.year}-${weddingData.rsvpDeadline.month}-${weddingData.rsvpDeadline.day}`)
+      console.log(rsvpDate)
+      weddingDate = new Date(`${weddingData.date.year}-${weddingData.date.month}-${weddingData.date.day}`)
+      formRsvp = new Date(rsvpDate).toISOString().split("T")[0]
+      formWeddingDate = new Date(weddingDate).toISOString().split("T")[0]
+    } else {
+      formRsvp = '';
+      formWeddingDate = '';
+    }
+
   const handleChange = (e) => {
     let updatedValue = { [e.target.name]: e.target.value };
     setFormData((prev) => ({ ...prev, ...updatedValue }));
@@ -42,8 +57,10 @@ function WeddingModal(props) {
   const dateStrToObj = (dateStr) => {
     let dateArr = dateStr.split("-");
     let year = parseInt(dateArr[0]);
-    let month = longMonths[parseInt(dateArr[1]) + 1];
+    console.log(dateArr[1])
+    let month = longMonths[parseInt(dateArr[1])];
     let day = parseInt(dateArr[2]);
+    console.log(year, month, day)
     return { year, month, day };
   };
 
@@ -52,6 +69,7 @@ function WeddingModal(props) {
       setInvalid(true);
       return;
     }
+    dateStrToObj(date)
     const formData = {
       title: title,
       venue: venue,
@@ -110,7 +128,7 @@ function WeddingModal(props) {
             <Form.Label>Title</Form.Label>
             <Form.Control
               type="text"
-              placeholder={!weddingData ? '' : weddingData.title}
+              defaultValue={weddingData ? weddingData.title : ''}
               onChange={(e) => setTitle(e.target.value)}
               required
             />
@@ -119,7 +137,7 @@ function WeddingModal(props) {
             <Form.Label>Venue</Form.Label>
             <Form.Control
               type="text"
-              placeholder={!weddingData ? '' : weddingData.venue}
+              defaultValue={weddingData ? weddingData.venue : ''}
               onChange={(e) => setVenue(e.target.value)}
               required
             />
@@ -128,6 +146,7 @@ function WeddingModal(props) {
             <Form.Label>Date</Form.Label>
             <Form.Control
               type="date"
+              defaultValue={formWeddingDate}
               onChange={(e) => setDate(e.target.value)}
               required
             />
@@ -136,6 +155,7 @@ function WeddingModal(props) {
             <Form.Label>RSVP Deadline</Form.Label>
             <Form.Control
               type="date"
+              defaultValue={formRsvp}
               onChange={(e) => setRsvpDeadline(e.target.value)}
               required
             />
