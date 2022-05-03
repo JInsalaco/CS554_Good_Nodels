@@ -71,14 +71,14 @@ function Users() {
   } else {
     return (
       <Card>
-      <Card.Body>
-        <Card.Title className='mb-4'>
-          <h1>Your Wedding</h1>
-        </Card.Title>
+        <Card.Body>
+          <Card.Title className="mb-4">
+            <h1>Your Wedding</h1>
+          </Card.Title>
           <Button
             variant="primary"
             onClick={() => setWeddingModalToggle(!weddingModalToggle)}
-            className='mb-4'
+            className="mb-4"
           >
             {weddingData ? "Edit" : "Create"} Wedding
           </Button>
@@ -93,7 +93,7 @@ function Users() {
           {weddingData && (
             <>
               <h2>{weddingData.title}</h2>
-              <h3 className='wedding-label'>
+              <h3 className="wedding-label">
                 {weddingData.date.day} {weddingData.date.month}{" "}
                 {weddingData.date.year}
               </h3>
@@ -126,7 +126,9 @@ function Users() {
                 })}
               </ul>
               <div className="gift-div">
-                <h6 style={{ float: "left" }}>Gift Registry for {weddingData.title}:</h6>
+                <h6 style={{ float: "left" }}>
+                  Gift Registry for {weddingData.title}:
+                </h6>
                 <br />
                 <br />
                 <Container>
@@ -136,7 +138,11 @@ function Users() {
                         return (
                           <ListGroup.Item key={gift.id}>
                             <Col>
-                              <GiftCard gift={gift} liftState={updateGifts} canEdit={true} />
+                              <GiftCard
+                                gift={gift}
+                                liftState={updateGifts}
+                                canEdit={true}
+                              />
                               <br />
                             </Col>
                           </ListGroup.Item>
@@ -147,7 +153,10 @@ function Users() {
                 </Container>
                 <br />
                 <br />
-                <Button variant="primary" onClick={() => setAddGiftButtonToggle(!addGiftButtonToggle)}>
+                <Button
+                  variant="primary"
+                  onClick={() => setAddGiftButtonToggle(!addGiftButtonToggle)}
+                >
                   Add Gift
                 </Button>
                 <br />
@@ -156,10 +165,10 @@ function Users() {
                   <AddGift wedding={weddingData} liftState={updateGifts} />
                 )}
               </div>
-              <Photos weddingID={weddingData._id} />
+              <Photos weddingID={weddingData._id} canEdit={true} />
             </>
           )}
-      </Card.Body>
+        </Card.Body>
       </Card>
     );
   }
