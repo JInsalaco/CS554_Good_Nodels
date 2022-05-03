@@ -32,8 +32,16 @@ function GiftCard(props) {
                         <Link to={`/gifts/${props.gift._id}`}>{props.gift.title}</Link>
                     </Card.Title>
                 </Card.Body>
-                <Button variant='secondary' onClick={handleOpenModal}>Edit Gift</Button>
-                <Button variant='danger' onClick={removeGift}>Remove Gift</Button>
+                {props.canEdit && (
+                    <Button variant='secondary' onClick={handleOpenModal}>
+                        Edit Gift
+                    </Button>
+                )}
+                {props.canEdit && (
+                    <Button variant='danger' onClick={removeGift}>
+                        Remove Gift
+                    </Button>
+                )}
                 <br />
             </Card>
             {editGiftModal && <EditGift isOpen={editGiftModal} handleCloseModal={handleCloseModal} gift={props.gift} liftState={props.liftState} />}

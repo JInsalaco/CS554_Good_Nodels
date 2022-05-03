@@ -148,7 +148,7 @@ function Wedding() {
                     return (
                       <ListGroup.Item key={gift.id}>
                         <Col>
-                          <GiftCard gift={gift} liftState={liftState} />
+                          <GiftCard gift={gift} liftState={liftState} canEdit={canEdit} />
                           <br />
                         </Col>
                       </ListGroup.Item>

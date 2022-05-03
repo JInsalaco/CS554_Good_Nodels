@@ -136,7 +136,7 @@ function Users() {
                         return (
                           <ListGroup.Item key={gift.id}>
                             <Col>
-                              <GiftCard gift={gift} liftState={updateGifts} />
+                              <GiftCard gift={gift} liftState={updateGifts} canEdit={true} />
                               <br />
                             </Col>
                           </ListGroup.Item>
