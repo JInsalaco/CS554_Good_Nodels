@@ -134,7 +134,7 @@ function Wedding() {
           {addAttendeeButtonToggle && (
             <AddAttendee weddingData={weddingData} liftState={liftState} />
           )}
-          <Attendees weddingData={weddingData} liftState={liftState} />
+          <Attendees weddingData={weddingData} canEdit={canEdit} liftState={liftState} />
           <div className="gift-div">
             <h7 style={{ float: "left" }}>
               Gift Registry for {weddingData.title}:

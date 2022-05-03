@@ -18,7 +18,7 @@ function Attendees(props) {
         <Container>
             <ListGroup>
                 <Row xs={2} md={4} lg={5} className="g-4">
-                    {weddingData.attendees.map((attendee,index) => {
+                    {weddingData.attendees.map((attendee, index) => {
                         return (
                             <ListGroup.Item key={attendee._id + index}>
                                 <Col>
@@ -34,13 +34,15 @@ function Attendees(props) {
                                                 return <Card.Text>{choice}</Card.Text>;
                                             })}
                                         </Card.Body>
-                                        <Button
-                                            variant="danger"
-                                            value={attendee._id}
-                                            onClick={(e) => removeAttendee(e.target.value)}
-                                        >
-                                            Remove Attendee
-                                        </Button>
+                                        {props.canEdit && (
+                                            <Button
+                                                variant="danger"
+                                                value={attendee._id}
+                                                onClick={(e) => removeAttendee(e.target.value)}
+                                            >
+                                                Remove Attendee
+                                            </Button>
+                                        )}
                                     </Card>
                                 </Col>
                             </ListGroup.Item>
