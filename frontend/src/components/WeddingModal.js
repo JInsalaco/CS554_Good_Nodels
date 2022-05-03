@@ -30,9 +30,10 @@ function WeddingModal(props) {
   const [loading, setLoading] = useState(false);
   const [invalid, setInvalid] = useState(false);
 
+
   const { setUpdateWeddingData, setWeddingModalToggle, weddingData, type } =
     props;
-
+  
   const handleChange = (e) => {
     let updatedValue = { [e.target.name]: e.target.value };
     setFormData((prev) => ({ ...prev, ...updatedValue }));
@@ -109,32 +110,34 @@ function WeddingModal(props) {
             <Form.Label>Title</Form.Label>
             <Form.Control
               type="text"
-              value={weddingData.title}
+              placeholder={!weddingData ? '' : weddingData.title}
               onChange={(e) => setTitle(e.target.value)}
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Venue</Form.Label>
             <Form.Control
               type="text"
-              value={weddingData.venue}
+              placeholder={!weddingData ? '' : weddingData.venue}
               onChange={(e) => setVenue(e.target.value)}
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="date">
             <Form.Label>Date</Form.Label>
             <Form.Control
               type="date"
-              value={weddingData.date}
               onChange={(e) => setDate(e.target.value)}
+              required
             />
           </Form.Group>
           <Form.Group controlId="rsvpdeadline">
             <Form.Label>RSVP Deadline</Form.Label>
             <Form.Control
               type="date"
-              value={weddingData.rsvpDeadline}
               onChange={(e) => setRsvpDeadline(e.target.value)}
+              required
             />
           </Form.Group>
         </Form>
