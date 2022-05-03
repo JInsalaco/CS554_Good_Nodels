@@ -55,6 +55,11 @@ function Users() {
     setWeddingData(wedding);
   }
 
+  async function deleteWedding() {
+    console.log(weddingData._id)
+    await axios.delete(`http://localhost:3001/weddings/${weddingData._id}`);
+  }
+
   if (loading) {
     return (
       <div>
@@ -75,21 +80,30 @@ function Users() {
           <Card.Title className="mb-4">
             <h1>Your Wedding</h1>
           </Card.Title>
-          <Button
-            variant="primary"
-            onClick={() => setWeddingModalToggle(!weddingModalToggle)}
-            className="mb-4"
-          >
-            {weddingData ? "Edit" : "Create"} Wedding
-          </Button>
-          {weddingModalToggle && (
-            <WeddingModal
-              setWeddingModalToggle={setWeddingModalToggle}
-              setUpdateWeddingData={setUpdateWeddingData}
-              type={weddingData ? "EDIT" : "CREATE"}
-              weddingData={weddingData}
-            />
-          )}
+          <Row>
+              <Col className='edit-delete'>
+              <Button
+                variant="primary"
+                onClick={() => setWeddingModalToggle(!weddingModalToggle)}
+                className="mb-4"
+                >
+                {weddingData ? "Edit" : "Create"} Wedding
+              </Button>
+                {weddingModalToggle && (
+                  <WeddingModal
+                    setWeddingModalToggle={setWeddingModalToggle}
+                    setUpdateWeddingData={setUpdateWeddingData}
+                    type={weddingData ? "EDIT" : "CREATE"}
+                    weddingData={weddingData}
+                  />
+                )}
+              </Col>
+              <Col className='edit-delete'>
+                <Button variant="danger" onClick={deleteWedding}>
+                    Delete Wedding
+                </Button>
+              </Col>
+            </Row>
           {weddingData && (
             <>
               <h2>{weddingData.title}</h2>
@@ -113,7 +127,7 @@ function Users() {
               
               <h4 className='wedding-label'>Events: </h4>
               <h4 className='wedding-display'>{weddingData.events < 1 && "None"}</h4>
-              <ul>
+              <ul className='mt-0 mb-0'>
                 {weddingData.events.map((event) => {
                   return (
                     <li key={event._id}>
@@ -135,7 +149,7 @@ function Users() {
                 })}
               </ul>
               <div className="gift-div">
-                <h4 className='wedding-labe' style={{ float: "left" }}>
+                <h4 className='wedding-label' style={{ float: "left" }}>
                   Gift Registry for {weddingData.title}:
                 </h4>
                 <br />

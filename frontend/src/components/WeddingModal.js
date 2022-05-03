@@ -109,6 +109,7 @@ function WeddingModal(props) {
             <Form.Label>Title</Form.Label>
             <Form.Control
               type="text"
+              value={weddingData.title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </Form.Group>
@@ -116,6 +117,7 @@ function WeddingModal(props) {
             <Form.Label>Venue</Form.Label>
             <Form.Control
               type="text"
+              value={weddingData.venue}
               onChange={(e) => setVenue(e.target.value)}
             />
           </Form.Group>
@@ -123,6 +125,7 @@ function WeddingModal(props) {
             <Form.Label>Date</Form.Label>
             <Form.Control
               type="date"
+              value={weddingData.date}
               onChange={(e) => setDate(e.target.value)}
             />
           </Form.Group>
@@ -130,6 +133,7 @@ function WeddingModal(props) {
             <Form.Label>RSVP Deadline</Form.Label>
             <Form.Control
               type="date"
+              value={weddingData.rsvpDeadline}
               onChange={(e) => setRsvpDeadline(e.target.value)}
             />
           </Form.Group>
