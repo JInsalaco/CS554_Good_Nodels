@@ -304,7 +304,7 @@ function Photos(props) {
   } else {
     return (
       <div className="photo-div">
-        <h6 style={{ float: "left" }}>Photos of {weddingName}:</h6>
+        <h4 className='wedding-label' style={{ float: "left" }}>Photos of {weddingName}:</h4>
         <br />
         <br />
         <Container>

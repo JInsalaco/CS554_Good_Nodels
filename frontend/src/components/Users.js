@@ -93,18 +93,26 @@ function Users() {
           {weddingData && (
             <>
               <h2>{weddingData.title}</h2>
-              <h3 className='wedding-label'>
+              <h3 className='wedding-label'>Wedding Date:</h3>
+              <h3 className='wedding-display'>
                 {weddingData.date.day} {weddingData.date.month}{" "}
                 {weddingData.date.year}
               </h3>
-              <h4>{weddingData.venue}</h4>
-              <h5>
-                RSVP Deadline: {weddingData.rsvpDeadline.day}{" "}
+              
+              <h4 className='wedding-label'>Venue: </h4>
+              <h4 className='wedding-display'>{weddingData.venue}</h4>
+              
+              <h4 className='wedding-label'>RSVP Deadline: </h4>
+              <h4 className='wedding-display'>
+                {weddingData.rsvpDeadline.day}{" "}
                 {weddingData.rsvpDeadline.month} {weddingData.rsvpDeadline.year}
-              </h5>
-              <h6>{weddingData.contactPerson}</h6>
-
-              <h6>Events: {weddingData.events < 1 && "None"}</h6>
+              </h4>
+              
+              <h4 className='wedding-label'>Contact Person: </h4>
+              <h4 className='wedding-display'>{weddingData.contactPerson}</h4>
+              
+              <h4 className='wedding-label'>Events: </h4>
+              <h4 className='wedding-display'>{weddingData.events < 1 && "None"}</h4>
               <ul>
                 {weddingData.events.map((event) => {
                   return (
@@ -119,14 +127,15 @@ function Users() {
                   );
                 })}
               </ul>
-              <h6>Attendees: {weddingData.attendees.length < 1 && "None"}</h6>
+              <h4 className='wedding-label'>Attendees: </h4>
+              <h4 className='wedding-display'>{weddingData.attendees.length < 1 && "None"}</h4>
               <ul>
                 {weddingData.attendees.map((attendee) => {
                   return <li key={attendee._id}>{attendee.name}</li>;
                 })}
               </ul>
               <div className="gift-div">
-                <h6 style={{ float: "left" }}>Gift Registry for {weddingData.title}:</h6>
+                <h4 className='wedding-label' style={{ float: "left" }}>Gift Registry for {weddingData.title}:</h4>
                 <br />
                 <br />
                 <Container>
