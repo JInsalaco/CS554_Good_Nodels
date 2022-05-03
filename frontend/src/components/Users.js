@@ -56,8 +56,8 @@ function Users() {
   }
 
   async function deleteWedding() {
-    console.log(weddingData._id)
     await axios.delete(`http://localhost:3001/weddings/${weddingData._id}`);
+    setWeddingData(null)
   }
 
   if (loading) {
@@ -99,9 +99,9 @@ function Users() {
                 )}
               </Col>
               <Col className='edit-delete'>
-                <Button variant="danger" onClick={deleteWedding}>
+                {weddingData ? <Button variant="danger" onClick={deleteWedding}>
                     Delete Wedding
-                </Button>
+                </Button> : <></>}
               </Col>
             </Row>
           {weddingData && (
@@ -175,14 +175,12 @@ function Users() {
                   </ListGroup>
                 </Container>
                 <br />
-                <br />
                 <Button
                   variant="primary"
                   onClick={() => setAddGiftButtonToggle(!addGiftButtonToggle)}
                 >
                   Add Gift
                 </Button>
-                <br />
                 <br />
                 {addGiftButtonToggle && (
                   <AddGift wedding={weddingData} liftState={updateGifts} />
