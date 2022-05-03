@@ -39,9 +39,8 @@ function WeddingModal(props) {
   let formRsvp;
   
   if(weddingData){
-      rsvpDate = new Date(`${weddingData.rsvpDeadline.year}-${weddingData.rsvpDeadline.month}-${weddingData.rsvpDeadline.day}`)
-      console.log(rsvpDate)
-      weddingDate = new Date(`${weddingData.date.year}-${weddingData.date.month}-${weddingData.date.day}`)
+      rsvpDate = new Date(Date.UTC(`${weddingData.rsvpDeadline.year}-${weddingData.rsvpDeadline.month}-${weddingData.rsvpDeadline.day}`))
+      weddingDate = new Date(Date.UTC(`${weddingData.date.year}-${weddingData.date.month}-${weddingData.date.day}`))
       formRsvp = new Date(rsvpDate).toISOString().split("T")[0]
       formWeddingDate = new Date(weddingDate).toISOString().split("T")[0]
     } else {
