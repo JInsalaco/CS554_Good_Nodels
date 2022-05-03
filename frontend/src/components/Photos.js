@@ -54,26 +54,30 @@ function Photos(props) {
             className="photo"
           ></Image>
           <div className="photo-buttons">
-            <Button
-              variant="primary"
-              onClick={() => {
-                setShowEdit(true);
-                setPhotoID(photo._id);
-              }}
-            >
-              Edit Image
-            </Button>
+            {props.canEdit && (
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setShowEdit(true);
+                  setPhotoID(photo._id);
+                }}
+              >
+                Edit Image
+              </Button>
+            )}
             <br />
             <br />
-            <Button
-              variant="primary"
-              onClick={() => {
-                setShowDelete(true);
-                setPhotoID(photo._id);
-              }}
-            >
-              Delete Image
-            </Button>
+            {props.canEdit && (
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setShowDelete(true);
+                  setPhotoID(photo._id);
+                }}
+              >
+                Delete Image
+              </Button>
+            )}
           </div>
         </Col>
       );
@@ -107,7 +111,11 @@ function Photos(props) {
       alert("You must fill out all details!");
       return;
     }
-    if (photoFile && photoFile.type !== "image/jpeg") {
+    if (
+      photoFile &&
+      photoFile.type !== "image/jpeg" &&
+      photoFile.type !== "image/png"
+    ) {
       alert("Invalid photo type!");
       return;
     }
@@ -143,7 +151,11 @@ function Photos(props) {
       alert("You must fill out all details!");
       return;
     }
-    if (photoFile && photoFile.type !== "image/jpeg") {
+    if (
+      photoFile &&
+      photoFile.type !== "image/jpeg" &&
+      photoFile.type !== "image/png"
+    ) {
       alert("Invalid photo type!");
       return;
     }
@@ -311,9 +323,11 @@ function Photos(props) {
           <Row>{images}</Row>
         </Container>
         <br /> <br />
-        <Button variant="primary" onClick={() => setShowAdd(true)}>
-          Add Image
-        </Button>
+        {props.canEdit && (
+          <Button variant="primary" onClick={() => setShowAdd(true)}>
+            Add Image
+          </Button>
+        )}
         {addModal}
         {editModal}
         {deleteModal}

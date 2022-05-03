@@ -7,6 +7,8 @@ import Attendees from "./Attendees";
 import AddGift from "./AddGift";
 import GiftCard from "./GiftCard";
 import { Button, Col, Container, ListGroup, Row } from "react-bootstrap";
+import Photos from "./Photos";
+import firebase from "firebase/app";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function Wedding() {
@@ -15,7 +17,9 @@ function Wedding() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
   const [addGiftButtonToggle, setAddGiftButtonToggle] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
   const [addAttendeeButtonToggle, setAddAttendeeButtonToggle] = useState(false);
+  const user = firebase.auth().currentUser;
 
   let { id } = useParams();
 
@@ -30,9 +34,7 @@ function Wedding() {
   }
 
   async function deleteWedding() {
-    await axios.delete(
-      `http://localhost:3001/weddings/${weddingData._id}`
-    );
+    await axios.delete(`http://localhost:3001/weddings/${weddingData._id}`);
     navigate("/");
   }
 
@@ -60,6 +62,27 @@ function Wedding() {
     }
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    if (!weddingData) return;
+    // Need to check if user is authorized to edit or view
+    let foundAttendee = false;
+    for (let i = 0; i < weddingData.attendees.length; i++) {
+      if (weddingData.attendees[i].email === user) {
+        foundAttendee = true;
+      }
+    }
+    if (!foundAttendee && user.email !== weddingData.contactPerson) {
+      return (
+        <div className="forbidden-div">
+          <h2>403 - You are not invited to this Wedding yet!</h2>
+        </div>
+      );
+    }
+    if (user.email === weddingData.contactPerson) {
+      setCanEdit(true);
+    }
+  }, [weddingData]);
 
   if (loading) {
     return (
@@ -98,54 +121,68 @@ function Wedding() {
           </ul>
           <h7>Attendees:</h7>
           <br />
-          <Button
-            variant="primary"
-            onClick={() => setAddAttendeeButtonToggle(!addAttendeeButtonToggle)}
-          >
-            Send Invitation
-          </Button>
-          <br />
-          <br />
+          {canEdit && (
+            <Button
+              variant="primary"
+              onClick={() =>
+                setAddAttendeeButtonToggle(!addAttendeeButtonToggle)
+              }
+            >
+              Send Invitation
+            </Button>
+          )}
           {addAttendeeButtonToggle && (
             <AddAttendee weddingData={weddingData} liftState={liftState} />
           )}
-          <Attendees weddingData={weddingData} liftState={liftState} />
+          <Attendees weddingData={weddingData} canEdit={canEdit} liftState={liftState} />
           <div className="gift-div">
-              <h7 style={{ float: "left" }}>Gift Registry for {weddingData.title}:</h7>
-              <br />
-              <br />
-              <Container>
-                  <ListGroup>
-                      <Row xs={1} md={2} lg={3} className="g-4">
-                          {weddingData.gifts.map((gift) => {
-                              return (
-                                <ListGroup.Item key={gift.id}>
-                                    <Col>
-                                        <GiftCard gift={gift} liftState={liftState} />
-                                        <br />
-                                    </Col>
-                                </ListGroup.Item>
-                                );
-                            })}
-                        </Row>
-                    </ListGroup>
-              </Container>
-              <br />
-              <br />
-              <Button variant="primary" onClick={() => setAddGiftButtonToggle(!addGiftButtonToggle)}>
-                  Add Gift
-                </Button>
-                <br />
-                <br />
-                {addGiftButtonToggle && (
-                    <AddGift wedding={weddingData} liftState={liftState} />
-                )}
+            <h7 style={{ float: "left" }}>
+              Gift Registry for {weddingData.title}:
+            </h7>
+            <br />
+            <br />
+            <Container>
+              <ListGroup>
+                <Row xs={1} md={2} lg={3} className="g-4">
+                  {weddingData.gifts.map((gift) => {
+                    return (
+                      <ListGroup.Item key={gift.id}>
+                        <Col>
+                          <GiftCard gift={gift} liftState={liftState} canEdit={canEdit} />
+                          <br />
+                        </Col>
+                      </ListGroup.Item>
+                    );
+                  })}
+                </Row>
+              </ListGroup>
+            </Container>
+            <br />
+            <br />
+            {canEdit && (
+              <Button
+                variant="primary"
+                onClick={() => setAddGiftButtonToggle(!addGiftButtonToggle)}
+              >
+                Add Gift
+              </Button>
+            )}
+            <br />
+            <br />
+            {addGiftButtonToggle && (
+              <AddGift wedding={weddingData} liftState={liftState} />
+            )}
           </div>
           <br />
           <br />
-          <Button variant="danger" onClick={deleteWedding}>
-            Delete Wedding
-          </Button>
+          <Photos weddingID={weddingData._id} canEdit={canEdit} />
+          <br />
+          <br />
+          {canEdit && (
+            <Button variant="danger" onClick={deleteWedding}>
+              Delete Wedding
+            </Button>
+          )}
         </Container>
       </div>
     );
