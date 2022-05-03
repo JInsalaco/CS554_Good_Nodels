@@ -13,7 +13,7 @@ const Profile = () => {
         <div className='profile-page'>
         <Container>
             <Row>
-                <Col sm={7} className='d-inline-block vertical-spacing'>
+                <Col sm={8} className='d-inline-block vertical-spacing'>
                     <Row className='mb-4 justify-content-center'>
                         <Fragment>
                             <Users/>
@@ -26,7 +26,7 @@ const Profile = () => {
                         </Fragment>
                     </Row>
                 </Col>
-                <Col sm={4}>
+                <Col sm={3}>
                     <Row className='mb-4'>
                     <Card>
                         <Card.Body>
