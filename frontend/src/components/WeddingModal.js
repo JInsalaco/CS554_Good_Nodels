@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import firebase from "firebase/app";
 import "../App.css";
 import axios from "axios";
-import { Button,Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const longMonths = {
@@ -29,24 +29,32 @@ function WeddingModal(props) {
   const [rsvpDeadline, setRsvpDeadline] = useState("");
   const [invalid, setInvalid] = useState(false);
 
-
   const { setUpdateWeddingData, setWeddingModalToggle, weddingData, type } =
     props;
-  
-  let rsvpDate; 
+
+  let rsvpDate;
   let weddingDate;
   let formWeddingDate;
   let formRsvp;
-  
-  if(weddingData){
-      rsvpDate = new Date(Date.UTC(`${weddingData.rsvpDeadline.year}-${weddingData.rsvpDeadline.month}-${weddingData.rsvpDeadline.day}`))
-      weddingDate = new Date(Date.UTC(`${weddingData.date.year}-${weddingData.date.month}-${weddingData.date.day}`))
-      formRsvp = new Date(rsvpDate).toISOString().split("T")[0]
-      formWeddingDate = new Date(weddingDate).toISOString().split("T")[0]
-    } else {
-      formRsvp = '';
-      formWeddingDate = '';
-    }
+
+  if (weddingData) {
+    rsvpDate = new Date(
+      Date.UTC(
+        `${weddingData.rsvpDeadline.year}-${weddingData.rsvpDeadline.month}-${weddingData.rsvpDeadline.day}`
+      )
+    );
+    weddingDate = new Date(
+      Date.UTC(
+        `${weddingData.date.year}-${weddingData.date.month}-${weddingData.date.day}`
+      )
+    );
+    // throwing errors when trying to parse date
+    // formRsvp = new Date(rsvpDate).toISOString().split("T")[0]
+    // formWeddingDate = new Date(weddingDate).toISOString().split("T")[0]
+  } else {
+    formRsvp = "";
+    formWeddingDate = "";
+  }
 
   const handleChange = (e) => {
     let updatedValue = { [e.target.name]: e.target.value };
@@ -56,10 +64,10 @@ function WeddingModal(props) {
   const dateStrToObj = (dateStr) => {
     let dateArr = dateStr.split("-");
     let year = parseInt(dateArr[0]);
-    console.log(dateArr[1])
+    console.log(dateArr[1]);
     let month = longMonths[parseInt(dateArr[1])];
     let day = parseInt(dateArr[2]);
-    console.log(year, month, day)
+    console.log(year, month, day);
     return { year, month, day };
   };
 
@@ -68,7 +76,7 @@ function WeddingModal(props) {
       setInvalid(true);
       return;
     }
-    dateStrToObj(date)
+    dateStrToObj(date);
     const formData = {
       title: title,
       venue: venue,
@@ -127,7 +135,7 @@ function WeddingModal(props) {
             <Form.Label>Title</Form.Label>
             <Form.Control
               type="text"
-              defaultValue={weddingData ? weddingData.title : ''}
+              defaultValue={weddingData ? weddingData.title : ""}
               onChange={(e) => setTitle(e.target.value)}
               required
             />
@@ -136,7 +144,7 @@ function WeddingModal(props) {
             <Form.Label>Venue</Form.Label>
             <Form.Control
               type="text"
-              defaultValue={weddingData ? weddingData.venue : ''}
+              defaultValue={weddingData ? weddingData.venue : ""}
               onChange={(e) => setVenue(e.target.value)}
               required
             />
