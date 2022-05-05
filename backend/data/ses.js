@@ -8,7 +8,7 @@ async function sendEmail(recipients,template){
 // Set the parameters
     const params = {
         Destination: {
-        /* required */
+            recipients,
         CcAddresses: [
             /* more CC email addresses */
         ],
