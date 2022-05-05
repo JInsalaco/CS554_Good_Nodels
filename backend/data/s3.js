@@ -2,7 +2,7 @@ require("dotenv").config();
 const fs = require("fs");
 const { s3Client } = require("../config/s3Client");
 // Enter the name of the bucket we are using for weddio
-const BUCKET_NAME = "weddio";
+const BUCKET_NAME = "weddio-images";
 
 
 // UPLOAD FILE TO S3
@@ -79,4 +79,5 @@ const deleteFile = (fileKey) => {
   }
 };
 
+uploadFile('C:/Users/Joseph/Documents/CS554_Good_Nodels/backend/data/cat.jpg')
 module.exports = { uploadFile, getFile, deleteFile, uploadImageBinary };
