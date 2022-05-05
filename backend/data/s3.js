@@ -79,5 +79,4 @@ const deleteFile = (fileKey) => {
   }
 };
 
-uploadFile('C:/Users/Joseph/Documents/CS554_Good_Nodels/backend/data/cat.jpg')
 module.exports = { uploadFile, getFile, deleteFile, uploadImageBinary };
