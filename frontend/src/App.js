@@ -36,8 +36,8 @@ function App() {
           <Route path="/weddings/:id" element={<PrivateRoute />}>
             <Route path="/weddings/:id" element={<Wedding />} />
           </Route>
-          <Route path="/weddings/wedding" element={<PrivateRoute />}>
-            <Route path="/weddings/wedding" element={<Users />} />
+          <Route path="/weddings/my-wedding" element={<PrivateRoute />}>
+            <Route path="/weddings/my-wedding" element={<Users />} />
           </Route>
           <Route path="/weddings/attending" element={<PrivateRoute />}>
             <Route path="/weddings/attending" element={<AttendingWeddings />} />

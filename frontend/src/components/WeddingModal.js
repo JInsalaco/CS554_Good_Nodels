@@ -130,7 +130,7 @@ function WeddingModal(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form noValidate validated={invalid}>
           <Form.Group className="mb-3">
             <Form.Label>Title</Form.Label>
             <Form.Control
@@ -138,7 +138,11 @@ function WeddingModal(props) {
               defaultValue={weddingData ? weddingData.title : ""}
               onChange={(e) => setTitle(e.target.value)}
               required
+              isValid={title.length > 0}
             />
+            <Form.Control.Feedback type="invalid">
+              Please input a title.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Venue</Form.Label>
@@ -148,6 +152,9 @@ function WeddingModal(props) {
               onChange={(e) => setVenue(e.target.value)}
               required
             />
+            <Form.Control.Feedback type="invalid">
+              Please input a venue.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="mb-3" controlId="date">
             <Form.Label>Date</Form.Label>
@@ -157,6 +164,9 @@ function WeddingModal(props) {
               onChange={(e) => setDate(e.target.value)}
               required
             />
+            <Form.Control.Feedback type="invalid">
+              Please input a wedding date.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="rsvpdeadline">
             <Form.Label>RSVP Deadline</Form.Label>
@@ -166,6 +176,9 @@ function WeddingModal(props) {
               onChange={(e) => setRsvpDeadline(e.target.value)}
               required
             />
+            <Form.Control.Feedback type="invalid">
+              Please input an RSVP date.
+            </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </Modal.Body>

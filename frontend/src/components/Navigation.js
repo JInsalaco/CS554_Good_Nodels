@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Container, Nav,Navbar } from "react-bootstrap";
+import { Container, Nav, Navbar } from "react-bootstrap";
 import { AuthContext } from "../firebase/Auth";
 import SignOutButton from "./SignOut";
 
@@ -32,24 +32,23 @@ const NavigationAuth = ({ currentUser }) => {
             <Nav.Link href="/home" className="active">
               Home
             </Nav.Link>
-            <Nav.Link href="/weddings/wedding" className="active">
-              Wedding
-            </Nav.Link>
-            <Nav.Link href="/weddings/attending" className="active">
-              Your Events
+            <Nav.Link href="/weddings/my-wedding" className="active">
+              My Wedding
             </Nav.Link>
             <Nav.Link href="/events" className="active">
-              Events
+              My Events
+            </Nav.Link>
+            <Nav.Link href="/weddings/attending" className="active">
+              Attending
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
         <Navbar.Collapse className="justify-content-end">
           <Nav.Link href="/profile" className="active">
-              Profile
+            Profile
           </Nav.Link>
           <SignOutButton />
-        </Navbar.Collapse>  
-
+        </Navbar.Collapse>
       </Container>
     </Navbar>
   );
@@ -74,7 +73,7 @@ const NavigationNonAuth = () => {
           <Nav.Link href="/signin" className="active">
             Sign In
           </Nav.Link>
-        </Navbar.Collapse>  
+        </Navbar.Collapse>
       </Container>
     </Navbar>
   );

@@ -23,6 +23,7 @@ function Photos(props) {
   const [photoFile, setPhotoFile] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
+  const [invalid, setInvalid] = useState(false);
 
   let images = undefined;
 
@@ -108,8 +109,10 @@ function Photos(props) {
   const addPhoto = async () => {
     // Error check
     if (photoURL.length === 0 && photoFile === undefined) {
-      alert("You must fill out all details!");
+      setInvalid(true);
       return;
+    } else {
+      setInvalid(false);
     }
     if (
       photoFile &&
@@ -148,8 +151,10 @@ function Photos(props) {
   const editPhoto = async () => {
     // Error check
     if (photoURL.length === 0 && photoFile === undefined) {
-      alert("You must fill out all details!");
+      setInvalid(true);
       return;
+    } else {
+      setInvalid(false);
     }
     if (
       photoFile &&
@@ -208,20 +213,28 @@ function Photos(props) {
         <Modal.Title>Add New Image</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form noValidated validated={invalid}>
           <Form.Group className="mb-3">
             <Form.Label>Image URL</Form.Label>
             <Form.Control
               type="text"
               onChange={(e) => handleInput("photoURL", e)}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include either a URL or File.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="formFile" className="mb-3">
             <Form.Label>Upload your Image</Form.Label>
             <Form.Control
               type="file"
               onChange={(e) => handleInput("photoFile", e)}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include either a URL or File.
+            </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </Modal.Body>
@@ -242,20 +255,28 @@ function Photos(props) {
         <Modal.Title>Edit Image</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form noValidate validated={invalid}>
           <Form.Group className="mb-3">
             <Form.Label>Image URL</Form.Label>
             <Form.Control
               type="text"
               onChange={(e) => handleInput("photoURL", e)}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include either a URL or File.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="formFile" className="mb-3">
             <Form.Label>Upload your Image</Form.Label>
             <Form.Control
               type="file"
               onChange={(e) => handleInput("photoFile", e)}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include either a URL or File.
+            </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </Modal.Body>
@@ -316,7 +337,9 @@ function Photos(props) {
   } else {
     return (
       <div className="photo-div">
-        <h4 className='wedding-label' style={{ float: "left" }}>Photos of {weddingName}:</h4>
+        <h4 className="wedding-label" style={{ float: "left" }}>
+          Photos of {weddingName}:
+        </h4>
         <br />
         <br />
         <Container>

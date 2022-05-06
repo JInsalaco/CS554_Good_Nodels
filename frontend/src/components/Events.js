@@ -18,6 +18,7 @@ function Events(props) {
   const [eventDate, setEventDate] = useState(new Date());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
+  const [invalid, setInvalid] = useState(false);
   const user = firebase.auth().currentUser;
   let eventCards = undefined;
 
@@ -64,7 +65,7 @@ function Events(props) {
         setError(false);
       } catch (e) {
         setLoading(false);
-        setError(true);
+        setError(false);
       }
     }
     fetchData();
@@ -83,7 +84,7 @@ function Events(props) {
   const addNewEvent = async () => {
     // Error checks
     if (eventName.length === 0 || eventDesc.length === 0 || !eventDate) {
-      alert("You must fill out all details!");
+      setInvalid(true);
       return;
     }
     if (new Date(eventDate).getTime() < new Date().getTime()) {
@@ -137,7 +138,7 @@ function Events(props) {
   const editEvent = async () => {
     // Error checks
     if (eventName.length === 0 || eventDesc.length === 0 || !eventDate) {
-      alert("You must fill out all details!");
+      setInvalid(true);
       return;
     }
     if (new Date(eventDate).getTime() < new Date().getTime()) {
@@ -175,27 +176,39 @@ function Events(props) {
         <Modal.Title>Add New Event</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form noValidate validated={invalid}>
           <Form.Group className="mb-3">
             <Form.Label>Event Name</Form.Label>
             <Form.Control
               type="text"
               onChange={(e) => handleInput("eventName", e)}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include a name.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Description</Form.Label>
             <Form.Control
               type="text"
               onChange={(e) => handleInput("eventDesc", e)}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include a description.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="date">
             <Form.Label>Event Date</Form.Label>
             <Form.Control
               type="date"
               onChange={(e) => handleInput("eventDate", e)}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include an event date.
+            </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </Modal.Body>
@@ -216,14 +229,18 @@ function Events(props) {
         <Modal.Title>Edit Event</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form noValidate validated={invalid}>
           <Form.Group className="mb-3">
             <Form.Label>Event Name</Form.Label>
             <Form.Control
               type="text"
               onChange={(e) => handleInput("eventName", e)}
               value={eventName}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include an event name.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Description</Form.Label>
@@ -231,7 +248,11 @@ function Events(props) {
               type="text"
               onChange={(e) => handleInput("eventDesc", e)}
               value={eventDesc}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include an event description.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="date">
             <Form.Label>Event Date</Form.Label>
@@ -239,7 +260,11 @@ function Events(props) {
               type="date"
               onChange={(e) => handleInput("eventDate", e)}
               value={eventDate}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include an event date.
+            </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </Modal.Body>
@@ -353,7 +378,7 @@ function Events(props) {
         <h2>Error loading page, please try again!</h2>
       </div>
     );
-  } else {
+  } else if (eventData) {
     return (
       <div className="event-div">
         <h2>Events for {weddingName}</h2>
@@ -364,6 +389,12 @@ function Events(props) {
         {addModal}
         {editModal}
         {deleteModal}
+      </div>
+    );
+  } else {
+    return (
+      <div className="error-div">
+        <h2>You have not created a wedding yet!</h2>
       </div>
     );
   }

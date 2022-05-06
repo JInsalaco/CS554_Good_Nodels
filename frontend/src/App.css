@@ -212,6 +212,11 @@
   text-align: center;
 }
 
+.error-div {
+  margin-top: 8vh;
+  text-align: center;
+}
+
 .edit-delete.col {
   max-width: fit-content;
 }
