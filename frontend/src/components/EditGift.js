@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import '../App.css';
 import axios from 'axios';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function EditGift(props) {
     const [editGiftModal, setEditGiftModal] = useState(props.isOpen);
     const [formData, setFormData] = useState(props.gift);
+    const [invalid, setInvalid] = useState(false);
     
     const handleChange = (e) => {
         let updatedValue = { [e.target.name]: e.target.value };
@@ -19,8 +20,13 @@ function EditGift(props) {
     };
 
     const editGift = async () => {
+        if(!formData.title || !formData.price || !formData.url || !formData.picture || !formData.description) {
+            setInvalid(true);
+            return;
+        }
         const { data } = await axios.put(`http://localhost:3001/gifts/${props.gift._id}`, formData);
         const response = await axios.get(`http://localhost:3001/weddings/${data.weddingId}`);
+        setInvalid(false);
         setEditGiftModal(false);
         props.handleCloseModal();
         props.liftState(response.data);
@@ -34,36 +40,51 @@ function EditGift(props) {
                 </Modal.Header>
                 
                 <Modal.Body>
-                    <div className='form-outline mb-4'>
-                        <label style={{ textAlign: 'left' }}>
+                    <Form noValidate validated={invalid}>
+                        <Form.Label style={{ textAlign: 'left' }}>
                             Title:
-                            <input className='form-control' type='text' onChange={(e) => handleChange(e)} id='title' name='title' value={formData.title} placeholder='Gift Title' />
-                        </label>
+                            <Form.Control className='form-control' type='text' onChange={(e) => handleChange(e)} id='title' name='title' value={formData.title} placeholder='Gift Title' required />
+                            <Form.Control.Feedback type='invalid'>
+                                Please input a title.
+                            </Form.Control.Feedback>
+                        </Form.Label>
                         <br />
                         <br />
-                        <label style={{ textAlign: 'left' }}>
+                        <Form.Label style={{ textAlign: 'left' }}>
                             Price:
-                            <input className='form-control' type='number' min='0' onChange={(e) => handleChange(e)} id='price' name='price' value={formData.price} placeholder='Gift Price' />
-                        </label>
+                            <Form.Control className='form-control' type='number' min='0' onChange={(e) => handleChange(e)} id='price' name='price' value={formData.price} placeholder='Gift Price' required />
+                            <Form.Control.Feedback type='invalid'>
+                                Please input a price.
+                            </Form.Control.Feedback>
+                        </Form.Label>
                         <br />
                         <br />
-                        <label style={{ textAlign: 'left' }}>
+                        <Form.Label style={{ textAlign: 'left' }}>
                             URL:
-                            <input className='form-control' type='text' onChange={(e) => handleChange(e)} id='url' name='url' value={formData.url} placeholder='Gift URL' />
-                        </label>
+                            <Form.Control className='form-control' type='text' onChange={(e) => handleChange(e)} id='url' name='url' value={formData.url} placeholder='Gift URL' required />
+                            <Form.Control.Feedback type='invalid'>
+                                Please input a URL.
+                            </Form.Control.Feedback>
+                        </Form.Label>
                         <br />
                         <br />
-                        <label style={{ textAlign: 'left' }}>
+                        <Form.Label style={{ textAlign: 'left' }}>
                             Picture:
-                            <input className='form-control' type='text' onChange={(e) => handleChange(e)} id='picture' name='picture' value={formData.picture} placeholder='Gift Picture' />
-                        </label>
+                            <Form.Control className='form-control' type='text' onChange={(e) => handleChange(e)} id='picture' name='picture' value={formData.picture} placeholder='Gift Picture' required />
+                            <Form.Control.Feedback type='invalid'>
+                                Please input a picture.
+                            </Form.Control.Feedback>
+                        </Form.Label>
                         <br />
                         <br />
-                        <label style={{ textAlign: 'left' }}>
+                        <Form.Label style={{ textAlign: 'left' }}>
                             Description:
-                            <input className='form-control' type='text' onChange={(e) => handleChange(e)} id='description' name='description' value={formData.description} placeholder='Gift Description' />
-                        </label>
-                    </div>
+                            <Form.Control className='form-control' type='text' onChange={(e) => handleChange(e)} id='description' name='description' value={formData.description} placeholder='Gift Description' required />
+                            <Form.Control.Feedback type='invalid'>
+                                Please input a description.
+                            </Form.Control.Feedback>
+                        </Form.Label>
+                    </Form>
                     <br />
                 </Modal.Body>
                 
