@@ -24,6 +24,14 @@ function AttendeeModal(props) {
   };
 
   const editAttendee = async () => {
+        if(!formData.name  || !formData.extras || !formData.foodChoices){
+          setInvalid(true);
+          return;
+        }
+        if(formData.foodChoices.toString().split(",").length == 0){
+          setInvalid(true);
+          return;
+        }
         let newAttendee = {
             name: formData.name,
             email: user.email,
@@ -37,7 +45,8 @@ function AttendeeModal(props) {
                 `http://localhost:3001/weddings/${weddingData._id}/attendee/${attendeeId}`,
                 newAttendee
             );
-
+            
+            setInvalid(false);
             let index = weddings.map(function(w) { return w._id; }).indexOf(weddingData._id);
             weddings[index] = data;            
             setAttendeeModalToggle(false);
@@ -55,14 +64,19 @@ function AttendeeModal(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form noValidate validated={invalid}>
           <Form.Group className="mb-3">
             <Form.Label>Name</Form.Label>
             <Form.Control
               type="text"
               name="name"
               onChange={(e) => handleChange(e)}
+              placeholder="Enter your full name"
+              required
             />
+            <Form.Control.Feedback type="invalid">
+               Please input your name.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Attending?</Form.Label>
@@ -78,7 +92,13 @@ function AttendeeModal(props) {
               type="number"
               name="extras"
               onChange={(e) => handleChange(e)}
+              placeholder="# of extras"
+              min="0"
+              required
             />
+            <Form.Control.Feedback type="invalid">
+               Please specify the number of extras you are bringing.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="rsvpdeadline">
             <Form.Label>Food Choices</Form.Label>
@@ -86,7 +106,12 @@ function AttendeeModal(props) {
               type="text"
               name="foodChoices"
               onChange={(e) => handleChange(e)}
+              placeholder="Food choices separated by commas ex: chicken,steak"
+              required
             />
+            <Form.Control.Feedback type="invalid">
+               Please specify your food choices separated by commas.
+            </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </Modal.Body>

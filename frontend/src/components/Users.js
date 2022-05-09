@@ -4,6 +4,8 @@ import "../App.css";
 import axios from "axios";
 import AddGift from "./AddGift";
 import WeddingModal from "./WeddingModal";
+import AddAttendee from "./AddAttendee";
+import Attendees from "./Attendees";
 import GiftCard from "./GiftCard";
 import { Button, Col, ListGroup, Row, Card, Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -14,6 +16,7 @@ function Users() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [addGiftButtonToggle, setAddGiftButtonToggle] = useState(false);
+  const [addAttendeeButtonToggle, setAddAttendeeButtonToggle] = useState(false);
   const [weddingModalToggle, setWeddingModalToggle] = useState(false);
   const [updateWeddingData, setUpdateWeddingData] = useState(false);
   const user = firebase.auth().currentUser;
@@ -142,12 +145,19 @@ function Users() {
                 })}
               </ul>
               <h4 className='wedding-label'>Attendees: </h4>
+              <Button
+                variant="primary"
+                onClick={() =>
+                setAddAttendeeButtonToggle(!addAttendeeButtonToggle)
+                }
+              >
+              Send Invitation
+              </Button>
               <h4 className='wedding-display'>{weddingData.attendees.length < 1 && "None"}</h4>
-              <ul>
-                {weddingData.attendees.map((attendee) => {
-                  return <li key={attendee._id}>{attendee.name}</li>;
-                })}
-              </ul>
+              {addAttendeeButtonToggle && (
+                <AddAttendee weddingData={weddingData} liftState={updateGifts} />
+              )}
+              <Attendees weddingData={weddingData} canEdit={true} liftState={updateGifts} />
               <div className="gift-div">
                 <h4 className='wedding-label' style={{ float: "left" }}>
                   Gift Registry for {weddingData.title}:

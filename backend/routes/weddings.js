@@ -700,7 +700,7 @@ router.patch("/:id/attendee/:attendeeId", async (req, res) => {
   // Fill in everything that wasn't passed in
   if (!attendInfo.name) attendInfo.name = existingAttend.name;
   if (!attendInfo.email) attendInfo.email = existingAttend.email;
-  if (!attendInfo.attending) attendInfo.attending = existingAttend.attending;
+  if (!("attending" in attendInfo) ) attendInfo.attending = existingAttend.attending;
   if (!attendInfo.extras) attendInfo.extras = existingAttend.extras;
   if (!attendInfo.foodChoices)
     attendInfo.foodChoices = existingAttend.foodChoices;
