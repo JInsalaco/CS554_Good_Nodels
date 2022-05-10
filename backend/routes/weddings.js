@@ -131,7 +131,7 @@ router.get("/wedding/:email", async (req, res) => {
     return;
   }
   try {
-    reqWedding = await weddingData.getByContactPerson(req.params.email);
+    reqWedding = await weddingData.getByContactPerson(xss(req.params.email));
     await addWeddingToRedisDB({
       wedding: reqWedding,
       db: weddings,
@@ -154,8 +154,8 @@ router.get("/attending/:email", async (req, res) => {
   let attendingWeddings;
   console.log(req.params.email);
   try {
-    attendingWeddings = await getByAttendee(req.params.email);
-    console.log(await getByAttendee(req.params.email));
+    attendingWeddings = await getByAttendee(xss(req.params.email));
+    console.log(await getByAttendee(xss(req.params.email)));
   } catch (e) {
     res.status(500).json({
       message: `Could not fetch your weddings! ${e}`,
@@ -173,7 +173,7 @@ router.get("/user/:userId", async (req, res) => {
     return;
   }
   try {
-    userWeddings = await weddingData.getAllUser(req.params.userId);
+    userWeddings = await weddingData.getAllUser(xss(req.params.userId));
   } catch (e) {
     res.status(400).json({ message: e });
     return;
@@ -193,7 +193,7 @@ router.delete("/:id", async (req, res) => {
     res.status(400).json({ message: "You must pass in a wedding id!" });
   }
   try {
-    wedding = await weddingData.get(req.params.id);
+    wedding = await weddingData.get(xss(req.params.id));
   } catch (e) {
     res.status(400).json({ message: e });
     return;
@@ -213,11 +213,13 @@ router.delete("/:id", async (req, res) => {
   }
 
   try {
-    await weddingData.remove(req.params.id);
+    await weddingData.remove(xss(req.params.id));
     const weddings = await client.getAsync("weddings");
     let parsedWeddings = JSON.parse(weddings);
     await removeWeddingInRedisDB({
-      wedding: parsedWeddings.find((w) => w._id.toString() === req.params.id),
+      wedding: parsedWeddings.find(
+        (w) => w._id.toString() === xss(req.params.id)
+      ),
       db: weddings,
       name: "weddings",
     });
@@ -291,11 +293,11 @@ router.patch("/:id/attendee", async (req, res) => {
   try {
     const newWedding = await weddingData.addAttendee(
       req.params.id,
-      name,
-      email,
-      attending,
-      extras,
-      foodChoices
+      xss(name),
+      xss(email),
+      xss(attending),
+      xss(extras),
+      xss(foodChoices)
     );
     await updateWeddingInRedisDB({
       wedding: newWedding,
@@ -319,6 +321,8 @@ router.delete("/:id/attendee/:attendeeId", async (req, res) => {
   try {
     checker.checkID(req.params.id);
     checker.checkID(req.params.attendeeId);
+    req.params.id = xss(req.params.id);
+    req.params.attendeeId = xss(rea.params.attendeeId);
     // Check that the event actually exists
     let reqWedding = await weddingData.get(req.params.id);
     for (let attendee of reqWedding.attendees) {
@@ -405,9 +409,9 @@ router.patch("/:id/event", async (req, res) => {
   try {
     const newWedding = await weddingData.addEvent(
       req.params.id,
-      title,
+      xss(title),
       date,
-      description
+      xss(description)
     );
     await updateWeddingInRedisDB({
       wedding: newWedding,
@@ -559,6 +563,8 @@ router.patch("/:id/event/:eventId", async (req, res) => {
   try {
     checker.checkID(req.params.id);
     checker.checkID(req.params.eventId);
+    req.params.id = xss(req.params.id);
+    req.params.eventId = xss(req.params.eventId);
     if (eventInfo.title) {
       checker.checkStr(eventInfo.title);
     }
@@ -618,6 +624,8 @@ router.delete("/:id/event/:eventId", async (req, res) => {
   try {
     checker.checkID(req.params.id);
     checker.checkID(req.params.eventId);
+    req.params.id = xss(req.params.id);
+    req.params.eventId = xss(req.params.eventId);
     // Check that the event actually exists
     let reqWedding = await weddingData.get(req.params.id);
     for (let event of reqWedding.events) {
@@ -661,6 +669,8 @@ router.patch("/:id/attendee/:attendeeId", async (req, res) => {
   try {
     checker.checkID(req.params.id);
     checker.checkID(req.params.attendeeId);
+    req.params.id = xss(req.params.id);
+    req.params.attendeeId = xss(req.params.attendeeId);
     if (attendInfo.name) {
       checker.checkStr(attendInfo.name);
     }
@@ -700,7 +710,8 @@ router.patch("/:id/attendee/:attendeeId", async (req, res) => {
   // Fill in everything that wasn't passed in
   if (!attendInfo.name) attendInfo.name = existingAttend.name;
   if (!attendInfo.email) attendInfo.email = existingAttend.email;
-  if (!("attending" in attendInfo) ) attendInfo.attending = existingAttend.attending;
+  if (!("attending" in attendInfo))
+    attendInfo.attending = existingAttend.attending;
   if (!attendInfo.extras) attendInfo.extras = existingAttend.extras;
   if (!attendInfo.foodChoices)
     attendInfo.foodChoices = existingAttend.foodChoices;
@@ -734,6 +745,8 @@ router.patch("/:id/image/:imageId", async (req, res) => {
   try {
     checker.checkID(req.params.id);
     checker.checkID(req.params.imageId);
+    req.params.id = xss(req.params.id);
+    req.params.imageId = xss(req.params.imageId);
     if (imageInfo.url) {
       checker.checkStr(imageInfo.url);
     }
@@ -831,6 +844,7 @@ router.put("/:id/image", async (req, res) => {
   // Error check
   let reqWedding;
   try {
+    req.params.id = xss(req.params.id);
     reqWedding = await weddingData.get(req.params.id);
     if (!reqWedding) throw `Wedding not found!`;
     if (imageInfo.url) {
@@ -912,6 +926,8 @@ router.delete("/:id/image/:imageId", async (req, res) => {
   try {
     checker.checkID(req.params.id);
     checker.checkID(req.params.imageId);
+    req.params.id = xss(req.params.id);
+    req.params.imageId = xss(req.params.imageId);
     // Check that the image actually exists
     let reqWedding = await weddingData.get(req.params.id);
     for (let image of reqWedding.images) {
