@@ -1,11 +1,8 @@
-const dotenv = require("dotenv");
-dotenv.config({
-  path: "C:/Users/Joseph/Documents/CS554_Good_Nodels/backend/.env",
-});
+require('dotenv').config();
 const AWS = require("aws-sdk");
 const ACCESS_KEY = process.env.AWS_ACCESS_KEY;
 const SECRET_KEY = process.env.AWS_SECRET_KEY;
-const REGION = process.env.REGION;
+const REGION = process.env.AWS_REGION;
 
 AWS.config.update({
   region: REGION,
@@ -18,4 +15,10 @@ const s3Client = new AWS.S3({
   signatureVersion: "v4",
 });
 
-module.exports = { s3Client };
+const sesClient = new AWS.SES({
+  apiVersion: "2010-12-01",
+  signatureVersion: "v4",
+  region: REGION
+})
+
+module.exports = { s3Client,sesClient };

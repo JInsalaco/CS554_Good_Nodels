@@ -6,6 +6,7 @@ const data = require("../data");
 const giftData = data.gifts;
 const weddingData = data.weddings;
 const s3 = require("../data/s3");
+const ses = require('../data/ses');
 const checker = require("../data/checker");
 const { ObjectId } = require("mongodb");
 const { exist } = require("mongodb/lib/gridfs/grid_store");
@@ -152,10 +153,8 @@ router.get("/wedding/:email", async (req, res) => {
 
 router.get("/attending/:email", async (req, res) => {
   let attendingWeddings;
-  console.log(req.params.email);
   try {
     attendingWeddings = await getByAttendee(xss(req.params.email));
-    console.log(await getByAttendee(xss(req.params.email)));
   } catch (e) {
     res.status(500).json({
       message: `Could not fetch your weddings! ${e}`,
@@ -252,7 +251,6 @@ router.patch("/:id/attendee", async (req, res) => {
     return;
   }
   let { name, email, attending, extras, foodChoices } = req.body;
-
   if (!name || typeof name !== "string" || name.trim() === "") {
     res.status(400).json({
       message:
@@ -289,21 +287,22 @@ router.patch("/:id/attendee", async (req, res) => {
     });
     return;
   }
-
+  let sesEmail = [email]
   try {
     const newWedding = await weddingData.addAttendee(
       req.params.id,
       xss(name),
       xss(email),
-      xss(attending),
-      xss(extras),
-      xss(foodChoices)
+      attending,
+      extras,
+      foodChoices
     );
     await updateWeddingInRedisDB({
       wedding: newWedding,
       db: weddings,
       name: "weddings",
     });
+    ses.sendEmail(sesEmail,newWedding.title)
     res.status(200).json(newWedding);
   } catch (e) {
     res.status(500).json({
@@ -322,7 +321,7 @@ router.delete("/:id/attendee/:attendeeId", async (req, res) => {
     checker.checkID(req.params.id);
     checker.checkID(req.params.attendeeId);
     req.params.id = xss(req.params.id);
-    req.params.attendeeId = xss(rea.params.attendeeId);
+    req.params.attendeeId = xss(req.params.attendeeId);
     // Check that the event actually exists
     let reqWedding = await weddingData.get(req.params.id);
     for (let attendee of reqWedding.attendees) {
@@ -466,7 +465,6 @@ router.patch("/:id/gift", async (req, res) => {
       db: weddings,
       name: "weddings",
     });
-    console.log("i ran");
     res.status(200).json(newWedding);
   } catch (e) {
     res.status(500).json({
