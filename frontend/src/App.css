@@ -220,3 +220,7 @@
 .edit-delete.col {
   max-width: fit-content;
 }
+
+.nav-link:hover {
+  text-decoration: underline;
+}

@@ -44,7 +44,11 @@ const NavigationAuth = ({ currentUser }) => {
           </Nav>
         </Navbar.Collapse>
         <Navbar.Collapse className="justify-content-end">
-          <Nav.Link href="/profile" className="active">
+          <Nav.Link
+            href="/profile"
+            className="active"
+            style={{ color: "black" }}
+          >
             Profile
           </Nav.Link>
           <SignOutButton />
