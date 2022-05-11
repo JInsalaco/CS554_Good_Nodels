@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "../App.css";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -39,7 +40,7 @@ function AttendingWeddings() {
     }
     fetchData();
   }, [email]);
-
+  
   if (loading) {
     return (
       <div>
@@ -87,7 +88,6 @@ function AttendingWeddings() {
           })}
         </Row>
       </Container>
-        
     );
   }
 }

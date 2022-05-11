@@ -6,7 +6,7 @@ const data = require("../data");
 const giftData = data.gifts;
 const weddingData = data.weddings;
 const s3 = require("../data/s3");
-const ses = require('../data/ses');
+const ses = require("../data/ses");
 const checker = require("../data/checker");
 const { ObjectId } = require("mongodb");
 const { exist } = require("mongodb/lib/gridfs/grid_store");
@@ -188,6 +188,7 @@ router.get("/user/:userId", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   let wedding;
+  req.params.id = xss(req.params.id);
   if (!req.params.id) {
     res.status(400).json({ message: "You must pass in a wedding id!" });
   }
@@ -287,7 +288,7 @@ router.patch("/:id/attendee", async (req, res) => {
     });
     return;
   }
-  let sesEmail = [email]
+  let sesEmail = [email];
   try {
     const newWedding = await weddingData.addAttendee(
       req.params.id,
@@ -302,7 +303,7 @@ router.patch("/:id/attendee", async (req, res) => {
       db: weddings,
       name: "weddings",
     });
-    ses.sendEmail(sesEmail,newWedding.title)
+    ses.sendEmail(sesEmail, newWedding.title);
     res.status(200).json(newWedding);
   } catch (e) {
     res.status(500).json({
@@ -477,7 +478,17 @@ router.patch("/:id/gift", async (req, res) => {
 // Route to create new wedding
 router.post("/", async (req, res) => {
   const weddings = await client.getAsync("weddings");
-  const { venue, title, events, date, contactPerson, rsvpDeadline } = req.body;
+  let { venue, title, events, date, contactPerson, rsvpDeadline } = req.body;
+  venue = xss(venue);
+  title = xss(title);
+  events = [];
+  date.month = xss(date.month);
+  date.day = xss(date.day);
+  date.year = xss(date.year);
+  contactPerson = xss(contactPerson);
+  rsvpDeadline.month = xss(rsvpDeadline.month);
+  rsvpDeadline.day = xss(rsvpDeadline.day);
+  rsvpDeadline.year = xss(rsvpDeadline.year);
   const newWedding = {
     venue,
     title,
@@ -510,19 +521,22 @@ router.put("/:id", async (req, res) => {
   const { id } = req.params;
   let newWedding = { weddingId: id };
   if (req.body.venue) {
-    const venue = req.body.venue;
+    const venue = xss(req.body.venue);
     newWedding = { ...newWedding, venue };
   }
   if (req.body.title) {
-    const title = req.body.title;
+    const title = xss(req.body.title);
     newWedding = { ...newWedding, title };
   }
   if (req.body.events) {
-    const events = req.body.events;
+    const events = xss(req.body.events);
     newWedding = { ...newWedding, events };
   }
   if (req.body.date) {
     const date = req.body.date;
+    date.month = xss(date.month);
+    date.day = xss(date.day);
+    date.year = xss(date.year);
     newWedding = { ...newWedding, date };
   }
   if (req.body.contactPerson) {
@@ -531,6 +545,9 @@ router.put("/:id", async (req, res) => {
   }
   if (req.body.rsvpDeadline) {
     const rsvpDeadline = req.body.rsvpDeadline;
+    rsvpDeadline.month = xss(rsvpDeadline.month);
+    rsvpDeadline.day = xss(rsvpDeadline.day);
+    rsvpDeadline.year = xss(rsvpDeadline.year);
     newWedding = { ...newWedding, rsvpDeadline };
   }
 

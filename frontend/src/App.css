@@ -243,3 +243,7 @@
   padding-left: 20px;
   padding-right: 20px;
 }
+
+.nav-link:hover {
+  text-decoration: underline;
+}

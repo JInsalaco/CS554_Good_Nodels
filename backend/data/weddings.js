@@ -157,7 +157,7 @@ let exportedMethods = {
       attending,
       extras,
       foodChoices,
-      responded: false
+      responded: false,
     };
 
     const weddingCollection = await weddings();
@@ -527,21 +527,21 @@ let exportedMethods = {
     return data;
   },
 
-  async getByAttendee(email){
-    let attendingWeddings = []
+  async getByAttendee(email) {
+    let attendingWeddings = [];
     const weddingCollection = await weddings();
     const data = await weddingCollection.find({}).toArray();
-    for(let i = 0; i<data.length; i++){
-      let attendance = data[i].attendees
-      for(let j = 0; j<attendance.length; j++){
-        if(attendance[j].email == email){
-          attendingWeddings.push(data[i])
+    for (let i = 0; i < data.length; i++) {
+      let attendance = data[i].attendees;
+      for (let j = 0; j < attendance.length; j++) {
+        if (attendance[j].email == email) {
+          attendingWeddings.push(data[i]);
         }
       }
     }
     return attendingWeddings;
   },
-  
+
   dateValidation,
   emailValidation,
 };

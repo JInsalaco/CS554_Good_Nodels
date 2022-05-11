@@ -1,3 +1,4 @@
+require("dotenv").config();
 const dbConnection = require("../config/mongoConnection");
 const weddingList = require("./weddings.json");
 const { loadDefaultWeddings, loadDefaultGifts } = require("./func");
@@ -16,7 +17,6 @@ async function main() {
     console.log(succeeded); // will be true if successfull
   });
   const db = await dbConnection();
-  await db.dropDatabase();
 
   const mixer = await giftData.create(
     "Kitchen-Aid Stand Mixer",
