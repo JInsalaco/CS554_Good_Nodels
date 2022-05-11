@@ -191,6 +191,7 @@ function Users() {
                             liftState={updateGifts}
                             canEdit={true}
                             weddingId={weddingData._id}
+                            key={gift._id}
                           />
                         );
                       })}

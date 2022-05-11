@@ -157,6 +157,7 @@ function Wedding() {
                             liftState={liftState}
                             canEdit={canEdit}
                             weddingId={weddingData._id}
+                            key={gift._id}
                           />
                           <br />
                         </Col>
