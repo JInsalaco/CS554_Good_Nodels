@@ -1,17 +1,22 @@
-const MongoClient = require("mongodb").MongoClient
-const settings = require("./settings")
-const mongoConfig = settings.mongoConfig
-let _connection = undefined
-let _db = undefined
+const MongoClient = require("mongodb").MongoClient;
+let _connection = undefined;
+let _db = undefined;
 
-module.exports = async() => {
+const settings = {
+  serverUrl: process.env.MONGO_URL,
+  database: "weddio",
+};
+
+console.log(settings.serverUrl);
+
+module.exports = async () => {
   if (!_connection) {
-    _connection = await MongoClient.connect(mongoConfig.serverUrl, {
-      useNewUrlParser: true, 
-      useUnifiedTopology: true
-    })
-    _db = await _connection.db(mongoConfig.database)
+    _connection = await MongoClient.connect(settings.serverUrl, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    _db = await _connection.db(settings.database);
   }
 
-  return _db
-}
+  return _db;
+};

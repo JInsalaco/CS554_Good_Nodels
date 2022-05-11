@@ -3,7 +3,6 @@ import "../App.css";
 import axios from "axios";
 import {
   Button,
-  Card,
   Container,
   Form,
   Row,
@@ -24,6 +23,7 @@ function Photos(props) {
   const [photoFile, setPhotoFile] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
+  const [invalid, setInvalid] = useState(false);
 
   let images = undefined;
 
@@ -55,31 +55,48 @@ function Photos(props) {
             className="photo"
           ></Image>
           <div className="photo-buttons">
-            <Button
-              variant="primary"
-              onClick={() => {
-                setShowEdit(true);
-                setPhotoID(photo._id);
-              }}
-            >
-              Edit Image
-            </Button>
+            {props.canEdit && (
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setShowEdit(true);
+                  setPhotoID(photo._id);
+                }}
+              >
+                Edit Image
+              </Button>
+            )}
             <br />
             <br />
-            <Button
-              variant="primary"
-              onClick={() => {
-                setShowDelete(true);
-                setPhotoID(photo._id);
-              }}
-            >
-              Delete Image
-            </Button>
+            {props.canEdit && (
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setShowDelete(true);
+                  setPhotoID(photo._id);
+                }}
+              >
+                Delete Image
+              </Button>
+            )}
           </div>
         </Col>
       );
     });
   }
+
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
 
   const handleInput = (state, e) => {
     if (state === "photoURL") {
@@ -92,22 +109,39 @@ function Photos(props) {
   const addPhoto = async () => {
     // Error check
     if (photoURL.length === 0 && photoFile === undefined) {
-      alert("You must fill out all details!");
+      setInvalid(true);
+      return;
+    } else {
+      setInvalid(false);
+    }
+    if (
+      photoFile &&
+      photoFile.type !== "image/jpeg" &&
+      photoFile.type !== "image/png"
+    ) {
+      alert("Invalid photo type!");
       return;
     }
-    // TODO: something with the file upload depending on how S3 is handled
     // Add the image
     let newData;
+    let photoBase64 = undefined;
+    // Convert photoFile to base64 to store in S3
+    if (photoFile) {
+      photoBase64 = await convertBase64(photoFile);
+    }
     try {
       newData = await axios.put(
         `http://localhost:3001/weddings/${props.weddingID}/image`,
-        { url: photoURL }
+        { url: photoURL, imageBinary: photoBase64 }
       );
 
-      setPhotoData(newData.data.images);
-      setShowAdd(false);
-      setPhotoURL("");
-      setPhotoFile(undefined);
+      // Wait a bit of time so the link becomes accessible
+      setTimeout(() => {
+        setPhotoData(newData.data.images);
+        setShowAdd(false);
+        setPhotoURL("");
+        setPhotoFile(undefined);
+      }, 1000);
     } catch (e) {
       alert("Could not add image, please try again!");
       console.log(e);
@@ -117,21 +151,41 @@ function Photos(props) {
   const editPhoto = async () => {
     // Error check
     if (photoURL.length === 0 && photoFile === undefined) {
-      alert("You must fill out all details!");
+      setInvalid(true);
+      return;
+    } else {
+      setInvalid(false);
+    }
+    if (
+      photoFile &&
+      photoFile.type !== "image/jpeg" &&
+      photoFile.type !== "image/png"
+    ) {
+      alert("Invalid photo type!");
       return;
     }
-    // TODO: something with the file upload depending on how S3 is handled
     // Make the edit
     let newData;
+    let photoBase64 = undefined;
+    // Convert photoFile to base64 to store in S3
+    if (photoFile) {
+      photoBase64 = await convertBase64(photoFile);
+    }
     try {
       newData = await axios.patch(
         `http://localhost:3001/weddings/${props.weddingID}/image/${photoID}`,
         {
           url: photoURL,
+          imageBinary: photoBase64,
         }
       );
-      setPhotoData(newData.data.images);
-      setShowEdit(false);
+      // Wait until the link is accessible
+      setTimeout(() => {
+        setPhotoData(newData.data.images);
+        setShowEdit(false);
+        setPhotoURL("");
+        setPhotoFile(undefined);
+      }, 1000);
     } catch (e) {
       alert("Could not edit image, please try again!");
       console.log(e);
@@ -159,20 +213,28 @@ function Photos(props) {
         <Modal.Title>Add New Image</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form noValidated validated={invalid}>
           <Form.Group className="mb-3">
             <Form.Label>Image URL</Form.Label>
             <Form.Control
               type="text"
               onChange={(e) => handleInput("photoURL", e)}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include either a URL or File.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="formFile" className="mb-3">
             <Form.Label>Upload your Image</Form.Label>
             <Form.Control
               type="file"
               onChange={(e) => handleInput("photoFile", e)}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include either a URL or File.
+            </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </Modal.Body>
@@ -193,20 +255,28 @@ function Photos(props) {
         <Modal.Title>Edit Image</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form noValidate validated={invalid}>
           <Form.Group className="mb-3">
             <Form.Label>Image URL</Form.Label>
             <Form.Control
               type="text"
               onChange={(e) => handleInput("photoURL", e)}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include either a URL or File.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group controlId="formFile" className="mb-3">
             <Form.Label>Upload your Image</Form.Label>
             <Form.Control
               type="file"
               onChange={(e) => handleInput("photoFile", e)}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              You must include either a URL or File.
+            </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </Modal.Body>
@@ -267,14 +337,20 @@ function Photos(props) {
   } else {
     return (
       <div className="photo-div">
-        <h2>Photos of {weddingName}</h2>
+        <h4 className="wedding-label" style={{ float: "left" }}>
+          Photos of {weddingName}:
+        </h4>
+        <br />
+        <br />
         <Container>
           <Row>{images}</Row>
         </Container>
         <br /> <br />
-        <Button variant="primary" onClick={() => setShowAdd(true)}>
-          Add Image
-        </Button>
+        {props.canEdit && (
+          <Button variant="primary" onClick={() => setShowAdd(true)}>
+            Add Image
+          </Button>
+        )}
         {addModal}
         {editModal}
         {deleteModal}

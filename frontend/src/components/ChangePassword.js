@@ -2,6 +2,7 @@ import React, {useContext, useState} from 'react';
 import {AuthContext} from '../firebase/Auth';
 import {doChangePassword} from '../firebase/FirebaseFunctions';
 import '../App.css';
+import { Card, Button } from 'react-bootstrap'
 
 function ChangePassword() {
   const {currentUser} = useContext(AuthContext);
@@ -34,58 +35,62 @@ function ChangePassword() {
   };
   if (currentUser.providerData[0].providerId === 'password') {
     return (
-      <div>
-        {pwMatch && <h4 className='error'>{pwMatch}</h4>}
-        <h2>Change Password</h2>
-        <form onSubmit={submitForm}>
-          <div className='form-group'>
-            <label>
-              Current Password:
-              <input
-                className='form-control'
-                name='currentPassword'
-                id='currentPassword'
-                type='password'
-                placeholder='Current Password'
-                autoComplete='off'
-                required
-              />
-            </label>
-          </div>
+      <Card>
+        <Card.Body>
+          <Card.Title>
+            <h2>Change Password</h2>
+          </Card.Title>
+          {pwMatch && <h4 className='error'>{pwMatch}</h4>}
+          <form onSubmit={submitForm}>
+            <div className='form-outline mb-4'>
+              <label>
+                Current Password:
+                <input
+                  className='form-control'
+                  name='currentPassword'
+                  id='currentPassword'
+                  type='password'
+                  placeholder='Current Password'
+                  autoComplete='off'
+                  required
+                />
+              </label>
+            </div>
 
-          <div className='form-group'>
-            <label>
-              New Password:
-              <input
-                className='form-control'
-                name='newPasswordOne'
-                id='newPasswordOne'
-                type='password'
-                placeholder='Password'
-                autoComplete='off'
-                required
-              />
-            </label>
-          </div>
-          <div className='form-group'>
-            <label>
-              Confirm New Password:
-              <input
-                className='form-control'
-                name='newPasswordTwo'
-                id='newPasswordTwo'
-                type='password'
-                placeholder='Confirm Password'
-                autoComplete='off'
-                required
-              />
-            </label>
-          </div>
+            <div className='form-outline mb-4'>
+              <label>
+                New Password:
+                <input
+                  className='form-control'
+                  name='newPasswordOne'
+                  id='newPasswordOne'
+                  type='password'
+                  placeholder='Password'
+                  autoComplete='off'
+                  required
+                />
+              </label>
+            </div>
+            <div className='form-outline mb-4'>
+              <label>
+                Confirm New Password:
+                <input
+                  className='form-control'
+                  name='newPasswordTwo'
+                  id='newPasswordTwo'
+                  type='password'
+                  placeholder='Confirm Password'
+                  autoComplete='off'
+                  required
+                />
+              </label>
+            </div>
 
-          <button type='submit'>Change Password</button>
-        </form>
-        <br />
-      </div>
+            <Button type='submit' variant='primary'>Change Password</Button>
+          </form>
+          <br />
+        </Card.Body>
+    </Card>
     );
   } else {
     return (

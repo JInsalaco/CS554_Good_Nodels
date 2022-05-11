@@ -5,14 +5,59 @@ const xss = require("xss");
 const data = require("../data");
 const giftData = data.gifts;
 const weddingData = data.weddings;
+const s3 = require("../data/s3");
+const ses = require("../data/ses");
 const checker = require("../data/checker");
 const { ObjectId } = require("mongodb");
 const { exist } = require("mongodb/lib/gridfs/grid_store");
+const { getByAttendee } = require("../data/weddings");
+const gm = require("gm").subClass({ imageMagick: true });
+
+const bluebird = require("bluebird");
+const redis = require("redis");
+const client = redis.createClient();
+
+bluebird.promisifyAll(redis.RedisClient.prototype);
+bluebird.promisifyAll(redis.Multi.prototype);
+
+const addWeddingToRedisDB = async ({ wedding, db, name }) => {
+  let _db = JSON.parse(db);
+  if (!_db?.length > 0) {
+    _db = [];
+  }
+  // add post to array
+  _db.push(wedding);
+  await client.setAsync(name, JSON.stringify(_db));
+};
+
+const updateWeddingInRedisDB = async ({ wedding, db, name }) => {
+  const _db = JSON.parse(db);
+  const index = _db.findIndex(
+    (w) => w._id.toString() === wedding._id.toString()
+  );
+  _db[index] = wedding;
+  await client.setAsync(name, JSON.stringify(_db));
+};
+
+const removeWeddingInRedisDB = async ({ wedding, db, name }) => {
+  const _db = JSON.parse(db);
+  const index = _db.findIndex(
+    (w) => w._id.toString() === wedding._id.toString()
+  );
+  _db.splice(index, 1);
+  await client.setAsync(name, JSON.stringify(_db));
+};
 
 // GET localhost:3001/weddings
 // Returns all weddings from the weddings collection
 // May or may not be used
 router.get("/", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
+  let parsedWeddings = JSON.parse(weddings);
+  if (parsedWeddings?.length > 0) {
+    res.status(200).json(parsedWeddings);
+    return;
+  }
   let allWeddings;
   try {
     allWeddings = await weddingData.getAll();
@@ -28,6 +73,19 @@ router.get("/", async (req, res) => {
 // GET localhost:3001/weddings/:weddingId
 // Returns the inputted wedding ID from the weddings collection
 router.get("/:weddingId", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
+  let parsedWeddings = JSON.parse(weddings);
+  if (parsedWeddings?.length > 0) {
+    if (parsedWeddings.find((w) => w._id === req.params.weddingId)) {
+      res
+        .status(200)
+        .json(parsedWeddings.find((w) => w._id === req.params.weddingId));
+      return;
+    }
+  } else {
+    parsedWeddings = [];
+  }
+
   let reqWedding;
   if (!req.params.weddingId) {
     res.status(400).json({ message: "You must pass in a weddingId!" });
@@ -35,6 +93,11 @@ router.get("/:weddingId", async (req, res) => {
   }
   try {
     reqWedding = await weddingData.get(req.params.weddingId);
+    await addWeddingToRedisDB({
+      wedding: reqWedding,
+      db: weddings,
+      name: "weddings",
+    });
   } catch (e) {
     res.status(400).json({ message: e });
     return;
@@ -45,17 +108,36 @@ router.get("/:weddingId", async (req, res) => {
     });
     return;
   }
+
   res.json(reqWedding);
 });
 
 router.get("/wedding/:email", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
+  let parsedWeddings = JSON.parse(weddings);
+  if (parsedWeddings?.length > 0) {
+    if (parsedWeddings.find((w) => w.contactPerson === req.params.email)) {
+      res
+        .status(200)
+        .json(parsedWeddings.find((w) => w.contactPerson === req.params.email));
+      return;
+    }
+  } else {
+    parsedWeddings = [];
+  }
+
   let reqWedding;
   if (!req.params.email) {
     res.status(400).json({ message: "You must pass in an email!" });
     return;
   }
   try {
-    reqWedding = await weddingData.getByContactPerson(req.params.email);
+    reqWedding = await weddingData.getByContactPerson(xss(req.params.email));
+    await addWeddingToRedisDB({
+      wedding: reqWedding,
+      db: weddings,
+      name: "weddings",
+    });
   } catch (e) {
     res.status(400).json({ message: e });
     return;
@@ -69,6 +151,18 @@ router.get("/wedding/:email", async (req, res) => {
   res.json(reqWedding);
 });
 
+router.get("/attending/:email", async (req, res) => {
+  let attendingWeddings;
+  try {
+    attendingWeddings = await getByAttendee(xss(req.params.email));
+  } catch (e) {
+    res.status(500).json({
+      message: `Could not fetch your weddings! ${e}`,
+    });
+    return;
+  }
+  res.json(attendingWeddings);
+});
 // GET localhost:3001/user/:userId
 // Gets all weddings associated with userId
 router.get("/user/:userId", async (req, res) => {
@@ -78,7 +172,7 @@ router.get("/user/:userId", async (req, res) => {
     return;
   }
   try {
-    userWeddings = await weddingData.getAllUser(req.params.userId);
+    userWeddings = await weddingData.getAllUser(xss(req.params.userId));
   } catch (e) {
     res.status(400).json({ message: e });
     return;
@@ -94,11 +188,12 @@ router.get("/user/:userId", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   let wedding;
+  req.params.id = xss(req.params.id);
   if (!req.params.id) {
     res.status(400).json({ message: "You must pass in a wedding id!" });
   }
   try {
-    wedding = await weddingData.get(req.params.id);
+    wedding = await weddingData.get(xss(req.params.id));
   } catch (e) {
     res.status(400).json({ message: e });
     return;
@@ -109,8 +204,25 @@ router.delete("/:id", async (req, res) => {
     });
     return;
   }
+
+  //If the wedding has images from s3 make sure to delete them
+  for (let image of wedding.images) {
+    if (image.url.includes("weddio.s3")) {
+      s3.deleteFile(image._id);
+    }
+  }
+
   try {
-    await weddingData.remove(req.params.id);
+    await weddingData.remove(xss(req.params.id));
+    const weddings = await client.getAsync("weddings");
+    let parsedWeddings = JSON.parse(weddings);
+    await removeWeddingInRedisDB({
+      wedding: parsedWeddings.find(
+        (w) => w._id.toString() === xss(req.params.id)
+      ),
+      db: weddings,
+      name: "weddings",
+    });
   } catch (e) {
     res.status(500).json({ message: `Error deleting wedding: ${e}` });
     return;
@@ -120,6 +232,7 @@ router.delete("/:id", async (req, res) => {
 
 router.patch("/:id/attendee", async (req, res) => {
   req.params.id = xss(req.params.id);
+  const weddings = await client.getAsync("weddings");
   if (
     !req.params.id ||
     typeof req.params.id !== "string" ||
@@ -138,8 +251,7 @@ router.patch("/:id/attendee", async (req, res) => {
     });
     return;
   }
-  let { name, email, attending, extras, foodChoice } = req.body;
-
+  let { name, email, attending, extras, foodChoices } = req.body;
   if (!name || typeof name !== "string" || name.trim() === "") {
     res.status(400).json({
       message:
@@ -156,7 +268,7 @@ router.patch("/:id/attendee", async (req, res) => {
     return;
   }
 
-  if (!attending || typeof attending !== "boolean") {
+  if (typeof attending !== "boolean") {
     res.status(400).json({
       message: "attending must be a boolean.",
     });
@@ -170,22 +282,28 @@ router.patch("/:id/attendee", async (req, res) => {
     return;
   }
 
-  if (!foodChoice || !Array.isArray(foodChoice)) {
+  if (!foodChoices || !Array.isArray(foodChoices)) {
     res.status(400).json({
       message: "food choice must be an array",
     });
     return;
   }
-
+  let sesEmail = [email];
   try {
     const newWedding = await weddingData.addAttendee(
       req.params.id,
-      name,
-      email,
+      xss(name),
+      xss(email),
       attending,
       extras,
-      foodChoice
+      foodChoices
     );
+    await updateWeddingInRedisDB({
+      wedding: newWedding,
+      db: weddings,
+      name: "weddings",
+    });
+    ses.sendEmail(sesEmail, newWedding.title);
     res.status(200).json(newWedding);
   } catch (e) {
     res.status(500).json({
@@ -195,7 +313,51 @@ router.patch("/:id/attendee", async (req, res) => {
   }
 });
 
+//Remove an attendee from a wedding
+router.delete("/:id/attendee/:attendeeId", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
+  let existingAttendee;
+  // Error check
+  try {
+    checker.checkID(req.params.id);
+    checker.checkID(req.params.attendeeId);
+    req.params.id = xss(req.params.id);
+    req.params.attendeeId = xss(req.params.attendeeId);
+    // Check that the event actually exists
+    let reqWedding = await weddingData.get(req.params.id);
+    for (let attendee of reqWedding.attendees) {
+      if (String(attendee._id) === req.params.attendeeId) {
+        existingAttendee = attendee;
+        break;
+      }
+    }
+    await updateWeddingInRedisDB({
+      wedding: reqWedding,
+      db: weddings,
+      name: "weddings",
+    });
+    if (!existingAttendee) throw `Attendee not found!`;
+  } catch (e) {
+    res.status(400).json({
+      message: `Error in deleting attendee, ${e}`,
+    });
+    return;
+  }
+  // Perform the delete
+  try {
+    const updatedWedding = await weddingData.removeAttendee(
+      req.params.id,
+      req.params.attendeeId
+    );
+    res.json(updatedWedding);
+  } catch (e) {
+    res.status(500).json({ message: e });
+    return;
+  }
+});
+
 router.patch("/:id/event", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
   req.params.id = xss(req.params.id);
   if (
     !req.params.id ||
@@ -247,10 +409,15 @@ router.patch("/:id/event", async (req, res) => {
   try {
     const newWedding = await weddingData.addEvent(
       req.params.id,
-      title,
+      xss(title),
       date,
-      description
+      xss(description)
     );
+    await updateWeddingInRedisDB({
+      wedding: newWedding,
+      db: weddings,
+      name: "weddings",
+    });
     res.status(200).json(newWedding);
   } catch (e) {
     res.status(500).json({
@@ -261,6 +428,7 @@ router.patch("/:id/event", async (req, res) => {
 });
 
 router.patch("/:id/gift", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
   req.params.id = xss(req.params.id);
   if (
     !req.params.id ||
@@ -290,8 +458,14 @@ router.patch("/:id/gift", async (req, res) => {
     return;
   }
 
+  let newWedding;
   try {
     newWedding = await weddingData.addGift(req.params.id, giftId);
+    await updateWeddingInRedisDB({
+      wedding: newWedding,
+      db: weddings,
+      name: "weddings",
+    });
     res.status(200).json(newWedding);
   } catch (e) {
     res.status(500).json({
@@ -303,7 +477,18 @@ router.patch("/:id/gift", async (req, res) => {
 // POST localhost:3001/weddings/
 // Route to create new wedding
 router.post("/", async (req, res) => {
-  const { venue, title, events, date, contactPerson, rsvpDeadline } = req.body;
+  const weddings = await client.getAsync("weddings");
+  let { venue, title, events, date, contactPerson, rsvpDeadline } = req.body;
+  venue = xss(venue);
+  title = xss(title);
+  events = [];
+  date.month = xss(date.month);
+  date.day = xss(date.day);
+  date.year = xss(date.year);
+  contactPerson = xss(contactPerson);
+  rsvpDeadline.month = xss(rsvpDeadline.month);
+  rsvpDeadline.day = xss(rsvpDeadline.day);
+  rsvpDeadline.year = xss(rsvpDeadline.year);
   const newWedding = {
     venue,
     title,
@@ -318,30 +503,40 @@ router.post("/", async (req, res) => {
   }
   try {
     const returnedWedding = await weddingData.create(newWedding);
+    await addWeddingToRedisDB({
+      wedding: returnedWedding,
+      db: weddings,
+      name: "weddings",
+    });
+
     res.status(200).send(returnedWedding);
   } catch (e) {
-    console.log(500);
     res.status(500).send({ error: e });
+    console.log(e);
   }
 });
 
 router.put("/:id", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
   const { id } = req.params;
   let newWedding = { weddingId: id };
   if (req.body.venue) {
-    const venue = req.body.venue;
+    const venue = xss(req.body.venue);
     newWedding = { ...newWedding, venue };
   }
   if (req.body.title) {
-    const title = req.body.title;
+    const title = xss(req.body.title);
     newWedding = { ...newWedding, title };
   }
   if (req.body.events) {
-    const events = req.body.events;
+    const events = xss(req.body.events);
     newWedding = { ...newWedding, events };
   }
   if (req.body.date) {
     const date = req.body.date;
+    date.month = xss(date.month);
+    date.day = xss(date.day);
+    date.year = xss(date.year);
     newWedding = { ...newWedding, date };
   }
   if (req.body.contactPerson) {
@@ -350,6 +545,9 @@ router.put("/:id", async (req, res) => {
   }
   if (req.body.rsvpDeadline) {
     const rsvpDeadline = req.body.rsvpDeadline;
+    rsvpDeadline.month = xss(rsvpDeadline.month);
+    rsvpDeadline.day = xss(rsvpDeadline.day);
+    rsvpDeadline.year = xss(rsvpDeadline.year);
     newWedding = { ...newWedding, rsvpDeadline };
   }
 
@@ -359,6 +557,11 @@ router.put("/:id", async (req, res) => {
   }
   try {
     const returnedWedding = await weddingData.updateWedding(newWedding);
+    await updateWeddingInRedisDB({
+      wedding: returnedWedding,
+      db: weddings,
+      name: "weddings",
+    });
     res.status(200).send(returnedWedding);
   } catch (e) {
     res.status(500).send({ error: e });
@@ -368,12 +571,15 @@ router.put("/:id", async (req, res) => {
 // PATCH localhost:3001/weddings/:id/event/:eventId
 // Route to edit an event within the inputted wedding
 router.patch("/:id/event/:eventId", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
   let eventInfo = req.body;
   let existingEvent;
   // Error check
   try {
     checker.checkID(req.params.id);
     checker.checkID(req.params.eventId);
+    req.params.id = xss(req.params.id);
+    req.params.eventId = xss(req.params.eventId);
     if (eventInfo.title) {
       checker.checkStr(eventInfo.title);
     }
@@ -407,12 +613,17 @@ router.patch("/:id/event/:eventId", async (req, res) => {
   if (!eventInfo.description) eventInfo.description = existingEvent.description;
   eventInfo._id = ObjectId(req.params.eventId);
   try {
-    const updateEvent = await weddingData.editEvent(
+    const updatedWedding = await weddingData.editEvent(
       req.params.id,
       req.params.eventId,
       eventInfo
     );
-    res.json(updateEvent);
+    await updateWeddingInRedisDB({
+      wedding: updatedWedding,
+      db: weddings,
+      name: "weddings",
+    });
+    res.json(updatedWedding);
   } catch (e) {
     res.status(500).json({ message: e });
     return;
@@ -422,11 +633,14 @@ router.patch("/:id/event/:eventId", async (req, res) => {
 // DELETE localhost:30001/weddings/:id/event/:eventId
 // Route to delete an associated event for a wedding
 router.delete("/:id/event/:eventId", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
   let existingEvent;
   // Error check
   try {
     checker.checkID(req.params.id);
     checker.checkID(req.params.eventId);
+    req.params.id = xss(req.params.id);
+    req.params.eventId = xss(req.params.eventId);
     // Check that the event actually exists
     let reqWedding = await weddingData.get(req.params.id);
     for (let event of reqWedding.events) {
@@ -444,11 +658,16 @@ router.delete("/:id/event/:eventId", async (req, res) => {
   }
   // Perform the delete
   try {
-    const deleteEvent = await weddingData.deleteEvent(
+    const updatedWedding = await weddingData.deleteEvent(
       req.params.id,
       req.params.eventId
     );
-    res.json(deleteEvent);
+    await updateWeddingInRedisDB({
+      wedding: updatedWedding,
+      db: weddings,
+      name: "weddings",
+    });
+    res.json(updatedWedding);
   } catch (e) {
     res.status(500).json({ message: e });
     return;
@@ -458,30 +677,33 @@ router.delete("/:id/event/:eventId", async (req, res) => {
 // PATCH localhost:3001/weddings/:id/attendee/:attendeeId
 // Route to edit an attendee within the inputted wedding
 router.patch("/:id/attendee/:attendeeId", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
   let attendInfo = req.body;
   let existingAttend;
   // Error check
   try {
     checker.checkID(req.params.id);
     checker.checkID(req.params.attendeeId);
-    if (attendInfo.Name) {
-      checker.checkStr(attendInfo.Name);
+    req.params.id = xss(req.params.id);
+    req.params.attendeeId = xss(req.params.attendeeId);
+    if (attendInfo.name) {
+      checker.checkStr(attendInfo.name);
     }
-    if (attendInfo.Email) {
-      weddingData.emailValidation(attendInfo.Email);
+    if (attendInfo.email) {
+      weddingData.emailValidation(attendInfo.email);
     }
     if (attendInfo.extras) {
       checker.checkID(attendInfo.extras);
     }
-    if (attendInfo.foodChoice) {
-      for (let food of attendInfo.foodChoice) checker.checkStr(food);
+    if (attendInfo.foodChoices) {
+      for (let food of attendInfo.foodChoices) checker.checkStr(food);
     }
     if (
-      !attendInfo.Name &&
-      !attendInfo.Email &&
-      !attendInfo.Attending &&
+      !attendInfo.name &&
+      !attendInfo.email &&
+      !attendInfo.attending &&
       !attendInfo.extras &&
-      !attendInfo.foodChoice
+      !attendInfo.foodChoices
     ) {
       throw "Nothing to edit in edit attendee route!";
     }
@@ -501,19 +723,26 @@ router.patch("/:id/attendee/:attendeeId", async (req, res) => {
     return;
   }
   // Fill in everything that wasn't passed in
-  if (!attendInfo.Name) attendInfo.Name = existingAttend.Name;
-  if (!attendInfo.Email) attendInfo.Email = existingAttend.Email;
-  if (!attendInfo.Attending) attendInfo.Attending = existingAttend.Attending;
+  if (!attendInfo.name) attendInfo.name = existingAttend.name;
+  if (!attendInfo.email) attendInfo.email = existingAttend.email;
+  if (!("attending" in attendInfo))
+    attendInfo.attending = existingAttend.attending;
   if (!attendInfo.extras) attendInfo.extras = existingAttend.extras;
-  if (!attendInfo.foodChoice) attendInfo.foodChoice = existingAttend.foodChoice;
+  if (!attendInfo.foodChoices)
+    attendInfo.foodChoices = existingAttend.foodChoices;
   attendInfo._id = ObjectId(req.params.attendeeId);
   try {
-    const editAttendee = await weddingData.editAttendee(
+    const updatedWedding = await weddingData.editAttendee(
       req.params.id,
       req.params.attendeeId,
       attendInfo
     );
-    res.json(editAttendee);
+    await updateWeddingInRedisDB({
+      wedding: updatedWedding,
+      db: weddings,
+      name: "weddings",
+    });
+    res.json(updatedWedding);
   } catch (e) {
     res.status(500).json({ message: e });
     return;
@@ -523,22 +752,29 @@ router.patch("/:id/attendee/:attendeeId", async (req, res) => {
 // PATCH localhost:3001/weddings/:id/image/:imageId
 // Route to edit an image within the inputted wedding
 router.patch("/:id/image/:imageId", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
   let imageInfo = req.body;
   let existingImage;
+  let isAWS = false;
   // Error check
   try {
     checker.checkID(req.params.id);
     checker.checkID(req.params.imageId);
+    req.params.id = xss(req.params.id);
+    req.params.imageId = xss(req.params.imageId);
     if (imageInfo.url) {
       checker.checkStr(imageInfo.url);
     }
-    if (!imageInfo.url) {
+    if (!imageInfo.url && !imageInfo.imageBinary) {
       throw "Nothing to edit in edit image route!";
     }
     // Check that the image actually exists
     let reqWedding = await weddingData.get(req.params.id);
     for (let image of reqWedding.images) {
       if (String(image._id) === req.params.imageId) {
+        if (image.url.includes("weddio.s3")) {
+          isAWS = true;
+        }
         existingImage = image;
         break;
       }
@@ -553,12 +789,61 @@ router.patch("/:id/image/:imageId", async (req, res) => {
   // Fill in everything that wasn't passed in
   imageInfo._id = ObjectId(req.params.imageId);
   try {
-    const editImage = await weddingData.editImage(
-      req.params.id,
-      req.params.imageId,
-      imageInfo
-    );
-    res.json(editImage);
+    // If the image is in S3, we need to delete the S3 object and recreate it
+    if (isAWS) {
+      s3.deleteFile(req.params.imageId);
+    }
+    if (imageInfo.imageBinary) {
+      var buf = Buffer.from(
+        req.body.imageBinary.replace(/^data:image\/\w+;base64,/, ""),
+        "base64"
+      );
+      // IMAGEMAGICK CODE to resize
+      gm(buf).identify(function (err, _) {
+        if (err) {
+          console.log(err);
+          res.sendStatus(500);
+          return;
+        }
+      });
+      gm(buf).resize(960, 960);
+      let s3Data = {
+        Bucket: "weddio-images",
+        Key: req.params.imageId,
+        Body: buf,
+        ContentEncoding: "base64",
+        ContentType: "image/jpeg",
+      };
+      s3.uploadImageBinary(s3Data);
+      // Then we need to add it into the MongoDB with the link
+      const baseURL = "https://weddio-images.s3.amazonaws.com";
+      const updatedWedding = await weddingData.editImage(
+        req.params.id,
+        req.params.imageId,
+        {
+          _id: ObjectId(req.params.imageId),
+          url: `${baseURL}/${req.params.imageId}`,
+        }
+      );
+      await updateWeddingInRedisDB({
+        wedding: updatedWedding,
+        db: weddings,
+        name: "weddings",
+      });
+      res.json(updatedWedding);
+    } else {
+      const updatedWedding = await weddingData.editImage(
+        req.params.id,
+        req.params.imageId,
+        imageInfo
+      );
+      await updateWeddingInRedisDB({
+        wedding: updatedWedding,
+        db: weddings,
+        name: "weddings",
+      });
+      res.json(updatedWedding);
+    }
   } catch (e) {
     res.status(500).json({ message: e });
     return;
@@ -568,13 +853,17 @@ router.patch("/:id/image/:imageId", async (req, res) => {
 // PUT localhost:3001/weddings/:id/image
 // Route to add an image to a wedding
 router.put("/:id/image", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
   let imageInfo = req.body;
   // Error check
   let reqWedding;
   try {
+    req.params.id = xss(req.params.id);
     reqWedding = await weddingData.get(req.params.id);
     if (!reqWedding) throw `Wedding not found!`;
-    checker.checkStr(imageInfo.url);
+    if (imageInfo.url) {
+      checker.checkStr(imageInfo.url);
+    }
   } catch (e) {
     res.status(400).json({
       message: `Error in adding image, ${e}`,
@@ -583,8 +872,57 @@ router.put("/:id/image", async (req, res) => {
   }
   // Perform the add
   try {
-    const addImage = await weddingData.addImage(req.params.id, imageInfo.url);
-    res.json(addImage);
+    // Create new ObjectId for the image
+    let newID = ObjectId();
+    // Add image into AWS first
+    if (req.body.imageBinary) {
+      var buf = Buffer.from(
+        req.body.imageBinary.replace(/^data:image\/\w+;base64,/, ""),
+        "base64"
+      );
+      // IMAGEMAGICK CODE to resize
+      gm(buf).identify(function (err, value) {
+        if (err) {
+          console.log(err);
+          res.sendStatus(500);
+          return;
+        }
+      });
+      gm(buf).resize(960, 960);
+      let s3Data = {
+        Bucket: "weddio-images",
+        Key: String(newID),
+        Body: buf,
+        ContentEncoding: "base64",
+        ContentType: "image/jpeg",
+      };
+      s3.uploadImageBinary(s3Data);
+      // Then we need to add it into the MongoDB with the link
+      const baseURL = "https://weddio-images.s3.amazonaws.com";
+      const updatedWedding = await weddingData.addImage(
+        req.params.id,
+        `${baseURL}/${String(newID)}`,
+        newID
+      );
+      await updateWeddingInRedisDB({
+        wedding: updatedWedding,
+        db: weddings,
+        name: "weddings",
+      });
+      res.json(updatedWedding);
+    } else {
+      const updatedWedding = await weddingData.addImage(
+        req.params.id,
+        imageInfo.url,
+        newID
+      );
+      await updateWeddingInRedisDB({
+        wedding: updatedWedding,
+        db: weddings,
+        name: "weddings",
+      });
+      res.json(updatedWedding);
+    }
   } catch (e) {
     res.status(500).json({ message: e });
     return;
@@ -594,15 +932,22 @@ router.put("/:id/image", async (req, res) => {
 // DELETE localhost:30001/weddings/:id/image/:imageId
 // Route to delete an image for a wedding
 router.delete("/:id/image/:imageId", async (req, res) => {
+  const weddings = await client.getAsync("weddings");
   let existingImage;
+  let isAWS = false;
   // Error check
   try {
     checker.checkID(req.params.id);
     checker.checkID(req.params.imageId);
+    req.params.id = xss(req.params.id);
+    req.params.imageId = xss(req.params.imageId);
     // Check that the image actually exists
     let reqWedding = await weddingData.get(req.params.id);
     for (let image of reqWedding.images) {
       if (String(image._id) === req.params.imageId) {
+        if (image.url.includes("weddio.s3")) {
+          isAWS = true;
+        }
         existingImage = image;
         break;
       }
@@ -616,11 +961,20 @@ router.delete("/:id/image/:imageId", async (req, res) => {
   }
   // Perform the delete
   try {
-    const deleteImage = await weddingData.deleteImage(
+    // If it's an AWS image, we have to remove it in AWS
+    if (isAWS) {
+      s3.deleteFile(req.params.imageId);
+    }
+    const updatedWedding = await weddingData.deleteImage(
       req.params.id,
       req.params.imageId
     );
-    res.json(deleteImage);
+    await updateWeddingInRedisDB({
+      wedding: updatedWedding,
+      db: weddings,
+      name: "weddings",
+    });
+    res.json(updatedWedding);
   } catch (e) {
     res.status(500).json({ message: e });
     return;

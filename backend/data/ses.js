@@ -1,32 +1,37 @@
-// Load the AWS SDK for Node.js
-var AWS = require('aws-sdk');
-// Set the region 
-AWS.config.update({region: 'us-east-1'});
+const {sesClient} = require("../config/s3Client");
 
 // Create sendEmail params
-async function sendEmail(recipients,template){
+async function sendEmail(recipients,weddingName){
 // Set the parameters
     const params = {
         Destination: {
-        /* required */
         CcAddresses: [
             /* more CC email addresses */
         ],
         ToAddresses: recipients,
         },
-        Source: "SENDER_ADDRESS", //SENDER_ADDRESS
-        Template: template, // TEMPLATE_NAME
-        TemplateData: '{ "REPLACEMENT_TAG_NAME":"REPLACEMENT_VALUE" }' /* required */,
+        Source: "joseph.insalaco1@gmail.com", //SENDER_ADDRESS
+        Message: { /* required */
+            Body: { /* required */
+              Html: {
+               Charset: "UTF-8",
+               Data: `You have been invited to ${weddingName} please visit http://localhost:3000/weddings/attending to RSVP`
+              }
+             },
+             Subject: {
+              Charset: 'UTF-8',
+              Data: `You\'ve been invited to ${weddingName}!`
+             }
+            },
         ReplyToAddresses: [],
     };
 
     try {
-    const data = await sesClient.send(new SendTemplatedEmailCommand(params));
-    console.log("Success.", data);
-    return "Successfully sent email!";
-    } catch (err) {
-    console.log("Error", err.stack);
+        sesClient.sendEmail(params).promise();
+        console.log("success")
+    } catch(e){
+        console.log("Error,",e);
     }
 };
 
-modules.export = { sendEmail }
+module.exports = { sendEmail }

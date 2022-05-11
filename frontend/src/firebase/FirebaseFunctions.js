@@ -1,7 +1,8 @@
 import firebase from 'firebase/app';
 
 async function doCreateUserWithEmailAndPassword(email, password, displayName) {
-  await firebase.auth().createUserWithEmailAndPassword(email, password);
+  await firebase.auth().createUserWithEmailAndPassword(email, password).then()
+  console.log(displayName)
   firebase.auth().currentUser.updateProfile({displayName: displayName});
 }
 
@@ -26,6 +27,7 @@ async function doSocialSignIn(provider) {
   } else if (provider === 'facebook') {
     socialProvider = new firebase.auth.FacebookAuthProvider();
   }
+  console.log(socialProvider);
   await firebase.auth().signInWithPopup(socialProvider);
 }
 
@@ -34,7 +36,7 @@ async function doPasswordReset(email) {
 }
 
 async function doPasswordUpdate(password) {
-  await firebase.auth().updatePassword(password);
+  await firebase.auth().currentUser.updatePassword(password);
 }
 
 async function doSignOut() {

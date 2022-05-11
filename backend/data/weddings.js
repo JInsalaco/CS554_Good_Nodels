@@ -31,6 +31,9 @@ const eventsValidation = (events) => {
 };
 
 const dateValidation = (date) => {
+  if (typeof date !== "object") {
+    throw new Error("Parameter must be an object.");
+  }
   const monthsAndDays = {
     January: 31,
     February: 29,
@@ -125,6 +128,7 @@ let exportedMethods = {
       rsvpDeadline,
       attendees: [],
       gifts: [],
+      images: [],
     };
 
     const weddingCollection = await weddings();
@@ -141,7 +145,7 @@ let exportedMethods = {
     stringValidation(foodChoices);
     emailValidation(email);
     if (typeof attending !== "boolean") {
-      throw new Error("Attending must be a boolean.");
+      throw new Error("attending must be a boolean.");
     }
     if (typeof extras !== "number" || extras < 0) {
       throw new Error("Extras must be greater than or equal to 0.");
@@ -153,6 +157,7 @@ let exportedMethods = {
       attending,
       extras,
       foodChoices,
+      responded: false,
     };
 
     const weddingCollection = await weddings();
@@ -276,7 +281,7 @@ let exportedMethods = {
     // Here is where the gift is being added to the wedding
     const updatedWedding = {
       ...wedding,
-      gifts: [...wedding.gifts, ObjectId(giftId)],
+      gifts: [...wedding.gifts, giftId],
     };
 
     const updateInfo = await weddingCollection.updateOne(
@@ -438,13 +443,13 @@ let exportedMethods = {
 
   async editAttendee(weddingId, attendeeId, newAttendee) {
     stringValidation([weddingId, attendeeId]);
-    stringValidation[newAttendee.Name];
-    emailValidation(newAttendee.Email);
-    if (newAttendee.Attending !== true && newAttendee.Attending !== false)
+    stringValidation[newAttendee.name];
+    emailValidation(newAttendee.email);
+    if (newAttendee.attending !== true && newAttendee.attending !== false)
       throw `Invalid attending field in editAttendee`;
     if (isNaN(parseInt(newAttendee.extras) || newAttendee.extras % 1 !== 0))
       throw `Invalid extras field in editAttendee`;
-    for (let food of newAttendee.foodChoice) stringValidation([food]);
+    for (let food of newAttendee.foodChoices) stringValidation([food]);
 
     const weddingCollection = await weddings();
     const updateInfo = await weddingCollection.updateOne(
@@ -491,7 +496,7 @@ let exportedMethods = {
     return exportedMethods.get(weddingId);
   },
 
-  async addImage(weddingId, url) {
+  async addImage(weddingId, url, imageID) {
     stringValidation([weddingId, url]);
 
     const weddingCollection = await weddings();
@@ -499,7 +504,7 @@ let exportedMethods = {
       {
         _id: ObjectId(weddingId),
       },
-      { $push: { images: { _id: ObjectId(), url: url } } }
+      { $push: { images: { _id: imageID, url: url } } }
     );
 
     if (insertInfo.modifiedCount === 0) {
@@ -510,16 +515,31 @@ let exportedMethods = {
   },
 
   //get wedding by email provided by firebase
-  async getByContactPerson(email){
+  async getByContactPerson(email) {
     stringValidation([email]);
     const weddingCollection = await weddings();
-    const data = await weddingCollection.findOne({contactPerson: email});
+    const data = await weddingCollection.findOne({ contactPerson: email });
 
-    if(!data){
-      throw new Error(`Could not find wedding for user ${email}`)
+    if (!data) {
+      throw new Error(`Could not find wedding for user ${email}`);
     }
 
     return data;
+  },
+
+  async getByAttendee(email) {
+    let attendingWeddings = [];
+    const weddingCollection = await weddings();
+    const data = await weddingCollection.find({}).toArray();
+    for (let i = 0; i < data.length; i++) {
+      let attendance = data[i].attendees;
+      for (let j = 0; j < attendance.length; j++) {
+        if (attendance[j].email == email) {
+          attendingWeddings.push(data[i]);
+        }
+      }
+    }
+    return attendingWeddings;
   },
 
   dateValidation,
