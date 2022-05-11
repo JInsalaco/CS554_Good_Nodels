@@ -134,7 +134,11 @@ function Wedding() {
           {addAttendeeButtonToggle && (
             <AddAttendee weddingData={weddingData} liftState={liftState} />
           )}
-          <Attendees weddingData={weddingData} canEdit={canEdit} liftState={liftState} />
+          <Attendees
+            weddingData={weddingData}
+            canEdit={canEdit}
+            liftState={liftState}
+          />
           <div className="gift-div">
             <h7 style={{ float: "left" }}>
               Gift Registry for {weddingData.title}:
@@ -148,7 +152,12 @@ function Wedding() {
                     return (
                       <ListGroup.Item key={gift.id}>
                         <Col>
-                          <GiftCard gift={gift} liftState={liftState} canEdit={canEdit} />
+                          <GiftCard
+                            gift={gift}
+                            liftState={liftState}
+                            canEdit={canEdit}
+                            weddingId={weddingData._id}
+                          />
                           <br />
                         </Col>
                       </ListGroup.Item>

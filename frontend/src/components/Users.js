@@ -28,6 +28,7 @@ function Users() {
         const { data } = await axios.get(
           `http://localhost:3001/weddings/wedding/${email}`
         );
+        console.log(data);
         const giftList = [];
         for (let giftId of data.gifts) {
           const { data } = await axios.get(
@@ -60,7 +61,7 @@ function Users() {
 
   async function deleteWedding() {
     await axios.delete(`http://localhost:3001/weddings/${weddingData._id}`);
-    setWeddingData(null)
+    setWeddingData(null);
   }
 
   if (loading) {
@@ -84,53 +85,59 @@ function Users() {
             <h1>Your Wedding</h1>
           </Card.Title>
           <Row>
-              <Col className='edit-delete'>
+            <Col className="edit-delete">
               <Button
                 variant="primary"
                 onClick={() => setWeddingModalToggle(!weddingModalToggle)}
                 className="mb-4"
-                >
+              >
                 {weddingData ? "Edit" : "Create"} Wedding
               </Button>
-                {weddingModalToggle && (
-                  <WeddingModal
-                    setWeddingModalToggle={setWeddingModalToggle}
-                    setUpdateWeddingData={setUpdateWeddingData}
-                    type={weddingData ? "EDIT" : "CREATE"}
-                    weddingData={weddingData}
-                  />
-                )}
-              </Col>
-              <Col className='edit-delete'>
-                {weddingData ? <Button variant="danger" onClick={deleteWedding}>
-                    Delete Wedding
-                </Button> : <></>}
-              </Col>
-            </Row>
+              {weddingModalToggle && (
+                <WeddingModal
+                  setWeddingModalToggle={setWeddingModalToggle}
+                  setUpdateWeddingData={setUpdateWeddingData}
+                  type={weddingData ? "EDIT" : "CREATE"}
+                  weddingData={weddingData}
+                />
+              )}
+            </Col>
+            <Col className="edit-delete">
+              {weddingData ? (
+                <Button variant="danger" onClick={deleteWedding}>
+                  Delete Wedding
+                </Button>
+              ) : (
+                <></>
+              )}
+            </Col>
+          </Row>
           {weddingData && (
             <>
               <h2>{weddingData.title}</h2>
-              <h3 className='wedding-label'>Wedding Date:</h3>
-              <h3 className='wedding-display'>
+              <h3 className="wedding-label">Wedding Date:</h3>
+              <h3 className="wedding-display">
                 {weddingData.date.day} {weddingData.date.month}{" "}
                 {weddingData.date.year}
               </h3>
-              
-              <h4 className='wedding-label'>Venue: </h4>
-              <h4 className='wedding-display'>{weddingData.venue}</h4>
-              
-              <h4 className='wedding-label'>RSVP Deadline: </h4>
-              <h4 className='wedding-display'>
-                {weddingData.rsvpDeadline.day}{" "}
-                {weddingData.rsvpDeadline.month} {weddingData.rsvpDeadline.year}
+
+              <h4 className="wedding-label">Venue: </h4>
+              <h4 className="wedding-display">{weddingData.venue}</h4>
+
+              <h4 className="wedding-label">RSVP Deadline: </h4>
+              <h4 className="wedding-display">
+                {weddingData.rsvpDeadline.day} {weddingData.rsvpDeadline.month}{" "}
+                {weddingData.rsvpDeadline.year}
               </h4>
-              
-              <h4 className='wedding-label'>Contact Person: </h4>
-              <h4 className='wedding-display'>{weddingData.contactPerson}</h4>
-              
-              <h4 className='wedding-label'>Events: </h4>
-              <h4 className='wedding-display'>{weddingData.events < 1 && "None"}</h4>
-              <ul className='mt-0 mb-0'>
+
+              <h4 className="wedding-label">Contact Person: </h4>
+              <h4 className="wedding-display">{weddingData.contactPerson}</h4>
+
+              <h4 className="wedding-label">Events: </h4>
+              <h4 className="wedding-display">
+                {weddingData.events < 1 && "None"}
+              </h4>
+              <ul className="mt-0 mb-0">
                 {weddingData.events.map((event) => {
                   return (
                     <li key={event._id}>
@@ -144,23 +151,32 @@ function Users() {
                   );
                 })}
               </ul>
-              <h4 className='wedding-label'>Attendees: </h4>
+              <h4 className="wedding-label">Attendees: </h4>
               <Button
                 variant="primary"
-                className='mt-4 mb-4'
+                className="mt-4 mb-4"
                 onClick={() =>
-                setAddAttendeeButtonToggle(!addAttendeeButtonToggle)
+                  setAddAttendeeButtonToggle(!addAttendeeButtonToggle)
                 }
               >
-              Add attendee
+                Add attendee
               </Button>
-              <h4 className='wedding-display'>{weddingData.attendees.length < 1 && "None"}</h4>
+              <h4 className="wedding-display">
+                {weddingData.attendees.length < 1 && "None"}
+              </h4>
               {addAttendeeButtonToggle && (
-                <AddAttendee weddingData={weddingData} liftState={updateGifts} />
+                <AddAttendee
+                  weddingData={weddingData}
+                  liftState={updateGifts}
+                />
               )}
-              <Attendees weddingData={weddingData} canEdit={true} liftState={updateGifts} />
+              <Attendees
+                weddingData={weddingData}
+                canEdit={true}
+                liftState={updateGifts}
+              />
               <div className="gift-div">
-                <h4 className='wedding-label' style={{ float: "left" }}>
+                <h4 className="wedding-label" style={{ float: "left" }}>
                   Gift Registry for {weddingData.title}:
                 </h4>
                 <br />
@@ -170,11 +186,12 @@ function Users() {
                     <Row xs={1} md={2} lg={3} className="g-4">
                       {weddingData.gifts.map((gift) => {
                         return (
-                              <GiftCard
-                                gift={gift}
-                                liftState={updateGifts}
-                                canEdit={true}
-                              />
+                          <GiftCard
+                            gift={gift}
+                            liftState={updateGifts}
+                            canEdit={true}
+                            weddingId={weddingData._id}
+                          />
                         );
                       })}
                     </Row>
