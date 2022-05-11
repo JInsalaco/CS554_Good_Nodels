@@ -147,11 +147,12 @@ function Users() {
               <h4 className='wedding-label'>Attendees: </h4>
               <Button
                 variant="primary"
+                className='mt-4 mb-4'
                 onClick={() =>
                 setAddAttendeeButtonToggle(!addAttendeeButtonToggle)
                 }
               >
-              Send Invitation
+              Add attendee
               </Button>
               <h4 className='wedding-display'>{weddingData.attendees.length < 1 && "None"}</h4>
               {addAttendeeButtonToggle && (
@@ -169,16 +170,11 @@ function Users() {
                     <Row xs={1} md={2} lg={3} className="g-4">
                       {weddingData.gifts.map((gift) => {
                         return (
-                          <ListGroup.Item key={gift.id}>
-                            <Col>
                               <GiftCard
                                 gift={gift}
                                 liftState={updateGifts}
                                 canEdit={true}
                               />
-                              <br />
-                            </Col>
-                          </ListGroup.Item>
                         );
                       })}
                     </Row>

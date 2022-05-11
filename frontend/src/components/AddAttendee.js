@@ -52,7 +52,7 @@ function AddGift(props) {
         <div>
             <div>
                 <label>
-                    Email:
+                    Email:&nbsp;
                     <input
                         type="email"
                         onChange={(e) => handleChange(e)}
@@ -63,7 +63,7 @@ function AddGift(props) {
                 </label>
             </div>
             <br />
-            <Button variant="primary" size="sm" onClick={addAttendee}>
+            <Button variant="primary" className='mt-2' size="sm" onClick={addAttendee}>
                 Submit
             </Button>
             <br/>

@@ -16,40 +16,36 @@ function Attendees(props) {
 
     return (
         <Container>
-            <ListGroup>
-                <Row xs={2} md={4} lg={5} className="g-4">
-                    {weddingData.attendees.map((attendee, index) => {
-                        return (
-                            <ListGroup.Item key={attendee._id + index}>
-                                <Col>
-                                    <Card>
-                                        <Card.Body>
-                                            <Card.Title>{attendee.name}</Card.Title>
-                                            <Card.Text>Email: {attendee.email}</Card.Text>
-                                            <Card.Text>
-                                                Attending?: {attendee.attending ? "Yes" : "No"}
-                                            </Card.Text>
-                                            <Card.Text>Extras: {attendee.extras}</Card.Text>
-                                            {attendee.foodChoices.map((choice) => {
-                                                return <Card.Text>{choice}</Card.Text>;
-                                            })}
-                                        </Card.Body>
-                                        {props.canEdit && (
-                                            <Button
-                                                variant="danger"
-                                                value={attendee._id}
-                                                onClick={(e) => removeAttendee(e.target.value)}
-                                            >
-                                                Remove Attendee
-                                            </Button>
-                                        )}
-                                    </Card>
-                                </Col>
-                            </ListGroup.Item>
-                        );
-                    })}
-                </Row>
-            </ListGroup>
+        <Row xs={1} md={2} lg={3} className="g-4">
+            {weddingData.attendees.map((attendee, index) => {
+                return (
+                    <Card className='attendee-card'>
+                        <Card.Body>
+                            <Card.Title>{attendee.name}</Card.Title>
+                            <Card.Text>Email:</Card.Text>
+                            <Card.Text>{attendee.email}</Card.Text>
+                            <Card.Text>Attending: </Card.Text>
+                            <Card.Text>{attendee.attending ? "Yes" : "No"}</Card.Text>
+                            <Card.Text>Extras:</Card.Text>
+                            <Card.Text>{attendee.extras}</Card.Text>
+                            {attendee.foodChoices.map((choice) => {
+                                return <Card.Text>{choice}</Card.Text>;
+                            })}
+                        </Card.Body>
+                        {props.canEdit && (
+                            <Button
+                                variant="danger"
+                                value={attendee._id}
+                                className='mt-4 mb-4'
+                                onClick={(e) => removeAttendee(e.target.value)}
+                            >
+                                Remove Attendee
+                            </Button>
+                        )}
+                    </Card>
+                );
+            })}
+        </Row>
         </Container>
     );
 }
