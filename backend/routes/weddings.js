@@ -808,16 +808,15 @@ router.patch("/:id/image/:imageId", async (req, res) => {
       });
       gm(buf).resize(960, 960);
       let s3Data = {
-        Bucket: "weddio",
+        Bucket: "weddio-images",
         Key: req.params.imageId,
         Body: buf,
         ContentEncoding: "base64",
         ContentType: "image/jpeg",
-        ACL: "public-read",
       };
       s3.uploadImageBinary(s3Data);
       // Then we need to add it into the MongoDB with the link
-      const baseURL = "https://weddio.s3.amazonaws.com";
+      const baseURL = "https://weddio-images.s3.amazonaws.com";
       const updatedWedding = await weddingData.editImage(
         req.params.id,
         req.params.imageId,
@@ -891,16 +890,15 @@ router.put("/:id/image", async (req, res) => {
       });
       gm(buf).resize(960, 960);
       let s3Data = {
-        Bucket: "weddio",
+        Bucket: "weddio-images",
         Key: String(newID),
         Body: buf,
         ContentEncoding: "base64",
         ContentType: "image/jpeg",
-        ACL: "public-read",
       };
       s3.uploadImageBinary(s3Data);
       // Then we need to add it into the MongoDB with the link
-      const baseURL = "https://weddio.s3.amazonaws.com";
+      const baseURL = "https://weddio-images.s3.amazonaws.com";
       const updatedWedding = await weddingData.addImage(
         req.params.id,
         `${baseURL}/${String(newID)}`,

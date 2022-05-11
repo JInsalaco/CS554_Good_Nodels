@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const AWS = require("aws-sdk");
 const ACCESS_KEY = process.env.AWS_ACCESS_KEY;
 const SECRET_KEY = process.env.AWS_SECRET_KEY;
@@ -18,7 +18,7 @@ const s3Client = new AWS.S3({
 const sesClient = new AWS.SES({
   apiVersion: "2010-12-01",
   signatureVersion: "v4",
-  region: REGION
-})
+  region: REGION,
+});
 
-module.exports = { s3Client,sesClient };
+module.exports = { s3Client, sesClient };
