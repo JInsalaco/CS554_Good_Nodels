@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../App.css';
 import axios from 'axios';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, FormControl } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function AddGift(props) {
@@ -32,49 +32,59 @@ function AddGift(props) {
   return (
     <div>
       <Form noValidate validated={invalid}>
-        <Form.Label style={{ textAlign: 'left' }}>
-          Title:
+        <Form.Group className="mb-3">
+          <Form.Label style={{ textAlign: 'left' }}>
+            Title:
+          </Form.Label>
           <Form.Control className='form-control' type='text' onChange={(e) => handleChange(e)} id='title' name='title' placeholder='Gift Title' required />
           <Form.Control.Feedback type='invalid'>
             Please input a title.
           </Form.Control.Feedback>
-        </Form.Label>
+        </Form.Group>
         <br />
         <br />
-        <Form.Label style={{ textAlign: 'left' }}>
-          Price:
+        <Form.Group className="mb-3">
+          <Form.Label style={{ textAlign: 'left' }}>
+            Price:
+          </Form.Label>
           <Form.Control className='form-control' type='number' min='0' onChange={(e) => handleChange(e)} id='price' name='price' placeholder='Gift Price' required />
           <Form.Control.Feedback type='invalid'>
             Please input a price.
           </Form.Control.Feedback>
-        </Form.Label>
+        </Form.Group>
         <br />
         <br />
-        <Form.Label style={{ textAlign: 'left' }}>
-          URL:
+        <Form.Group className="mb-3">
+          <Form.Label style={{ textAlign: 'left' }}>
+            URL:
+          </Form.Label>
           <Form.Control className='form-control' type='text' onChange={(e) => handleChange(e)} id='url' name='url' placeholder='Gift URL' required />
           <Form.Control.Feedback type='invalid'>
             Please input a URL.
           </Form.Control.Feedback>
-        </Form.Label>
+        </Form.Group>
         <br />
         <br />
-        <Form.Label style={{ textAlign: 'left' }}>
-          Picture:
+        <Form.Group className="mb-3">
+          <Form.Label style={{ textAlign: 'left' }}>
+            Picture:
+          </Form.Label>
           <Form.Control className='form-control' type='text' onChange={(e) => handleChange(e)} id='picture' name='picture' placeholder='Gift Picture' required />
           <Form.Control.Feedback type='invalid'>
             Please input a picture.
           </Form.Control.Feedback>
-        </Form.Label>
+        </Form.Group>
         <br />
         <br />
-        <Form.Label style={{ textAlign: 'left' }}>
-          Description:
+        <Form.Group className="mb-3">
+          <Form.Label style={{ textAlign: 'left' }}>
+            Description:
+          </Form.Label>
           <Form.Control className='form-control' type='text' onChange={(e) => handleChange(e)} id='description' name='description' placeholder='Gift Description' required />
           <Form.Control.Feedback type='invalid'>
             Please input a description.
           </Form.Control.Feedback>
-        </Form.Label>
+        </Form.Group>
       </Form>
       <br />
       <Button variant='primary' size='sm' onClick={addGift}>Submit</Button>

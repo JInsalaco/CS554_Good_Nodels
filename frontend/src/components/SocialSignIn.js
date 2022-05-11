@@ -15,15 +15,13 @@ const SocialSignIn = () => {
 
   return (
   <div className='social-sign-in'>
-    <button class="google-btn social-btn btn-lg btn-block" onClick={() => socialSignOn('google')}
-        role="button">
-        <img class="login-logo rounded" src={googleLogo} role='presentation' width="24"
-        height="24" /><span>Continue with Google</span>
+    <button class="google-btn social-btn btn-lg btn-block" onClick={() => socialSignOn('google')}>
+        <img class="login-logo rounded" src={googleLogo} width="24"
+        height="24" alt="Google Logo"/><span>Continue with Google</span>
     </button>
-    <button class="fb-btn social-btn btn-lg  btn-block" onClick={() => socialSignOn('facebook')}
-        role='button'>
-        <img class='login-logo rounded' role='presentation' src={facebookLogo} width="24" 
-        height="24"/><span>Continue with Facebook</span>
+    <button class="fb-btn social-btn btn-lg  btn-block" onClick={() => socialSignOn('facebook')}>
+        <img class='login-logo rounded' src={facebookLogo} width="24" 
+        height="24" alt="Facebook Logo"/><span>Continue with Facebook</span>
     </button>
   </div>
   );

@@ -57,7 +57,7 @@ function AttendingWeddings() {
   } else {
     console.log(weddingData.length);
     return (
-      <Container className='attending-weddings' xs={12} sm={8} md={6} lg={5} xl={4}>
+      <Container className='attending-weddings'>
         <Row xs={1} md={2} lg={3} className="g-4">
           {weddingData.map((wedding) => {
             return (

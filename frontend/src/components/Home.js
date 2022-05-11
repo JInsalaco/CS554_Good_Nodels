@@ -21,22 +21,20 @@ function Home() {
         <h3>
           Wedd.io allows you to:
         </h3>
-        <h4>
-        <ol>
-          <ul>
+        <ul>
+          <li>
             Create a wedding invitation
-          </ul>
-          <ul>
+          </li>
+          <li>
             Invite your friends
-          </ul>
-          <ul>
+          </li>
+          <li>
             Create events
-          </ul>
-          <ul>
+          </li>
+          <li>
             Upload photos from the event
-          </ul>
-        </ol>
-        </h4>
+          </li>
+        </ul>
       </div>
     </div>
   );
