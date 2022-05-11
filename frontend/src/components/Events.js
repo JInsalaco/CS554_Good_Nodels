@@ -303,7 +303,6 @@ function Events(props) {
         eventImage = (
           <i
             className="fa-solid fa-champagne-glasses event-image"
-            alt="event icon"
           ></i>
         );
       } else if (
@@ -311,13 +310,12 @@ function Events(props) {
         event.title.toLowerCase().includes("food")
       ) {
         eventImage = (
-          <i className="fa-solid fa-utensils event-image" alt="event icon"></i>
+          <i className="fa-solid fa-utensils event-image"></i>
         );
       } else {
         eventImage = (
           <i
             className="fa-solid fa-cake-candles event-image"
-            alt="event icon"
           ></i>
         );
       }
