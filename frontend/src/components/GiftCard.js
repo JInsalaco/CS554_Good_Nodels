@@ -24,28 +24,27 @@ function GiftCard(props) {
     };
 
     return (
-        <div>
-            <Card>
-                <Card.Img variant='top' src={`${props.gift.picture}`} alt={`${props.gift.title}`} />
-                <Card.Body>
-                    <Card.Title>
-                        <Link to={`/gifts/${props.gift._id}`}>{props.gift.title}</Link>
-                    </Card.Title>
-                </Card.Body>
+            <Card className='gift-card'>
+                <Link to={`/gifts/${props.gift._id}`}>
+                    <Card.Img variant='top' src={`${props.gift.picture}`} alt={`${props.gift.title}`} />
+                    <Card.Body>
+                        <Card.Title>
+                            {props.gift.title}
+                        </Card.Title>
+                    </Card.Body>
+                </Link>
                 {props.canEdit && (
-                    <Button variant='secondary' onClick={handleOpenModal}>
+                    <Button variant='secondary' className='mt-2 mb-2' onClick={handleOpenModal}>
                         Edit Gift
                     </Button>
                 )}
                 {props.canEdit && (
-                    <Button variant='danger' onClick={removeGift}>
+                    <Button variant='danger' className='mt-2 mb-2' onClick={removeGift}>
                         Remove Gift
                     </Button>
                 )}
-                <br />
-            </Card>
             {editGiftModal && <EditGift isOpen={editGiftModal} handleCloseModal={handleCloseModal} gift={props.gift} liftState={props.liftState} />}
-        </div>
+            </Card>
     );
 }
 

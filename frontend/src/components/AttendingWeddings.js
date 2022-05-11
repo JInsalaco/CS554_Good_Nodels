@@ -4,41 +4,13 @@ import { Link } from "react-router-dom";
 import "../App.css";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Card, CardHeader, Grid, makeStyles, Button } from "@material-ui/core";
+import {
+    Card,
+    Container,
+    Button,
+    Row
+  } from "react-bootstrap";
 import AttendeeModal from "./AttendeeModal";
-
-const useStyles = makeStyles({
-  card: {
-    maxWidth: 250,
-    height: "auto",
-    marginLeft: "auto",
-    marginRight: "auto",
-    borderRadius: 5,
-    border: "1px solid #1e8678",
-    boxShadow: "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
-  },
-  titleHead: {
-    borderBottom: "1px solid #1e8678",
-    fontWeight: "bold",
-  },
-  grid: {
-    flexGrow: 1,
-    flexDirection: "row",
-  },
-  media: {
-    height: "100%",
-    width: "100%",
-  },
-  button: {
-    background: "#ADD8E6",
-    fontWeight: "bold",
-    fontSize: 12,
-  },
-  Pagination: {
-    alignContent: "center",
-    justifyContent: "center",
-  },
-});
 
 function AttendingWeddings() {
   const [weddingData, setWeddingData] = useState(undefined);
@@ -50,7 +22,6 @@ function AttendingWeddings() {
   const user = firebase.auth().currentUser;
   const email = user.email;
   let list = null;
-  const classes = useStyles();
 
   useEffect(() => {
     async function fetchData() {
@@ -69,46 +40,7 @@ function AttendingWeddings() {
     }
     fetchData();
   }, [email]);
-
-  const buildList = (wedding) => {
-    return (
-      <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={wedding._id}>
-        <Card className={classes.card} variant="outlined">
-          <Link to={`/weddings/${wedding._id}`}>
-            <CardHeader className={classes.titleHead} title={wedding.title} />
-          </Link>
-          <br />
-          <br />
-          {!wedding.attendees.find((att) => att.email === email).responded && (
-            <Button
-              variant="primary"
-              onClick={() => setAttendeeModalToggle(!attendeeModalToggle)}
-            >
-              Respond to Invitation
-            </Button>
-          )}
-          {attendeeModalToggle && (
-            <AttendeeModal
-              setAttendeeModalToggle={setAttendeeModalToggle}
-              setWeddingData={setWeddingData}
-              weddingData={wedding}
-              weddings={weddingData}
-              attendeeId={
-                wedding.attendees.find((att) => att.email === email)._id
-              }
-            />
-          )}
-        </Card>
-        <br />
-      </Grid>
-    );
-  };
-  if (weddingData) {
-    list = weddingData.map((wedding) => {
-      console.log(wedding);
-      return buildList(wedding);
-    });
-  }
+  
   if (loading) {
     return (
       <div>
@@ -125,11 +57,37 @@ function AttendingWeddings() {
   } else {
     console.log(weddingData.length);
     return (
-      <div>
-        <Grid container className={classes.grid} spacing={5}>
-          {list}
-        </Grid>
-      </div>
+      <Container className='attending-weddings' xs={12} sm={8} md={6} lg={5} xl={4}>
+        <Row xs={1} md={2} lg={3} className="g-4">
+          {weddingData.map((wedding) => {
+            return (
+              <Card className='invite-card'>
+                <Card.Body>
+                  <Card.Title>{wedding.title}</Card.Title>
+                  <Card.Text>{wedding.date.month} {wedding.date.day}, {wedding.date.year}</Card.Text>
+                  <Card.Text>RSVP by: {wedding.rsvpDeadline.month} {wedding.rsvpDeadline.day}, {wedding.rsvpDeadline.year}</Card.Text>
+                </Card.Body>
+              {!wedding.attendees.find((att) => att.email === email).responded && 
+                <Button 
+                  variant='primary'
+                  className='mb-2 mt-2'
+                  onClick={() => setAttendeeModalToggle(!attendeeModalToggle)}>Respond to Invitation
+                </Button>
+              }   
+              {attendeeModalToggle && (
+                <AttendeeModal
+                  setAttendeeModalToggle={setAttendeeModalToggle}
+                  setWeddingData={setWeddingData}
+                  weddingData={wedding}
+                  weddings = {weddingData}
+                  attendeeId={wedding.attendees.find((att) => att.email === email)._id}
+                />
+              )}
+              </Card>
+          );
+          })}
+        </Row>
+      </Container>
     );
   }
 }
