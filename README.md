@@ -22,3 +22,10 @@ npm start
 ```
 
 Ensure Redis is running at the default port. All other integrations are cloud based, and a .env file will be required to run this.
+
+Note: ImageMagick must be properly installed for the backend photo uploading.
+Installation can be performed on MacOS via the HomeBrew package manager
+```
+brew install imagemagick
+brew install graphicsmagick
+```
