@@ -4,12 +4,7 @@ import { Link } from "react-router-dom";
 import "../App.css";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import {
-    Card,
-    Container,
-    Button,
-    Row
-  } from "react-bootstrap";
+import { Card, Container, Button, Row } from "react-bootstrap";
 import AttendeeModal from "./AttendeeModal";
 
 function AttendingWeddings() {
@@ -40,7 +35,7 @@ function AttendingWeddings() {
     }
     fetchData();
   }, [email]);
-  
+
   if (loading) {
     return (
       <div>
@@ -57,34 +52,46 @@ function AttendingWeddings() {
   } else {
     console.log(weddingData.length);
     return (
-      <Container className='attending-weddings'>
+      <Container className="attending-weddings">
         <Row xs={1} md={2} lg={3} className="g-4">
           {weddingData.map((wedding) => {
             return (
-              <Card className='invite-card'>
+              <Card className="invite-card">
                 <Card.Body>
-                  <Card.Title>{wedding.title}</Card.Title>
-                  <Card.Text>{wedding.date.month} {wedding.date.day}, {wedding.date.year}</Card.Text>
-                  <Card.Text>RSVP by: {wedding.rsvpDeadline.month} {wedding.rsvpDeadline.day}, {wedding.rsvpDeadline.year}</Card.Text>
+                  <Link to={`/weddings/${wedding._id}`}>
+                    <Card.Title>{wedding.title}</Card.Title>
+                  </Link>
+                  <Card.Text>
+                    {wedding.date.month} {wedding.date.day}, {wedding.date.year}
+                  </Card.Text>
+                  <Card.Text>
+                    RSVP by: {wedding.rsvpDeadline.month}{" "}
+                    {wedding.rsvpDeadline.day}, {wedding.rsvpDeadline.year}
+                  </Card.Text>
                 </Card.Body>
-              {!wedding.attendees.find((att) => att.email === email).responded && 
-                <Button 
-                  variant='primary'
-                  className='mb-2 mt-2'
-                  onClick={() => setAttendeeModalToggle(!attendeeModalToggle)}>Respond to Invitation
-                </Button>
-              }   
-              {attendeeModalToggle && (
-                <AttendeeModal
-                  setAttendeeModalToggle={setAttendeeModalToggle}
-                  setWeddingData={setWeddingData}
-                  weddingData={wedding}
-                  weddings = {weddingData}
-                  attendeeId={wedding.attendees.find((att) => att.email === email)._id}
-                />
-              )}
+                {!wedding.attendees.find((att) => att.email === email)
+                  .responded && (
+                  <Button
+                    variant="primary"
+                    className="mb-2 mt-2"
+                    onClick={() => setAttendeeModalToggle(!attendeeModalToggle)}
+                  >
+                    Respond to Invitation
+                  </Button>
+                )}
+                {attendeeModalToggle && (
+                  <AttendeeModal
+                    setAttendeeModalToggle={setAttendeeModalToggle}
+                    setWeddingData={setWeddingData}
+                    weddingData={wedding}
+                    weddings={weddingData}
+                    attendeeId={
+                      wedding.attendees.find((att) => att.email === email)._id
+                    }
+                  />
+                )}
               </Card>
-          );
+            );
           })}
         </Row>
       </Container>
